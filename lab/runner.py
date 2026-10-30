@@ -16,11 +16,14 @@ async def api(path,body=None):
   r=await c.get(CONTROL+path,headers=headers('runner')) if body is None else await c.post(CONTROL+path,json=body,headers=headers('runner'))
   r.raise_for_status();return r.json()
 def redact(value):
- text=json.dumps(value,ensure_ascii=False,default=str)
- for key in ['API_KEY']:
-  secret_value=os.getenv(key)
-  if secret_value:text=text.replace(secret_value,'[REDACTED]')
- return json.loads(text)
+ if isinstance(value,str):
+  key=os.getenv('API_KEY')
+  return value.replace(key,'[REDACTED]') if key else value
+ if isinstance(value,dict):return {redact(k):redact(v) for k,v in value.items()}
+ if isinstance(value,(list,tuple)):return [redact(x) for x in value]
+ if value is None or isinstance(value,(bool,int,float)):return value
+ return redact(str(value))
+
 async def execute(case):
  cid=case['id'];attempt=case['attempt_id'];cancel=asyncio.Event();phase=case['phase'];schemas=READ+WRITE if phase=='repair' else READ
  allowed={x['name'] for x in schemas};session_dir=DATA/'reports'/attempt;session_dir.mkdir(parents=True,exist_ok=True)
