@@ -7,7 +7,10 @@ candidate=Path(a.candidate).resolve();trusted=Path(a.trusted).resolve();tag='lab
 def run(argv,**kw):return subprocess.run(argv,check=True,**kw)
 try:
  run(['docker','network','create','--internal',net],stdout=subprocess.DEVNULL)
- run(['docker','build','-f',str(trusted/'deploy/Order.Dockerfile'),'-t',tag,str(candidate)])
+ options=[]
+ for key in ['PYTHON_BASE','PIP_INDEX_URL','APT_MIRROR_SITE','HTTP_PROXY','HTTPS_PROXY','NO_PROXY']:
+  if os.getenv(key):options+=['--build-arg',key+'='+os.environ[key]]
+ run(['docker','build',*options,'-f',str(trusted/'deploy/Order.Dockerfile'),'-t',tag,str(candidate)])
  with tempfile.TemporaryDirectory() as temp:
   secret=Path(temp)/'password';secret.write_text(password);secret.chmod(0o644)
   run(['docker','run','-d','--name',tag+'-db','--network',net,'--network-alias','db','-e','POSTGRES_USER=orders','-e','POSTGRES_DB=orders','-e','POSTGRES_PASSWORD='+password,'postgres:16.9-alpine'],stdout=subprocess.DEVNULL)

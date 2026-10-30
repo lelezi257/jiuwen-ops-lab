@@ -3,6 +3,7 @@
 import asyncio,json,sys,time
 from pathlib import Path
 import httpx
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from lab.runner import client,configured,redact
 async def main():
  report={'scope':'official_sdk_qualification','time':time.time(),'real_model_qualified':False}

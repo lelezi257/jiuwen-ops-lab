@@ -10,10 +10,15 @@ HOST_REPO=os.environ['HOST_REPO'];IMAGE='localhost:5000/jiuwen-order';CONTAINER=
 ALLOWED=('apps/order_api/','tests/order/')
 TRUSTED=['.github/workflows/contract.yml','.github/workflows/build.yml','deploy/Order.Dockerfile','contracts/check_http.py','scripts/ci.py']
 def cmd(argv,cwd=None,timeout=120,check=True):
- env={**os.environ,'GIT_TERMINAL_PROMPT':'0','GIT_CONFIG_COUNT':'1','GIT_CONFIG_KEY_0':'credential.helper','GIT_CONFIG_VALUE_0':'!python -m lab.git_credential'}
+ env={**os.environ,'GIT_TERMINAL_PROMPT':'0','GIT_CONFIG_COUNT':'1','GIT_CONFIG_KEY_0':'credential.helper','GIT_CONFIG_VALUE_0':'!python /app/lab/git_credential.py'}
  r=subprocess.run(argv,cwd=cwd,env=env,capture_output=True,text=True,timeout=timeout)
  if check and r.returncode:raise RuntimeError(f'{argv[0]} failed ({r.returncode}): '+r.stderr[-1500:])
  return r.stdout.strip()
+def build_options():
+ out=[]
+ for key in ['PYTHON_BASE','PIP_INDEX_URL','APT_MIRROR_SITE','HTTP_PROXY','HTTPS_PROXY','NO_PROXY']:
+  if os.getenv(key):out+=['--build-arg',key+'='+os.environ[key]]
+ return out
 def gh(method,path,body=None):
  token=secret('github_token')
  if not token:raise HTTPException(409,'GitHub credential not configured')
@@ -245,7 +250,7 @@ def ops(name:str,args:dict):
    file.write_text(source.replace(old,'normalized = coupon.strip().upper()'))
    cmd(['git','config','user.name','Jiuwen Ops Lab'],path);cmd(['git','config','user.email','ops-lab@users.noreply.github.com'],path);cmd(['git','add','apps/order_api/pricing.py'],path);cmd(['git','commit','-m','Experiment: introduce optional coupon regression'],path)
    sha=cmd(['git','rev-parse','HEAD'],path);cmd(['git','push','origin','HEAD:refs/heads/'+BRANCH],path,180)
-   tag=IMAGE+':'+sha;cmd(['docker','build','-f','/app/deploy/Order.Dockerfile','--build-arg','SOURCE_SHA='+sha,'-t',tag,str(path)],timeout=300);cmd(['docker','push',tag],timeout=180)
+   tag=IMAGE+':'+sha;cmd(['docker','build',*build_options(),'-f','/app/deploy/Order.Dockerfile','--build-arg','SOURCE_SHA='+sha,'-t',tag,str(path)],timeout=300);cmd(['docker','push',tag],timeout=180)
    digest=next(x for x in json.loads(cmd(['docker','image','inspect',tag]))[0]['RepoDigests'] if x.startswith(IMAGE+'@'))
    return deploy(digest,sha,ident('fault-release'),current()['ledger']['release_id'])
  raise HTTPException(404,'Unknown controller operation')

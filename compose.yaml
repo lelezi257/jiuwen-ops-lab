@@ -152,6 +152,9 @@
         "GITHUB_BRANCH": "${GITHUB_BRANCH:-lab-live}",
         "LAB_TRUST_SHA": "${LAB_TRUST_SHA}",
         "HOST_REPO": "${HOST_REPO}",
+        "PYTHON_BASE": "${PYTHON_BASE:-python:3.11-slim-bookworm}",
+        "PIP_INDEX_URL": "${PIP_INDEX_URL:-https://pypi.org/simple}",
+        "APT_MIRROR_SITE": "${APT_MIRROR_SITE:-}",
         "HTTP_PROXY": "${HTTP_PROXY:-}",
         "HTTPS_PROXY": "${HTTPS_PROXY:-}",
         "NO_PROXY": "localhost,127.0.0.1,control,probe,order-api"

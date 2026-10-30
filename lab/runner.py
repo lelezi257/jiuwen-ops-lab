@@ -10,7 +10,7 @@ from jiuwenswarm_sdk import Client
 CONTROL='http://control:8080';capability=None;worker_error=None
 
 def configured():return all(os.getenv(x,'').strip() for x in ['API_BASE','API_KEY','MODEL_NAME'])
-def client():return Client(command=[sys.executable,'-m','jiuwenswarm.channels.process_cli.main'],cwd='/vendor/swarm',env={'JIUWENSWARM_DATA_DIR':'/data/swarm','JIUWENSWARM_CONFIG_DIR':'/config/swarm'})
+def client():return Client(command=[sys.executable,'-m','jiuwenswarm.channels.process_cli.main'],cwd='/data',env={'JIUWENSWARM_DATA_DIR':'/data/swarm','JIUWENSWARM_CONFIG_DIR':'/config/swarm'})
 async def api(path,body=None):
  async with httpx.AsyncClient(timeout=50,trust_env=False) as c:
   r=await c.get(CONTROL+path,headers=headers('runner')) if body is None else await c.post(CONTROL+path,json=body,headers=headers('runner'))
