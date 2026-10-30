@@ -5,7 +5,7 @@ import httpx
 from fastapi import FastAPI,Depends,HTTPException
 from lab.common import *
 app=FastAPI();init_store();lock=threading.RLock()
-REPO=os.environ['GITHUB_REPOSITORY'];BRANCH=os.getenv('GITHUB_BRANCH','lab-live');REMOTE='https://github.com/'+REPO+'.git';CACHE=Path('/work/repository');WORK=Path('/work/candidates');WORK.mkdir(parents=True,exist_ok=True)
+REPO=os.environ['GITHUB_REPOSITORY'];BRANCH=os.getenv('GITHUB_BRANCH','lab-live');REMOTE='https://github.com/'+REPO+'.git';WORK_ROOT=Path(os.getenv('LAB_WORK_ROOT','/work'));CACHE=WORK_ROOT/'repository';WORK=WORK_ROOT/'candidates';WORK.mkdir(parents=True,exist_ok=True)
 HOST_REPO=os.environ['HOST_REPO'];IMAGE='localhost:5000/jiuwen-order';CONTAINER='ops-order-api'
 ALLOWED=('apps/order_api/','tests/order/')
 TRUSTED=['.github/workflows/contract.yml','.github/workflows/build.yml','deploy/Order.Dockerfile','contracts/check_http.py','scripts/ci.py']
@@ -99,9 +99,7 @@ def tool(name:str,args:dict):
    check_changes(root,w['base_sha']);run_id=ident('test')
    argv=['python','/app/scripts/ci.py','--candidate',str(root),'--trusted','/app','--oracle-host-path',HOST_REPO+'/contracts']
    result=subprocess.run(argv,capture_output=True,text=True,timeout=300)
-   # Also execute agent-added tests inside an unprivileged disposable container.
-   unit=subprocess.run(['docker','run','--rm','--network','none','--read-only','--tmpfs','/tmp','--mount','type=volume,src=jiuwen-ops-lab_work,dst=/work,readonly','-w',str(root),'jiuwen-ops-runtime:local','python','-m','unittest','discover','-s','tests/order','-v'],capture_output=True,text=True,timeout=90)
-   rec={'test_id':run_id,'passed':result.returncode==0 and unit.returncode==0,'output':(result.stdout+result.stderr+unit.stdout+unit.stderr)[-45000:],'tree_hash':cmd(['git','write-tree'],root)};put('test',cid,rec);return rec
+   rec={'test_id':run_id,'passed':result.returncode==0,'output':(result.stdout+result.stderr)[-45000:],'tree_hash':cmd(['git','write-tree'],root)};put('test',cid,rec);return rec
   if name=='create_pull_request':
    check_changes(root,w['base_sha']);test=get('test',cid)
    if not test or not test['passed'] or test['tree_hash']!=cmd(['git','write-tree'],root):raise HTTPException(409,'Passing tests required for exact candidate tree')
@@ -168,15 +166,17 @@ def ops(name:str,args:dict):
    cid=args['case_id'];c=call('http://control:8080','/internal/cases/'+cid,role='runner')
    if c['cancelled']:raise HTTPException(409,'Cancelled')
    status=pr_status(cid)
-   if status['state']=='merged':return status
+   if status['state']=='merged':
+    if not get('merge-intent',cid):raise HTTPException(409,'Merge was not authorized by this controller')
+    put('merge',cid,status);return status
    if status['state']!='passed':raise HTTPException(409,'Exact candidate trusted CI has not passed')
-   pr=status['pr'];rec=gh('PUT',f"/pulls/{pr['number']}/merge",{'sha':pr['head_sha'],'merge_method':'merge','commit_title':'Verified order repair '+cid})
+   pr=status['pr'];put('merge-intent',cid,status);rec=gh('PUT',f"/pulls/{pr['number']}/merge",{'sha':pr['head_sha'],'merge_method':'merge','commit_title':'Verified order repair '+cid})
    if not rec.get('merged'):raise HTTPException(409,'Merge refused')
    result={'state':'merged','merge_sha':rec['sha'],'pr':pr,'checked':status};put('merge',cid,result);return result
   if name=='build':
    cid=args['case_id'];merge=get('merge',cid)
    if not merge:raise HTTPException(409,'Merge ledger required')
-   sha=merge['merge_sha'];assert_trusted(sha);rec=get('build',cid)
+   sha=merge['merge_sha'];assert_trusted(sha);assert_trusted(gh('GET','/branches/main')['commit']['sha']);rec=get('build',cid)
    if not rec:
     rec={'source_sha':sha,'dispatched_at':now(),'state':'dispatching'};put('build',cid,rec)
     gh('POST','/actions/workflows/build.yml/dispatches',{'ref':'main','inputs':{'source_sha':sha}});rec['state']='pending';put('build',cid,rec)
@@ -193,7 +193,7 @@ def ops(name:str,args:dict):
     response=client.get(artifact['archive_download_url'],headers={'Authorization':'Bearer '+secret('github_token')});response.raise_for_status();blob=response.content
    with zipfile.ZipFile(io.BytesIO(blob)) as z:
     provenance=json.loads(z.read('provenance.json'));tar=z.read('image.tar')
-   if provenance['source_sha']!=sha or provenance['architecture']!=arch or hashlib.sha256(tar).hexdigest()!=provenance['archive_sha256']:raise HTTPException(409,'Artifact provenance mismatch')
+   if str(provenance.get('run_id'))!=str(run['id']) or provenance['source_sha']!=sha or provenance['architecture']!=arch or hashlib.sha256(tar).hexdigest()!=provenance['archive_sha256']:raise HTTPException(409,'Artifact provenance mismatch')
    target=DATA/('image-'+cid+'.tar');target.write_bytes(tar)
    try:
     cmd(['docker','load','-i',str(target)],timeout=180);tag=IMAGE+':'+sha;cmd(['docker','tag','order-build:'+sha,tag]);cmd(['docker','push',tag],timeout=180)
@@ -202,6 +202,10 @@ def ops(name:str,args:dict):
    rec.update(state='ready',image_digest=digest,artifact_id=artifact['id'],provenance=provenance);put('build',cid,rec);return rec
   if name=='deploy':
    cid=args['case_id'];b=get('build',cid)
+   case=call('http://control:8080','/internal/cases/'+cid,role='runner')
+   if case['cancelled']:raise HTTPException(409,'Cancelled')
+   already=current()
+   if already['consistent'] and already['ledger']['release_id']=='release-'+cid:return already
    if not b or b['state']!='ready':raise HTTPException(409,'Verified build required')
    return deploy(b['image_digest'],b['source_sha'],'release-'+cid,args['expected_release'])
   if name=='rollback':
@@ -218,7 +222,7 @@ def ops(name:str,args:dict):
    rec={'release_id':fact['release_id'],'source_sha':fact['source_sha'],'image_digest':image,'state':'ready','time':now()};put('release','current',rec);return current()
   if name=='fault':
    active=call('http://control:8080','/api/cases')
-   if any(x['state'] not in ['RESOLVED_FIXED','RECOVERED_ROLLBACK','NEEDS_HUMAN','CANCELLED','NO_ACTION'] for x in active):raise HTTPException(409,'Finish/cancel the current experiment first')
+   if any(x['state'] not in ['DELIVERY_ACCEPTANCE_PASSED','RESOLVED_FIXED','RECOVERED_ROLLBACK','NEEDS_HUMAN','CANCELLED','NO_ACTION'] for x in active):raise HTTPException(409,'Finish/cancel the current experiment first')
    good=get('release','good')
    if not good:raise HTTPException(409,'Verify and mark a healthy baseline first')
    root=repository();branch=gh('GET','/branches/'+BRANCH)['commit']['sha'] if args.get('branch_exists') else None

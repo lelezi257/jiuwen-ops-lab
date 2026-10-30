@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="940" viewBox="0 0 1080 940" role="img" aria-labelledby="deployment-title deployment-desc">
+<title id="deployment-title">真实运维 Agent v1 部署设计</title><desc id="deployment-desc">Mac 浏览器连接虚拟机内自己的控制中心；九问执行服务通过本地 Process SDK 管道启动 Swarm 和 Core；工具与工程交付服务独立部署，外部依赖为 GitHub 与模型服务。</desc>
+<defs><marker id="deployment-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#46748b"/></marker></defs>
+<rect width="1080" height="940" rx="16" fill="#f7fafc"/>
+<g font-family="-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif" fill="#17374a">
+<text x="28" y="35" font-size="27" font-weight="700" fill="#17374a">部署设计｜一台 Linux VM，各服务独立运行</text>
+<rect x="30" y="60" width="280" height="94" rx="12" fill="#eaf2ff" stroke="#9ebde2" stroke-width="1.5"/>
+<text x="48" y="93" font-size="23" font-weight="700" fill="#17374a">Mac 浏览器</text>
+<text x="48" y="123" font-size="18" font-weight="400" fill="#496576">我们自己的运维工作台</text>
+<rect x="400" y="60" width="260" height="94" rx="12" fill="#f2edff" stroke="#c4b6e8" stroke-width="1.5"/>
+<text x="418" y="93" font-size="22" font-weight="700" fill="#17374a">外部模型服务</text>
+<text x="418" y="123" font-size="18" font-weight="400" fill="#496576">真实推理；Key 仅执行侧配置</text>
+<rect x="740" y="60" width="310" height="94" rx="12" fill="#fff1de" stroke="#e1bf86" stroke-width="1.5"/>
+<text x="758" y="93" font-size="22" font-weight="700" fill="#17374a">GitHub + CI / 制品</text>
+<text x="758" y="123" font-size="18" font-weight="400" fill="#496576">演示仓库、PR、检查、镜像</text>
+<rect x="22" y="192" width="1036" height="715" rx="18" fill="#eef6f8" stroke="#a7cbd0" stroke-width="2" stroke-dasharray="8 5"/>
+<text x="45" y="225" font-size="20" font-weight="700" fill="#31717b">Linux 虚拟机｜容器网络互通；仅发布入口转发到 Mac</text>
+<path d="M170 154V260" fill="none" stroke="#46748b" stroke-width="2" marker-end="url(#deployment-arrow)"/>
+<text x="184" y="183" font-size="17" font-weight="600" fill="#46748b">HTTP / SSE</text>
+<path d="M340 315H600" fill="none" stroke="#46748b" stroke-width="2" marker-end="url(#deployment-arrow)"/>
+<text x="365" y="302" font-size="17" font-weight="600" fill="#46748b">任务、心跳、过程与结果</text>
+<path d="M600 430H340" fill="none" stroke="#46748b" stroke-width="2" marker-end="url(#deployment-arrow)"/>
+<text x="365" y="418" font-size="17" font-weight="600" fill="#46748b">工具回调 → HTTP</text>
+<path d="M810 260V175H550V154" fill="none" stroke="#8470b0" stroke-width="2" marker-end="url(#deployment-arrow)"/>
+<path d="M340 650H370V563H850V600" fill="none" stroke="#46748b" stroke-width="2" marker-end="url(#deployment-arrow)"/>
+<text x="705" y="552" font-size="17" font-weight="600" fill="#46748b">授权后发布 / 回滚</text>
+<path d="M80 370H40V570H80V580" fill="none" stroke="#46748b" stroke-width="2" marker-end="url(#deployment-arrow)"/>
+<text x="46" y="558" font-size="17" font-weight="600" fill="#46748b">合并 / 发布指令</text>
+<path d="M640 490V548H285V580" fill="none" stroke="#46748b" stroke-width="2" marker-end="url(#deployment-arrow)"/>
+<text x="350" y="537" font-size="17" font-weight="600" fill="#46748b">代码、测试、PR 工具</text>
+<path d="M515 740V795H45V355H60" fill="none" stroke="#46748b" stroke-width="2" marker-end="url(#deployment-arrow)" stroke-dasharray="6 5"/>
+<text x="235" y="820" font-size="17" font-weight="600" fill="#46748b">告警 → 事件</text>
+<path d="M630 720H700" fill="none" stroke="#46748b" stroke-width="2" marker-end="url(#deployment-arrow)" stroke-dasharray="6 5"/>
+<path d="M340 470H400V637" fill="none" stroke="#46748b" stroke-width="2" marker-end="url(#deployment-arrow)" stroke-dasharray="6 5"/>
+<text x="430" y="584" font-size="17" font-weight="600" fill="#46748b">查指标与日志</text>
+<path d="M895 154V205H1045V770H355V705H340" fill="none" stroke="#a1783d" stroke-width="2" marker-end="url(#deployment-arrow)"/>
+<text x="772" y="185" font-size="17" font-weight="600" fill="#a1783d">仓库 / CI / 制品</text>
+<rect x="60" y="260" width="280" height="110" rx="12" fill="#eaf2ff" stroke="#9ebde2" stroke-width="1.5"/>
+<text x="78" y="293" font-size="23" font-weight="700" fill="#17374a">运维控制中心</text>
+<text x="78" y="323" font-size="18" font-weight="400" fill="#496576">自己的 Web + API</text>
+<text x="78" y="349" font-size="18" font-weight="400" fill="#496576">Case / 任务 / 决策账本</text>
+<rect x="600" y="260" width="400" height="230" rx="12" fill="#e6f4ed" stroke="#9ccbb5" stroke-width="1.5"/>
+<text x="618" y="293" font-size="23" font-weight="700" fill="#17374a">九问执行服务</text>
+<text x="618" y="323" font-size="18" font-weight="400" fill="#496576">常驻适配器 + Process SDK</text>
+<text x="618" y="349" font-size="18" font-weight="400" fill="#496576">        ⇅ 本地 stdin/stdout JSONL</text>
+<text x="618" y="375" font-size="18" font-weight="400" fill="#496576">按任务启动 Swarm 子进程</text>
+<text x="618" y="401" font-size="18" font-weight="400" fill="#496576">子进程内使用 Core 驱动模型循环</text>
+<rect x="60" y="420" width="280" height="100" rx="12" fill="#fff" stroke="#c7d8e2" stroke-width="1.5"/>
+<text x="78" y="453" font-size="23" font-weight="700" fill="#17374a">取证工具服务</text>
+<text x="78" y="483" font-size="18" font-weight="400" fill="#496576">查询证据、限定范围、保留原文</text>
+<rect x="60" y="580" width="280" height="160" rx="12" fill="#fff1de" stroke="#e1bf86" stroke-width="1.5"/>
+<text x="78" y="613" font-size="23" font-weight="700" fill="#17374a">工程交付服务</text>
+<text x="78" y="643" font-size="18" font-weight="400" fill="#496576">隔离工作区 / 测试容器</text>
+<text x="78" y="669" font-size="18" font-weight="400" fill="#496576">Git / PR / 发布控制</text>
+<text x="78" y="695" font-size="18" font-weight="400" fill="#496576">Agent 无合并、部署调用权</text>
+<rect x="400" y="600" width="230" height="140" rx="12" fill="#edf3f6" stroke="#c7d8e2" stroke-width="1.5"/>
+<text x="418" y="633" font-size="23" font-weight="700" fill="#17374a">观测与流量</text>
+<text x="418" y="663" font-size="18" font-weight="400" fill="#496576">监控、日志、告警</text>
+<text x="418" y="689" font-size="18" font-weight="400" fill="#496576">持续真实下单请求</text>
+<rect x="700" y="600" width="300" height="140" rx="12" fill="#fff" stroke="#9eb5c5" stroke-width="1.5"/>
+<text x="718" y="633" font-size="23" font-weight="700" fill="#17374a">被维护的业务环境</text>
+<text x="718" y="663" font-size="18" font-weight="400" fill="#496576">订单应用：独立容器</text>
+<text x="718" y="689" font-size="18" font-weight="400" fill="#496576">PostgreSQL：独立容器</text>
+<text x="60" y="864" font-size="17" font-weight="400" fill="#496576">持久化：Case 数据、执行事件、证据、代码工作区、发布账本、业务数据库分别归属。</text>
+<text x="28" y="932" font-size="17" font-weight="400" fill="#637d8c">设计图，不代表服务已部署。图内为部署组；监控组、交付组内含多个独立进程/容器。</text>
+</g></svg>

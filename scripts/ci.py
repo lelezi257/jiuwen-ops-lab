@@ -21,7 +21,7 @@ try:
    r=subprocess.run(['docker','exec',tag+'-app','python','-c',"import urllib.request;urllib.request.urlopen('http://localhost:8080/health')"],capture_output=True)
    if r.returncode==0:break
    time.sleep(1)
-  run(['docker','run','--rm','--network',net,'--read-only','--tmpfs','/tmp','--mount',f"type=bind,src={a.oracle_host_path or str(trusted/'contracts')},dst=/oracle,readonly",tag,'python','/oracle/check_http.py','http://candidate:8080'])
+  run(['docker','run','--rm','--network',net,'--read-only','--tmpfs','/tmp','-e','CONTRACT_DB_PASSWORD='+password,'--mount',f"type=bind,src={a.oracle_host_path or str(trusted/'contracts')},dst=/oracle,readonly",tag,'python','/oracle/check_http.py','http://candidate:8080'])
   run(['docker','run','--rm','--network','none','--read-only','--tmpfs','/tmp','--mount',f'type=bind,src={candidate},dst=/candidate,readonly','-w','/candidate',tag,'python','-m','unittest','discover','-s','tests/order','-v'])
 finally:
  for name in [tag+'-app',tag+'-db']:subprocess.run(['docker','rm','-f',name],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)

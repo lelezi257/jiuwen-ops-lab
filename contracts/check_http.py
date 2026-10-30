@@ -1,6 +1,6 @@
 """Trusted oracle. Candidate code cannot modify this copy."""
 import json,os,sys,time,uuid
-import httpx
+import httpx,psycopg
 
 def check(base):
  results=[]
@@ -13,6 +13,9 @@ def check(base):
    saved=c.get(base+'/orders/'+v['id']);assert saved.status_code==200 and saved.json()['total_cents']==want and saved.json()['quantity']==2
    repeat=c.post(base+'/orders',json=payload);assert repeat.status_code==200 and repeat.json()==v
    conflict=c.post(base+'/orders',json={**payload,'quantity':3});assert conflict.status_code==409
+   with psycopg.connect('host=db dbname=orders user=orders password='+os.environ['CONTRACT_DB_PASSWORD']) as database:
+    stored=database.execute('SELECT id,quantity,total_cents FROM orders WHERE id=%s',(v['id'],)).fetchone()
+    assert stored and stored[1]==2 and stored[2]==want,('Database persistence missing',stored)
    results.append({'coupon':coupon,'total_cents':want,'persisted':True,'idempotent':True})
   for body in [{'quantity':0},{'quantity':2,'coupon':'INVALID'}]:
    r=c.post(base+'/orders',json={**body,'request_key':uuid.uuid4().hex});assert r.status_code==422,r.text

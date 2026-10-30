@@ -1,10 +1,12 @@
 """Independent real HTTP / PostgreSQL-backed order verification."""
 import asyncio,os,time,uuid
 from contextlib import asynccontextmanager
-import httpx
+import httpx,psycopg
+from lab.common import secret
 from fastapi import FastAPI,Depends
 from lab.common import DATA,operator,put,get,init_store,ident
 BASE='http://order-api:8080';init_store()
+DSN='host=db dbname=orders user=verifier password='+secret('verify_db_password')
 def sample(c,coupon):
  payload={'quantity':2,'request_key':'probe-'+uuid.uuid4().hex}
  if coupon is not None:payload['coupon']=coupon
@@ -12,7 +14,10 @@ def sample(c,coupon):
  if r.status_code==200:
   row=r.json();read=c.get(BASE+'/orders/'+row['id']);want=18000 if coupon else 20000
   result.update(order_id=row['id'],total_cents=row.get('total_cents'),persisted=read.json() if read.status_code==200 else None)
-  result['ok']=row.get('total_cents')==want and read.status_code==200 and read.json().get('total_cents')==want and read.json().get('quantity')==2
+  with psycopg.connect(DSN) as database:
+   stored=database.execute('SELECT id,quantity,total_cents FROM orders WHERE id=%s',(row['id'],)).fetchone()
+  result['database_row']=list(stored) if stored else None
+  result['ok']=bool(stored and stored[1]==2 and stored[2]==want) and row.get('total_cents')==want and read.status_code==200 and read.json().get('total_cents')==want and read.json().get('quantity')==2
   if result['ok'] and not get('baseline','old_order'):put('baseline','old_order',{'id':row['id'],'total_cents':want})
  return result
 async def traffic():

@@ -1,0 +1,26 @@
+{
+  "observed_on": "2026-10-29",
+  "scope": "Official integration learning; current develop snapshots are not a runtime-qualified pair",
+  "repos": {
+    "agent-core": {
+      "branch": "develop",
+      "commit": "e089198835426cd7681761b0cc278670cd83031f",
+      "commit_date": "2026-10-29T06:31:48Z"
+    },
+    "jiuwenswarm": {
+      "branch": "develop",
+      "commit": "32d75d7d3a0b466412ee64d77c29460297515119",
+      "commit_date": "2026-10-29T07:54:03Z"
+    }
+  },
+  "prototype": {
+    "core": "22e349af414028a688ef94bedb263e3c8b3ddca0",
+    "swarm": "ea98a45207f8e543d0e8817b82a097959e865116"
+  },
+  "upstream_preservation": "No working files modified; snapshots extracted from Git objects into artifacts",
+  "declared_dependency_match": "Swarm pyproject.toml declares Core e089198835426cd7681761b0cc278670cd83031f, matching the observed Core snapshot; no runtime qualification implied",
+  "prototype_snapshot_absence": {
+    "Swarm sdks/README.md": true,
+    "Core openjiuwen/harness_protocol/README.md": true
+  }
+}

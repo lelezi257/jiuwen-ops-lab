@@ -6,7 +6,7 @@ from fastapi import FastAPI,Depends,HTTPException,Request
 from fastapi.responses import FileResponse,StreamingResponse
 from lab.common import *
 init_store();mutex=threading.RLock();DELIVERY='http://delivery:8080';PROBE='http://probe:8080'
-TERMINAL={'RESOLVED_FIXED','RECOVERED_ROLLBACK','NEEDS_HUMAN','CANCELLED','NO_ACTION'}
+TERMINAL={'DELIVERY_ACCEPTANCE_PASSED','RESOLVED_FIXED','RECOVERED_ROLLBACK','NEEDS_HUMAN','CANCELLED','NO_ACTION'}
 AGENT_STATES={'REPAIR_QUEUED','REPAIRING','VERIFY_AGENT_QUEUED','VERIFY_AGENT_RUNNING'}
 def events(cid):return sorted((x for x in all_objects('event') if x['case_id']==cid),key=lambda x:x['time'])
 def event(cid,kind,data,key=None):
@@ -61,7 +61,10 @@ def transition(c):
   if not cur['consistent']:raise RuntimeError('Runtime / release ledger differs')
   report=call(PROBE,'/verify',{'release_id':cur['ledger']['release_id']},timeout=600)
   c['verification']=report
-  if report['passed']:save(c,'VERIFY_AGENT_QUEUED','Independent contract passed; new Jiuwen session reads deployment evidence')
+  if report['passed']:
+   if c.get('kind')=='engineering_acceptance':
+    call(DELIVERY,'/ops/mark-good',{'verification_id':report['verification_id']});save(c,'DELIVERY_ACCEPTANCE_PASSED','Engineering chain only; human-authored patch, no model or Agent qualification')
+   else:save(c,'VERIFY_AGENT_QUEUED','Independent contract passed; new Jiuwen session reads deployment evidence')
   else:save(c,'ROLLING_BACK','Candidate did not recover business paths')
  elif state=='ROLLING_BACK':
   cur=call(DELIVERY,'/ops/current',{})
@@ -176,6 +179,10 @@ def result(cid:str,body:dict):
   if body['result'].get('status')!='completed' or body['result'].get('exit_code')!=0:return save(c,'NEEDS_HUMAN','Official SDK run did not complete successfully')
   output=body['result'].get('output_json') or {}
   if output.get('needs_human'):return save(c,'NEEDS_HUMAN',output.get('finding'))
+  for eid in output.get('evidence_ids',[]):
+   fact=call('http://evidence:8080','/evidence/'+eid)
+   if fact.get('case_id')!=cid:return save(c,'NEEDS_HUMAN','Evidence does not belong to this case')
+  if not output.get('evidence_ids'):return save(c,'NEEDS_HUMAN','Actual evidence references required')
   if c['phase']=='repair':
    status=call(DELIVERY,'/ops/pr-status',{'case_id':cid});pr=status['pr']
    if output.get('pr_number')!=pr['number'] or output.get('candidate_sha')!=pr['head_sha']:return save(c,'NEEDS_HUMAN','Model output does not match actual broker PR')
@@ -184,3 +191,17 @@ def result(cid:str,body:dict):
   cur=call(DELIVERY,'/ops/current',{});report=c['verification']
   if not report['passed'] or not cur['consistent'] or cur['ledger']['release_id']!=report['release_id']:return save(c,'NEEDS_HUMAN','Runtime changed after verification')
   call(DELIVERY,'/ops/mark-good',{'verification_id':report['verification_id']});return save(c,'RESOLVED_FIXED')
+
+@app.post('/api/engineering/start',dependencies=[Depends(operator)])
+def engineering_start():
+ with mutex:
+  if any(c['state'] not in TERMINAL for c in all_objects('case')):raise HTTPException(409,'Cancel/finish other cases before isolated engineering acceptance')
+  cur=call(DELIVERY,'/ops/current',{})
+  if not cur['consistent']:raise HTTPException(409,'Release mismatch')
+  cid=ident('engineering');c={'id':cid,'kind':'engineering_acceptance','created_at':now(),'state':'REPAIRING','observed_release':cur['ledger']['release_id'],'observed_sha':cur['ledger']['source_sha'],'trigger':{'source':'operator_engineering_acceptance'},'cancelled':False,'attempt':1,'attempt_id':ident('manual-attempt'),'lease_at':now(),'phase':'repair'}
+  event(cid,'engineering_scope',{'model_calls':0,'patch_author':'human_script','not_agent_acceptance':True});return save(c,'REPAIRING')
+@app.post('/api/engineering/{cid}/submit',dependencies=[Depends(operator)])
+def engineering_submit(cid:str):
+ c=case(cid)
+ if c.get('kind')!='engineering_acceptance' or c['cancelled'] or c['state']!='REPAIRING':raise HTTPException(409,'Not an active engineering case')
+ status=call(DELIVERY,'/ops/pr-status',{'case_id':cid});c['pr']=status['pr'];return save(c,'CI_PENDING','Human-authored candidate; real delivery acceptance only')

@@ -5,7 +5,17 @@
       "image": "jiuwen-ops-runtime:local",
       "build": {
         "context": ".",
-        "dockerfile": "deploy/Dockerfile"
+        "dockerfile": "deploy/Dockerfile",
+        "args": {
+          "HTTP_PROXY": "${HTTP_PROXY:-}",
+          "HTTPS_PROXY": "${HTTPS_PROXY:-}",
+          "NO_PROXY": "${NO_PROXY:-}",
+          "PIP_INDEX_URL": "${PIP_INDEX_URL:-https://pypi.org/simple}",
+          "UV_INDEX_URL": "${UV_INDEX_URL:-https://pypi.org/simple}",
+          "APT_MIRROR_SITE": "${APT_MIRROR_SITE:-}",
+          "PYTHON_BASE": "${PYTHON_BASE:-python:3.11-slim-bookworm}",
+          "DOCKER_CLI_IMAGE": "${DOCKER_CLI_IMAGE:-docker:29.1.3-cli}"
+        }
       },
       "restart": "unless-stopped",
       "networks": [
@@ -51,7 +61,17 @@
       "image": "jiuwen-ops-runtime:local",
       "build": {
         "context": ".",
-        "dockerfile": "deploy/Dockerfile"
+        "dockerfile": "deploy/Dockerfile",
+        "args": {
+          "HTTP_PROXY": "${HTTP_PROXY:-}",
+          "HTTPS_PROXY": "${HTTPS_PROXY:-}",
+          "NO_PROXY": "${NO_PROXY:-}",
+          "PIP_INDEX_URL": "${PIP_INDEX_URL:-https://pypi.org/simple}",
+          "UV_INDEX_URL": "${UV_INDEX_URL:-https://pypi.org/simple}",
+          "APT_MIRROR_SITE": "${APT_MIRROR_SITE:-}",
+          "PYTHON_BASE": "${PYTHON_BASE:-python:3.11-slim-bookworm}",
+          "DOCKER_CLI_IMAGE": "${DOCKER_CLI_IMAGE:-docker:29.1.3-cli}"
+        }
       },
       "restart": "unless-stopped",
       "networks": [
@@ -92,7 +112,17 @@
       "image": "jiuwen-ops-runtime:local",
       "build": {
         "context": ".",
-        "dockerfile": "deploy/Dockerfile"
+        "dockerfile": "deploy/Dockerfile",
+        "args": {
+          "HTTP_PROXY": "${HTTP_PROXY:-}",
+          "HTTPS_PROXY": "${HTTPS_PROXY:-}",
+          "NO_PROXY": "${NO_PROXY:-}",
+          "PIP_INDEX_URL": "${PIP_INDEX_URL:-https://pypi.org/simple}",
+          "UV_INDEX_URL": "${UV_INDEX_URL:-https://pypi.org/simple}",
+          "APT_MIRROR_SITE": "${APT_MIRROR_SITE:-}",
+          "PYTHON_BASE": "${PYTHON_BASE:-python:3.11-slim-bookworm}",
+          "DOCKER_CLI_IMAGE": "${DOCKER_CLI_IMAGE:-docker:29.1.3-cli}"
+        }
       },
       "restart": "unless-stopped",
       "networks": [
@@ -142,7 +172,17 @@
       "image": "jiuwen-ops-runner:local",
       "build": {
         "context": ".",
-        "dockerfile": "deploy/Runner.Dockerfile"
+        "dockerfile": "deploy/Runner.Dockerfile",
+        "args": {
+          "HTTP_PROXY": "${HTTP_PROXY:-}",
+          "HTTPS_PROXY": "${HTTPS_PROXY:-}",
+          "NO_PROXY": "${NO_PROXY:-}",
+          "PIP_INDEX_URL": "${PIP_INDEX_URL:-https://pypi.org/simple}",
+          "UV_INDEX_URL": "${UV_INDEX_URL:-https://pypi.org/simple}",
+          "APT_MIRROR_SITE": "${APT_MIRROR_SITE:-}",
+          "PYTHON_BASE": "${PYTHON_BASE:-python:3.11-slim-bookworm}",
+          "DOCKER_CLI_IMAGE": "${DOCKER_CLI_IMAGE:-docker:29.1.3-cli}"
+        }
       },
       "restart": "unless-stopped",
       "networks": [
@@ -159,7 +199,8 @@
         "ALL"
       ],
       "environment": {
-        "LAB_DATA": "/data"
+        "LAB_DATA": "/data",
+        "HOME": "/data/home"
       },
       "volumes": [
         "runner:/data",
@@ -186,7 +227,17 @@
       "image": "jiuwen-ops-runtime:local",
       "build": {
         "context": ".",
-        "dockerfile": "deploy/Dockerfile"
+        "dockerfile": "deploy/Dockerfile",
+        "args": {
+          "HTTP_PROXY": "${HTTP_PROXY:-}",
+          "HTTPS_PROXY": "${HTTPS_PROXY:-}",
+          "NO_PROXY": "${NO_PROXY:-}",
+          "PIP_INDEX_URL": "${PIP_INDEX_URL:-https://pypi.org/simple}",
+          "UV_INDEX_URL": "${UV_INDEX_URL:-https://pypi.org/simple}",
+          "APT_MIRROR_SITE": "${APT_MIRROR_SITE:-}",
+          "PYTHON_BASE": "${PYTHON_BASE:-python:3.11-slim-bookworm}",
+          "DOCKER_CLI_IMAGE": "${DOCKER_CLI_IMAGE:-docker:29.1.3-cli}"
+        }
       },
       "restart": "unless-stopped",
       "networks": [
@@ -223,14 +274,25 @@
         "8080"
       ],
       "secrets": [
-        "control_token"
+        "control_token",
+        "verify_db_password"
       ]
     },
     "collector": {
       "image": "jiuwen-ops-runtime:local",
       "build": {
         "context": ".",
-        "dockerfile": "deploy/Dockerfile"
+        "dockerfile": "deploy/Dockerfile",
+        "args": {
+          "HTTP_PROXY": "${HTTP_PROXY:-}",
+          "HTTPS_PROXY": "${HTTPS_PROXY:-}",
+          "NO_PROXY": "${NO_PROXY:-}",
+          "PIP_INDEX_URL": "${PIP_INDEX_URL:-https://pypi.org/simple}",
+          "UV_INDEX_URL": "${UV_INDEX_URL:-https://pypi.org/simple}",
+          "APT_MIRROR_SITE": "${APT_MIRROR_SITE:-}",
+          "PYTHON_BASE": "${PYTHON_BASE:-python:3.11-slim-bookworm}",
+          "DOCKER_CLI_IMAGE": "${DOCKER_CLI_IMAGE:-docker:29.1.3-cli}"
+        }
       },
       "restart": "unless-stopped",
       "networks": [
@@ -260,7 +322,7 @@
       ]
     },
     "db": {
-      "image": "postgres:16.9-alpine",
+      "image": "${REGISTRY_MIRROR_PREFIX:-}library/postgres:16.9-alpine",
       "restart": "unless-stopped",
       "networks": [
         "app"
@@ -271,10 +333,12 @@
         "POSTGRES_PASSWORD_FILE": "/run/secrets/db_password"
       },
       "secrets": [
-        "db_password"
+        "db_password",
+        "verify_db_password"
       ],
       "volumes": [
-        "postgres:/var/lib/postgresql/data"
+        "postgres:/var/lib/postgresql/data",
+        "./deploy/init-db.sh:/docker-entrypoint-initdb.d/10-verifier.sh:ro"
       ],
       "healthcheck": {
         "test": [
@@ -288,13 +352,6 @@
     },
     "order-api": {
       "image": "${ORDER_IMAGE:-jiuwen-order:bootstrap}",
-      "build": {
-        "context": ".",
-        "dockerfile": "deploy/Order.Dockerfile",
-        "args": {
-          "SOURCE_SHA": "${LAB_TRUST_SHA}"
-        }
-      },
       "container_name": "ops-order-api",
       "restart": "unless-stopped",
       "read_only": true,
@@ -324,7 +381,7 @@
       }
     },
     "prometheus": {
-      "image": "prom/prometheus:v3.4.1",
+      "image": "${REGISTRY_MIRROR_PREFIX:-}prom/prometheus:v3.4.1",
       "restart": "unless-stopped",
       "networks": [
         "ops",
@@ -341,7 +398,7 @@
       ]
     },
     "alertmanager": {
-      "image": "prom/alertmanager:v0.28.1",
+      "image": "${REGISTRY_MIRROR_PREFIX:-}prom/alertmanager:v0.28.1",
       "restart": "unless-stopped",
       "networks": [
         "ops"
@@ -351,10 +408,11 @@
       ],
       "secrets": [
         "control_token"
-      ]
+      ],
+      "user": "0:0"
     },
     "loki": {
-      "image": "grafana/loki:3.5.1",
+      "image": "${REGISTRY_MIRROR_PREFIX:-}grafana/loki:3.5.1",
       "restart": "unless-stopped",
       "networks": [
         "ops"
@@ -368,7 +426,7 @@
       ]
     },
     "registry": {
-      "image": "registry:2.8.3",
+      "image": "${REGISTRY_MIRROR_PREFIX:-}library/registry:2.8.3",
       "restart": "unless-stopped",
       "networks": [
         "ops"
@@ -408,6 +466,9 @@
     },
     "db_password": {
       "file": ".local/secrets/db_password"
+    },
+    "verify_db_password": {
+      "file": ".local/secrets/verify_db_password"
     },
     "github_token": {
       "file": ".local/secrets/github_token"

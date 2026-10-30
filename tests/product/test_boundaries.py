@@ -1,6 +1,7 @@
 import os,tempfile,unittest
 from pathlib import Path
 os.environ['LAB_DATA']=tempfile.mkdtemp(prefix='ops-tests-')
+os.environ['LAB_WORK_ROOT']=tempfile.mkdtemp(prefix='ops-work-tests-')
 os.environ['GITHUB_REPOSITORY']='owner/lab'
 os.environ['HOST_REPO']='/lab'
 from unittest.mock import patch
@@ -19,6 +20,12 @@ class ProductBoundaries(unittest.TestCase):
  def test_agent_cannot_reach_merge(self):
   c=TestClient(delivery.app)
   self.assertEqual(c.post('/ops/merge',json={'case_id':'x'}).status_code,403)
+ def test_valid_runner_identity_cannot_merge(self):
+  c=TestClient(delivery.app)
+  with patch('lab.common.secret',side_effect=lambda name:{'runner_token':'runner-secret','control_token':'control-secret'}.get(name,'')):
+   self.assertEqual(c.post('/ops/merge',json={'case_id':'x'},headers={'Authorization':'Bearer runner-secret'}).status_code,403)
+   with patch('lab.delivery.call',return_value={'cancelled':False}),patch('lab.delivery.pr_status',return_value={'state':'pending'}):
+    self.assertEqual(c.post('/ops/merge',json={'case_id':'x'},headers={'Authorization':'Bearer control-secret'}).status_code,409)
  def test_operator_required_for_fault_or_cancel(self):
   c=TestClient(control.app)
   self.assertEqual(c.post('/api/experiment/fault',json={}).status_code,403)

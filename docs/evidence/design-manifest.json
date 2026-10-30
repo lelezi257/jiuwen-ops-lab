@@ -1,0 +1,30 @@
+{
+  "title": "真实运维 Agent v1 详细设计",
+  "revision": "D1",
+  "date": "2026-10-30",
+  "status": "design_only_not_implemented",
+  "sections": 15,
+  "process_sdk_reference": "32d75d7d3a0b466412ee64d77c29460297515119",
+  "core_reference": "e089198835426cd7681761b0cc278670cd83031f",
+  "source_keys": [
+    "jwprocesssdk",
+    "jwprocessprotocol",
+    "jwprocessclient",
+    "jwprocessschema",
+    "jwprocessmain",
+    "jwsingle",
+    "jwdependency",
+    "jwfactory",
+    "jwdeep"
+  ],
+  "files": [
+    "reports/ops-agent-v1-design.html",
+    "diagrams/ops-v1-deployment.svg",
+    "diagrams/ops-v1-jiuwen.svg",
+    "build_ops_design.py"
+  ],
+  "runtime_validation": "not_run",
+  "new_vm_created": false,
+  "new_github_mutations": false,
+  "new_model_calls": false
+}
