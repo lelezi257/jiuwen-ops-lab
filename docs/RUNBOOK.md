@@ -91,3 +91,14 @@ sudo python3 scripts/engineering_acceptance.py
 
 
 真实模型配置后，可运行 `scripts/lab agent-acceptance --trials 3`。它只发实验请求并等待真实 Agent / GitHub / 业务验证结果，不提供补丁；每次使用新的故障提交和按 release 分组的真实告警。全部尝试与失败保存在 `.local/evidence/agent-acceptance-*.json`，不会挑选最好轨迹。该命令会使用已配置的真实模型并产生供应商费用。
+
+
+### 补验发布后失败与自动回滚
+
+在不配置模型的专用实验环境中，先在一个终端运行工程验收脚本。它打印 `engineering-...` 事件ID后，在第二个终端运行：
+
+```bash
+python3 scripts/rollback_acceptance.py --case-id engineering-替换为实际ID
+```
+
+Mac 上脚本通过专用 Lima VM 操作，VM/Linux 内需具备 Docker 权限。脚本只接受明确的人工工程验收事件，在实际部署成功进入 VERIFYING 后停止该订单容器，观察控制中心自动回滚与独立业务验证。正常工程脚本此时因未达到正向通过终态而退出；负向脚本应报告 RECOVERED_ROLLBACK，通过的是回滚保护分支，不是候选或 Agent 修复。两边日志和真实GitHub记录均保留。

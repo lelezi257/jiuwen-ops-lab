@@ -27,7 +27,7 @@ def redact(value):
 async def execute(case):
  cid=case['id'];attempt=case['attempt_id'];cancel=asyncio.Event();phase=case['phase'];schemas=READ+WRITE if phase=='repair' else READ
  allowed={x['name'] for x in schemas};session_dir=DATA/'reports'/attempt;session_dir.mkdir(parents=True,exist_ok=True)
- async def record(kind,data,seq=None):return await api('/internal/cases/'+cid+'/event',{'attempt_id':attempt,'kind':kind,'data':redact(data),'sequence':seq or str(time.time_ns())})
+ async def record(kind,data,seq=None):return await api('/internal/cases/'+cid+'/event',{'attempt_id':attempt,'kind':kind,'data':redact(data),'sequence':seq if seq is not None else str(time.time_ns())})
  async def on_event(event):
   await record(event['event_type'],event,event['sequence'])
  async def on_tool(event):

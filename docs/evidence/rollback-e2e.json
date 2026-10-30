@@ -1,0 +1,144 @@
+{
+  "date": "2026-10-30",
+  "scope": "actual_negative_delivery_acceptance_without_model",
+  "case_id": "engineering-ceae2f8cd56d4ff2",
+  "model_calls": 0,
+  "real_agent_qualified": false,
+  "fault_injection": {
+    "scope": "controlled_negative_delivery_acceptance",
+    "case_id": "engineering-ceae2f8cd56d4ff2",
+    "fault": "stop deployed order container during VERIFYING",
+    "injected_at": 1793332112.927209,
+    "container_id": "bfffc30445b07d5ca547797b866b16c5175b3c0806fea387c33cf33617160f59",
+    "source_sha": "24218c8f50b7d0d6e8e84048f59eb9d36268db49",
+    "model_calls": 0
+  },
+  "pr": {
+    "number": 2,
+    "url": "https://github.com/lelezi257/jiuwen-ops-lab/pull/2",
+    "head_sha": "4a0dc30083d6ee4e09d4e87e0847996d30b04e9e",
+    "base_sha": "c477acd539d6c16a0ec95194a64cfc923cfe27f6",
+    "case_id": "engineering-ceae2f8cd56d4ff2"
+  },
+  "ci": {
+    "state": "passed",
+    "run_id": 40998166437,
+    "run_url": "https://github.com/lelezi257/jiuwen-ops-lab/actions/runs/40998166437",
+    "test_merge_sha": "b5fd3f3a881101c84d28b8daacb375ec641e1523",
+    "pr": {
+      "number": 2,
+      "url": "https://github.com/lelezi257/jiuwen-ops-lab/pull/2",
+      "head_sha": "4a0dc30083d6ee4e09d4e87e0847996d30b04e9e",
+      "base_sha": "c477acd539d6c16a0ec95194a64cfc923cfe27f6",
+      "case_id": "engineering-ceae2f8cd56d4ff2"
+    }
+  },
+  "merge": {
+    "state": "merged",
+    "merge_sha": "24218c8f50b7d0d6e8e84048f59eb9d36268db49",
+    "pr": {
+      "number": 2,
+      "url": "https://github.com/lelezi257/jiuwen-ops-lab/pull/2",
+      "head_sha": "4a0dc30083d6ee4e09d4e87e0847996d30b04e9e",
+      "base_sha": "c477acd539d6c16a0ec95194a64cfc923cfe27f6",
+      "case_id": "engineering-ceae2f8cd56d4ff2"
+    },
+    "checked": {
+      "state": "passed",
+      "run_id": 40998166437,
+      "run_url": "https://github.com/lelezi257/jiuwen-ops-lab/actions/runs/40998166437",
+      "test_merge_sha": "b5fd3f3a881101c84d28b8daacb375ec641e1523",
+      "pr": {
+        "number": 2,
+        "url": "https://github.com/lelezi257/jiuwen-ops-lab/pull/2",
+        "head_sha": "4a0dc30083d6ee4e09d4e87e0847996d30b04e9e",
+        "base_sha": "c477acd539d6c16a0ec95194a64cfc923cfe27f6",
+        "case_id": "engineering-ceae2f8cd56d4ff2"
+      }
+    }
+  },
+  "build": {
+    "source_sha": "24218c8f50b7d0d6e8e84048f59eb9d36268db49",
+    "dispatched_at": 1793331362.4833498,
+    "state": "ready",
+    "run_id": 40998287950,
+    "run_url": "https://github.com/lelezi257/jiuwen-ops-lab/actions/runs/40998287950",
+    "image_digest": "localhost:5000/jiuwen-order@sha256:6c3eaade3b9f02b1ae07de9753d759e10be43be05a57b3f17b7abd9a9b61fe26",
+    "artifact_id": 12952049053,
+    "provenance": {
+      "source_sha": "24218c8f50b7d0d6e8e84048f59eb9d36268db49",
+      "architecture": "arm64",
+      "archive_sha256": "3467559d767eea637085e4aeabb08b3523d48c5a645b254e36ed424316cd42df",
+      "run_id": "40998287950"
+    }
+  },
+  "failure": "Independent verification failed: http://probe:8080/verify: HTTP 500: Internal Server Error",
+  "rollback_runtime": {
+    "container_id": "00657527232c3c1dd74ae227e236062cbf32890e6ea3441d634cdf22f40e8a31",
+    "image_id": "sha256:eed0247991192fb5a437d51f7031a072a19b4337870740fb958551c3de414524",
+    "repo_digests": [
+      "order-build@sha256:eed0247991192fb5a437d51f7031a072a19b4337870740fb958551c3de414524",
+      "localhost:5000/jiuwen-order@sha256:eed0247991192fb5a437d51f7031a072a19b4337870740fb958551c3de414524"
+    ],
+    "source_sha": "3e1e80e1aa3994b6f18e767c9a98647212691998",
+    "running": true,
+    "release_id": "rollback-9e18020573864b8f"
+  },
+  "rollback_ledger": {
+    "release_id": "rollback-9e18020573864b8f",
+    "source_sha": "3e1e80e1aa3994b6f18e767c9a98647212691998",
+    "image_digest": "localhost:5000/jiuwen-order@sha256:eed0247991192fb5a437d51f7031a072a19b4337870740fb958551c3de414524",
+    "state": "ready"
+  },
+  "verification": {
+    "verification_id": "verify-d67ba34f70de44ef",
+    "release_id": "rollback-9e18020573864b8f",
+    "expected_source_sha": "3e1e80e1aa3994b6f18e767c9a98647212691998",
+    "expected_image_digest": "localhost:5000/jiuwen-order@sha256:eed0247991192fb5a437d51f7031a072a19b4337870740fb958551c3de414524",
+    "started_at": 1793332120.3448765,
+    "finished_at": 1793332241.0872786,
+    "contract": {
+      "seconds": 60,
+      "windows": 2,
+      "minimum_per_path": 30
+    },
+    "before": {
+      "source_sha": "3e1e80e1aa3994b6f18e767c9a98647212691998",
+      "release_id": "rollback-9e18020573864b8f",
+      "image_digest": "localhost:5000/jiuwen-order@sha256:eed0247991192fb5a437d51f7031a072a19b4337870740fb958551c3de414524"
+    },
+    "after": {
+      "source_sha": "3e1e80e1aa3994b6f18e767c9a98647212691998",
+      "release_id": "rollback-9e18020573864b8f",
+      "image_digest": "localhost:5000/jiuwen-order@sha256:eed0247991192fb5a437d51f7031a072a19b4337870740fb958551c3de414524"
+    },
+    "passed": true,
+    "old_order_ok": true,
+    "invalid_input_ok": true,
+    "windows": [
+      {
+        "start": 1793332120.355154,
+        "end": 1793332180.6744223,
+        "counts": {
+          "coupon": 106,
+          "no_coupon": 106
+        },
+        "passed": true,
+        "all_database_rows_match": true
+      },
+      {
+        "start": 1793332180.6744266,
+        "end": 1793332241.0694811,
+        "counts": {
+          "coupon": 106,
+          "no_coupon": 106
+        },
+        "passed": true,
+        "all_database_rows_match": true
+      }
+    ]
+  },
+  "terminal_state": "RECOVERED_ROLLBACK",
+  "passed": true,
+  "note": "Human patch passed actual PR/CI/build; a controlled container stop after deployment caused independent verification failure and actual rollback. This is rollback protection qualification, not Agent or candidate repair success."
+}

@@ -14,10 +14,10 @@
 | 真实候选、PR与CI | 实测通过（人工补丁工程验收） | [PR #1](https://github.com/lelezi257/jiuwen-ops-lab/pull/1)；[候选CI](https://github.com/lelezi257/jiuwen-ops-lab/actions/runs/40996229012)；真实代码、独立HTTP/DB合同与新增回归测试 |
 | 合并后构建与发布 | 实测通过 | 控制中心自动合并到实验分支；[构建](https://github.com/lelezi257/jiuwen-ops-lab/actions/runs/40996327233) 在 AMD64/ARM64 都重查实际 merge SHA；导入 ARM64 制品后以真实 registry digest 发布 |
 | 发布后业务恢复 | 实测通过 | 连续两个60秒窗口，每窗口每条路径109次且全部通过；数据库直接读取、旧订单与非法输入保持；[完整工程证据链](evidence/engineering-e2e.json) |
-| 产品边界单测 | 本地9项通过 | 角色分离、路径/symlink、取消与重试身份、CI failure/neutral/skipped、过期 head/base 等；单元测试不是模型效果证明 |
+| 产品边界单测 | 本地10项通过 | 角色分离、路径/symlink、取消与重试身份、CI failure/neutral/skipped、过期 head/base 等；单元测试不是模型效果证明 |
 | 真实模型/host tool/取消 | 待配置后实测 | 已提供 `scripts/lab qualify`；未发外部模型请求 |
 | 模型自主诊断与代码修复 E2E | 尚未验收 | 人工补丁不是模型生成修复；尚无外部LLM成功率或三次干净重置结果 |
-| 自动回滚/异常重启完整路径 | 已实现，尚未完整实测 | 不声称所有G7失败分支或Core Checkpoint恢复已经验证 |
+| 自动回滚保护 | 故障注入实测通过 | [PR #2](https://github.com/lelezi257/jiuwen-ops-lab/pull/2) 发布后停止真实订单容器，验证失败后自动回滚到上一已验证镜像；两个60秒窗口每路径106次全部通过；[证据](evidence/rollback-e2e.json)；不计修复成功 |
 
 ## 本次版本证据链
 
@@ -33,6 +33,8 @@ ARM64 artifact: 12952050101
 终态: DELIVERY_ACCEPTANCE_PASSED
 人工补丁 / 模型调用0次 / 不计 Agent 成功
 ```
+
+仍未证明所有异常重启/长期运行分支、Core Checkpoint 恢复或生产可靠性。
 
 ## 下一步
 
