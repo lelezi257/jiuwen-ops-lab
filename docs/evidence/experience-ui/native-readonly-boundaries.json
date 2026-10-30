@@ -1,0 +1,25 @@
+{
+  "session_id": "process_cli_1a18ca1aca6_3d11a297ccba",
+  "checks": {
+    "actual_session_metadata": true,
+    "chat.send_rejected": true,
+    "config.set_rejected": true,
+    "session.delete_rejected": true,
+    "invalid_session_rejected": true,
+    "hint_matches_native_store": true,
+    "negative_revision_rejected": true,
+    "foreign_origin_rejected": true,
+    "foreign_websocket_rejected": true,
+    "observer_has_no_execution_credentials": true
+  },
+  "native_hints": [
+    {
+      "session_id": "process_cli_1a18ca1aca6_3d11a297ccba",
+      "trace_id": "2d2522338f28dd446f9c30b73812008f",
+      "revision": 78,
+      "frame_seq": 0,
+      "store_epoch": "49a54bbcd3534f6e912c08feb1acd7a7"
+    }
+  ],
+  "passed": true
+}

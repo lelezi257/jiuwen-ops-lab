@@ -10,6 +10,8 @@
 
 **当前验收状态请先看 [STATUS](docs/STATUS.md)。模型未配置不代表 Agent 已验证；工程、环境和模型验收分别记录。** 本项目用于受控学习实验，自动操作仅针对你自己的演示仓库与专用 VM。
 
+操作入口和两个页面的使用方法见 [操作与持续观测](docs/OPERATOR-EXPERIENCE.md)，本轮真实截图和 PR #11 的验收结果见 [体验验收](docs/OPERATOR-EXPERIENCE-ACCEPTANCE.md)。
+
 ## 先理解组件
 
 ```mermaid

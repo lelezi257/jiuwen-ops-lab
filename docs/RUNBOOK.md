@@ -116,3 +116,8 @@ sudo docker compose --env-file .local/lab.env --env-file .local/runtime.env exec
 ```
 
 原生 API 采样可在 Mac 执行 `python3 scripts/observe_native_trace.py CASE_ID`。它只读取现有事件和原生数据，不创建修复、不代替浏览器验收。
+
+
+## 操作与观测体验更新
+
+工作台默认显示真实业务检测和后台操作卡；“持续观察本轮事件”一次打开后会接续同一事件的修复与复核。历史阶段可以主动选择并暂停跟随。完整操作、证据来源、升级及原版 UI 的扩展边界见 [操作与持续观测](OPERATOR-EXPERIENCE.md)。

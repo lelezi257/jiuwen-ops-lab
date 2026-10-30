@@ -1,0 +1,332 @@
+{
+  "recorded_at": 1793361614.0846798,
+  "experiment": {
+    "id": "experiment-82bb7025cde34386",
+    "created_at": 1793360455.7478426,
+    "updated_at": 1793361122.5771103,
+    "baseline": {
+      "verification_id": "verify-bea7515224ba47d1",
+      "release_id": "release-case-dd97c79e87ab46e8",
+      "expected_source_sha": "18fba6814e7a79cc5c9f029f0aa9d315586691a8",
+      "expected_image_digest": "localhost:5000/jiuwen-order@sha256:ab12fe95f1471796627915d3a82bd121de8b63b9139d0712a80b4b524874061d",
+      "started_at": 1793360456.2901616,
+      "finished_at": 1793360576.9910839,
+      "passed": true,
+      "old_order_ok": true,
+      "invalid_input_ok": true,
+      "contract": {
+        "seconds": 60,
+        "windows": 2,
+        "minimum_per_path": 30
+      },
+      "examples": [
+        {
+          "path": "no_coupon",
+          "status": 200,
+          "order_id": "4fb3949fbf5a431aa4a1e3e87b10f5bf",
+          "total_cents": 20000,
+          "expected_total_cents": 20000,
+          "database_row": [
+            "4fb3949fbf5a431aa4a1e3e87b10f5bf",
+            2,
+            20000
+          ],
+          "ok": true
+        },
+        {
+          "path": "coupon",
+          "status": 200,
+          "order_id": "5baf122f8c1c4199a51eb6e1b846d93a",
+          "total_cents": 18000,
+          "expected_total_cents": 18000,
+          "database_row": [
+            "5baf122f8c1c4199a51eb6e1b846d93a",
+            2,
+            18000
+          ],
+          "ok": true
+        }
+      ],
+      "windows": [
+        {
+          "start": 1793360456.3040051,
+          "end": 1793360516.6672163,
+          "counts": {
+            "coupon": 108,
+            "no_coupon": 108
+          },
+          "passed": true,
+          "failed_requests": 0,
+          "database_rows_match": true
+        },
+        {
+          "start": 1793360516.6672177,
+          "end": 1793360576.982745,
+          "counts": {
+            "coupon": 108,
+            "no_coupon": 108
+          },
+          "passed": true,
+          "failed_requests": 0,
+          "database_rows_match": true
+        }
+      ]
+    },
+    "fault": {
+      "observation_id": "observation-6e7c143f7e03470d",
+      "started_at": 1793360738.1840844,
+      "observed_at": 1793360738.2535107,
+      "state": "UNHEALTHY",
+      "version": {
+        "source_sha": "fe34e4320b6628e210f10acc2bfe61e4ca1dc8ad",
+        "release_id": "fault-release-749ee62c2f6e42de",
+        "image_digest": "localhost:5000/jiuwen-order@sha256:818727351cff21877209ba3088a8f5b053ff1e982189365e65791726418f5453"
+      },
+      "version_before": {
+        "source_sha": "fe34e4320b6628e210f10acc2bfe61e4ca1dc8ad",
+        "release_id": "fault-release-749ee62c2f6e42de",
+        "image_digest": "localhost:5000/jiuwen-order@sha256:818727351cff21877209ba3088a8f5b053ff1e982189365e65791726418f5453"
+      },
+      "version_stable": true,
+      "requests": [
+        {
+          "path": "no_coupon",
+          "status": 500,
+          "elapsed_ms": 2.31,
+          "ok": false,
+          "expected_total_cents": 20000,
+          "response_excerpt": "Internal Server Error"
+        },
+        {
+          "path": "coupon",
+          "status": 200,
+          "elapsed_ms": 7.16,
+          "ok": true,
+          "expected_total_cents": 18000,
+          "order_id": "28d7d884ff054471bf55d37272133201",
+          "total_cents": 18000,
+          "persisted": {
+            "id": "28d7d884ff054471bf55d37272133201",
+            "quantity": 2,
+            "coupon": "SAVE10",
+            "total_cents": 18000
+          },
+          "database_row": [
+            "28d7d884ff054471bf55d37272133201",
+            2,
+            18000
+          ]
+        }
+      ],
+      "source": "real HTTP orders + readback + PostgreSQL SELECT"
+    },
+    "recovery": {
+      "verification_id": "verify-1413cfe615ee455a",
+      "release_id": "release-case-32afbd7df6a043a4",
+      "expected_source_sha": "d953a107b29451a9ddafb0dfb56eed5b9e35464e",
+      "expected_image_digest": "localhost:5000/jiuwen-order@sha256:c1f0f1e50472563285bbea79ada6ab44f2d050e828e25b57bfbdfddca7dbad36",
+      "started_at": 1793361002.3977451,
+      "finished_at": 1793361122.5610986,
+      "passed": true,
+      "old_order_ok": true,
+      "invalid_input_ok": true,
+      "contract": {
+        "seconds": 60,
+        "windows": 2,
+        "minimum_per_path": 30
+      },
+      "examples": [
+        {
+          "path": "no_coupon",
+          "status": 200,
+          "order_id": "af4a2a24d3ea460698c983f4fd536647",
+          "total_cents": 20000,
+          "expected_total_cents": 20000,
+          "database_row": [
+            "af4a2a24d3ea460698c983f4fd536647",
+            2,
+            20000
+          ],
+          "ok": true
+        },
+        {
+          "path": "coupon",
+          "status": 200,
+          "order_id": "37a7365c5f3a411d9417fc4d5fde8d9a",
+          "total_cents": 18000,
+          "expected_total_cents": 18000,
+          "database_row": [
+            "37a7365c5f3a411d9417fc4d5fde8d9a",
+            2,
+            18000
+          ],
+          "ok": true
+        }
+      ],
+      "windows": [
+        {
+          "start": 1793361002.4097238,
+          "end": 1793361062.4972622,
+          "counts": {
+            "coupon": 108,
+            "no_coupon": 108
+          },
+          "passed": true,
+          "failed_requests": 0,
+          "database_rows_match": true
+        },
+        {
+          "start": 1793361062.4972646,
+          "end": 1793361122.5526798,
+          "counts": {
+            "coupon": 108,
+            "no_coupon": 108
+          },
+          "passed": true,
+          "failed_requests": 0,
+          "database_rows_match": true
+        }
+      ]
+    },
+    "baseline_operation": "operation-270f3f6bfd8e4434",
+    "fault_operation": "operation-0beb5756779148e9",
+    "fault_release": "fault-release-749ee62c2f6e42de",
+    "fault_source_sha": "fe34e4320b6628e210f10acc2bfe61e4ca1dc8ad",
+    "fault_published_at": 1793360738.239111,
+    "case_id": "case-32afbd7df6a043a4"
+  },
+  "case": {
+    "id": "case-32afbd7df6a043a4",
+    "state": "RESOLVED_FIXED",
+    "created_at": 1793360764.5456362,
+    "updated_at": 1793361148.8122354,
+    "attempt": 2,
+    "sdk_runs": {
+      "attempt-c4fc94e15f3c4003": {
+        "attempt_id": "attempt-c4fc94e15f3c4003",
+        "phase": "repair",
+        "session_id": "process_cli_1a18ca1aca6_3d11a297ccba",
+        "request_id": "466eee71-d1c6-454f-993e-017a7223115a",
+        "started_at": 1793360768.2003155
+      },
+      "attempt-90c7027788ff4ab1": {
+        "attempt_id": "attempt-90c7027788ff4ab1",
+        "phase": "verify",
+        "session_id": "process_cli_1a18ca72470_b4bdee5cff29",
+        "request_id": "8649e78d-9289-4d10-b8e0-4cc2c6107d62",
+        "started_at": 1793361126.5391014
+      }
+    },
+    "pr": {
+      "number": 11,
+      "url": "https://github.com/lelezi257/jiuwen-ops-lab/pull/11",
+      "head_sha": "4825cd974591b0475a36e03472b945853054281d",
+      "base_sha": "fe34e4320b6628e210f10acc2bfe61e4ca1dc8ad",
+      "case_id": "case-32afbd7df6a043a4"
+    },
+    "merge": {
+      "state": "merged",
+      "merge_sha": "d953a107b29451a9ddafb0dfb56eed5b9e35464e",
+      "pr": {
+        "number": 11,
+        "url": "https://github.com/lelezi257/jiuwen-ops-lab/pull/11",
+        "head_sha": "4825cd974591b0475a36e03472b945853054281d",
+        "base_sha": "fe34e4320b6628e210f10acc2bfe61e4ca1dc8ad",
+        "case_id": "case-32afbd7df6a043a4"
+      },
+      "checked": {
+        "state": "passed",
+        "run_id": 41050525397,
+        "run_url": "https://github.com/lelezi257/jiuwen-ops-lab/actions/runs/41050525397",
+        "test_merge_sha": "d21c10873f1c22e84a036ac296907a7728ff5d11",
+        "pr": {
+          "number": 11,
+          "url": "https://github.com/lelezi257/jiuwen-ops-lab/pull/11",
+          "head_sha": "4825cd974591b0475a36e03472b945853054281d",
+          "base_sha": "fe34e4320b6628e210f10acc2bfe61e4ca1dc8ad",
+          "case_id": "case-32afbd7df6a043a4"
+        }
+      }
+    },
+    "build": {
+      "source_sha": "d953a107b29451a9ddafb0dfb56eed5b9e35464e",
+      "dispatched_at": 1793360878.259654,
+      "state": "ready",
+      "run_id": 41050669226,
+      "run_url": "https://github.com/lelezi257/jiuwen-ops-lab/actions/runs/41050669226",
+      "image_digest": "localhost:5000/jiuwen-order@sha256:c1f0f1e50472563285bbea79ada6ab44f2d050e828e25b57bfbdfddca7dbad36",
+      "artifact_id": 12973788608,
+      "provenance": {
+        "source_sha": "d953a107b29451a9ddafb0dfb56eed5b9e35464e",
+        "architecture": "arm64",
+        "archive_sha256": "0865d2ca8bc653a39c0a891623de7a3172105232ff46c143bc7196e048b771d9",
+        "run_id": "41050669226"
+      }
+    }
+  },
+  "checks": {
+    "baseline_real_contract_passed": true,
+    "fault_real_500_captured": true,
+    "fault_version_stable": true,
+    "recovery_real_contract_passed": true,
+    "case_resolved_fixed": true,
+    "same_outer_observation_url": true,
+    "automatic_repair_session": true,
+    "automatic_verify_session": true,
+    "two_distinct_sdk_sessions": true,
+    "history_not_forced_to_new_session": true,
+    "resume_moves_to_latest_session": true,
+    "new_case_does_not_steal_old_view": true,
+    "debug_json_initially_collapsed": true,
+    "technical_details_bounded_and_available": true
+  },
+  "case_state_timeline": [
+    {
+      "at": 1793360764.5459,
+      "state": "REPAIR_QUEUED"
+    },
+    {
+      "at": 1793360764.615757,
+      "state": "REPAIRING"
+    },
+    {
+      "at": 1793360822.021948,
+      "state": "CI_PENDING"
+    },
+    {
+      "at": 1793360854.0996346,
+      "state": "READY_TO_MERGE"
+    },
+    {
+      "at": 1793360858.7561603,
+      "state": "MERGING"
+    },
+    {
+      "at": 1793360871.3110156,
+      "state": "BUILDING"
+    },
+    {
+      "at": 1793360991.4919257,
+      "state": "DEPLOYING"
+    },
+    {
+      "at": 1793360997.666191,
+      "state": "VERIFYING"
+    },
+    {
+      "at": 1793361122.5798287,
+      "state": "VERIFY_AGENT_QUEUED"
+    },
+    {
+      "at": 1793361122.9695709,
+      "state": "VERIFY_AGENT_RUNNING"
+    },
+    {
+      "at": 1793361148.811221,
+      "state": "RESOLVED_FIXED"
+    }
+  ],
+  "first_sdk_request_seconds_after_case_created": 0.098,
+  "collector_note": "Round sampler stopped when a queued case had no Session mapping. Null handling was fixed and the same persisted round was read again without re-running the fault. Baseline/progress samples before that gap are preserved locally; case event timeline, independent reports, native trajectory samples and actual browser observations supply the remaining evidence. No intermediate samples were invented.",
+  "passed": true
+}

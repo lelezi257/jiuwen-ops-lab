@@ -1,0 +1,11 @@
+{
+  "upstream_commit": "32d75d7d3a0b466412ee64d77c29460297515119",
+  "tracked_frontend_files": 1550,
+  "all_frontend_sources_match_upstream": true,
+  "frontend_manifest_sha256": "3149636122bac01c086ba6df1da09ef441e3981743f3d756c4ffb36be3fdda34",
+  "index_sha256": "f78dc8e64ec45c282c4199ef2bf5ab087ff9039d67389c353a638aea5b0f3446",
+  "entry_asset": "/assets/main-DmPJRBTh.js",
+  "entry_sha256": "f77525ff85c0f760ac8a0c1b13857be87ef4050c86155f5c950480bbd6eb9bc0",
+  "served_assets_match_native_build": true,
+  "own_addition": "ops-observe.html; original frontend files and assets unchanged"
+}

@@ -8,7 +8,8 @@ import asyncio,json,logging,os
 import httpx
 from contextlib import asynccontextmanager
 from pathlib import Path
-from fastapi import FastAPI,WebSocket
+from fastapi import FastAPI,WebSocket,Request,HTTPException
+from gateway.common.security.ws_origin import is_allowed_browser_origin
 from gateway.channel_manager.base import RobotMessageRouter
 from gateway.channel_manager.web.web_connect import WebChannel,WebChannelConfig
 from gateway.channel_manager.web.web_channel_app import _serve_channel_websocket
@@ -129,6 +130,18 @@ async def lifespan(app):
  finally:task.cancel()
 app=FastAPI(lifespan=lifespan)
 attach_trajectory_routes(app,channel,metadata_loader=metadata,fetch=host.call)
+@app.get('/api/ops/state')
+async def ops_state(request:Request):
+ origin=request.headers.get('origin')
+ if origin and not is_allowed_browser_origin(origin):raise HTTPException(403,'Origin not allowed')
+ async with httpx.AsyncClient(timeout=10,trust_env=False) as client:
+  response=await client.get('http://control:8080/api/overview');response.raise_for_status();return response.json()
+@app.get('/api/ops/session-ready/{sid}')
+async def session_ready(sid:str):
+ validate_session_id(sid)
+ if not (RECORDINGS/'agent/sessions'/sid).is_dir():return {'ready':False,'session_id':sid}
+ item=await metadata(sid)
+ return {'ready':bool(item),'session_id':sid}
 @app.websocket('/ws')
 async def websocket(ws:WebSocket):await _serve_channel_websocket(channel,ws)
 @app.get('/health')

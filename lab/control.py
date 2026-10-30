@@ -5,6 +5,7 @@ from pathlib import Path
 from fastapi import FastAPI,Depends,HTTPException,Request
 from fastapi.responses import FileResponse,StreamingResponse
 from lab.common import *
+from lab import experience
 init_store();mutex=threading.RLock();DELIVERY='http://delivery:8080';PROBE='http://probe:8080'
 TERMINAL={'DELIVERY_ACCEPTANCE_PASSED','RESOLVED_FIXED','RECOVERED_ROLLBACK','NEEDS_HUMAN','CANCELLED','NO_ACTION','TRACE_PROBE_COMPLETED'}
 AGENT_STATES={'REPAIR_QUEUED','REPAIRING','VERIFY_AGENT_QUEUED','VERIFY_AGENT_RUNNING','TRACE_PROBE_QUEUED','TRACE_PROBE_RUNNING'}
@@ -34,7 +35,7 @@ def create_case(trigger):
   existing=next((c for c in all_objects('case') if c.get('kind')!='trace_probe' and c['observed_release']==release['release_id']),None)
   if existing:return existing
   cid=ident('case');c={'id':cid,'created_at':now(),'state':'REPAIR_QUEUED','observed_release':release['release_id'],'observed_sha':release['source_sha'],'trigger':trigger,'cancelled':False,'attempt':0,'feedback':None}
-  save(c,'REPAIR_QUEUED','Waiting for runner / real model configuration');return c
+  save(c,'REPAIR_QUEUED','Waiting for runner / real model configuration');experience.attach_case(c);return c
 
 
 def transition(c):
@@ -68,6 +69,7 @@ def transition(c):
    report=call(PROBE,'/verify',{k:cur['ledger'][k] for k in ['release_id','source_sha','image_digest']},timeout=600)
    c['verification']=report
    if report['passed']:
+    experience.record_recovery(c,report)
     if c.get('kind')=='engineering_acceptance':
      call(DELIVERY,'/ops/mark-good',{'verification_id':report['verification_id']});save(c,'DELIVERY_ACCEPTANCE_PASSED','Engineering chain only; human-authored patch, no model or Agent qualification')
     else:save(c,'VERIFY_AGENT_QUEUED','Independent contract passed; new Jiuwen session reads deployment evidence')
@@ -94,10 +96,25 @@ async def scheduler():
   await asyncio.sleep(3)
 @asynccontextmanager
 async def lifespan(app):
- task=asyncio.create_task(scheduler());yield;task.cancel()
+ experience.interrupt_unfinished();task=asyncio.create_task(scheduler());operations=asyncio.create_task(experience.worker())
+ yield
+ task.cancel();operations.cancel()
 app=FastAPI(lifespan=lifespan)
 @app.get('/')
 def index():return FileResponse('/app/web/index.html')
+@app.get('/workbench.js')
+def workbench_js():return FileResponse('/app/web/workbench.js',media_type='text/javascript')
+@app.get('/workbench.css')
+def workbench_css():return FileResponse('/app/web/workbench.css',media_type='text/css')
+@app.get('/api/overview')
+def overview():return experience.overview()
+@app.post('/api/operations',dependencies=[Depends(operator)])
+def start_operation(body:dict):return experience.submit(body.get('action'))
+@app.get('/api/operations/{oid}')
+def operation(oid:str,details:bool=False):
+ o=get('operation',oid)
+ if not o:raise HTTPException(404,'Operation not found')
+ return o if details else experience.operation_summary(o)
 @app.get('/health')
 def health():return {'ok':True,'role':'our-product-control','model_loop':'official-jiuwen-child-process'}
 @app.get('/api/status')
@@ -159,11 +176,7 @@ def approve(cid:str):
 @app.post('/api/experiment/{action}',dependencies=[Depends(operator)])
 def experiment(action:str,body:dict):
  if action=='bootstrap':return call(DELIVERY,'/ops/bootstrap',body,timeout=180)
- if action=='fault':return call(DELIVERY,'/ops/fault',{},timeout=600)
- if action=='baseline':
-  cur=call(DELIVERY,'/ops/register',{});report=call(PROBE,'/verify',{k:cur['ledger'][k] for k in ['release_id','source_sha','image_digest']},timeout=600)
-  if not report['passed']:raise HTTPException(409,'Baseline did not pass business contract')
-  return call(DELIVERY,'/ops/mark-good',{'verification_id':report['verification_id']})
+ if action in ['baseline','fault']:return experience.legacy(action)
  raise HTTPException(404,'Unknown experiment action')
 @app.get('/internal/cases/{cid}',dependencies=[Depends(worker)])
 def internal_case(cid:str):return case(cid)

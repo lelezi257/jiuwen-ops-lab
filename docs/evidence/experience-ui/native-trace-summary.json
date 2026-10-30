@@ -1,0 +1,265 @@
+{
+  "collected_at": 1793361250.806966,
+  "source": "Original Jiuwen trajectory HTTP API plus official SDK receipts; no business-event-to-span conversion",
+  "cases": [
+    {
+      "case_id": "case-32afbd7df6a043a4",
+      "kind": "incident",
+      "state": "RESOLVED_FIXED",
+      "attempt": 2,
+      "sessions": [
+        {
+          "attempt_id": "attempt-c4fc94e15f3c4003",
+          "phase": "repair",
+          "session_id": "process_cli_1a18ca1aca6_3d11a297ccba",
+          "request_id": "466eee71-d1c6-454f-993e-017a7223115a",
+          "started_at": 1793360768.2003155,
+          "trace_ids": [
+            "2d2522338f28dd446f9c30b73812008f"
+          ],
+          "native_subjects": {
+            "schema_version": 1,
+            "session_id": "process_cli_1a18ca1aca6_3d11a297ccba",
+            "items": [
+              {
+                "subject_id": "main",
+                "display_name": "Main Agent",
+                "kind": "main_agent",
+                "parent_id": null,
+                "record_count": 51,
+                "trace_count": 1,
+                "first_start_time_unix_nano": "1793360769815478596",
+                "last_observed_time_unix_nano": "1793360810496499570",
+                "first_revision": 1,
+                "revision": 78,
+                "has_error": false,
+                "running": false
+              }
+            ],
+            "watermark": 78,
+            "store_epoch": "49a54bbcd3534f6e912c08feb1acd7a7"
+          },
+          "native_span_names": {
+            "context.window.commit": 10,
+            "chat DeepSeek-V4.1-Flash-1017": 10,
+            "execute_tool query_metrics": 1,
+            "execute_tool query_logs": 1,
+            "execute_tool get_running_release": 1,
+            "execute_tool get_release_diff": 1,
+            "agent.ops-order-repair.react_iteration.1": 1,
+            "llm.reasoning": 5,
+            "execute_tool create_workspace": 1,
+            "agent.ops-order-repair.react_iteration.2": 1,
+            "execute_tool list_source": 1,
+            "execute_tool read_source": 3,
+            "agent.ops-order-repair.react_iteration.3": 1,
+            "agent.ops-order-repair.react_iteration.4": 1,
+            "execute_tool write_source": 2,
+            "agent.ops-order-repair.react_iteration.5": 1,
+            "agent.ops-order-repair.react_iteration.6": 1,
+            "execute_tool run_tests": 1,
+            "agent.ops-order-repair.react_iteration.7": 1,
+            "execute_tool get_diff": 1,
+            "agent.ops-order-repair.react_iteration.8": 1,
+            "execute_tool create_pull_request": 1,
+            "agent.ops-order-repair.react_iteration.9": 1,
+            "agent.ops-order-repair.react_iteration.10": 1,
+            "agent.ops-order-repair.task_iteration.1": 1,
+            "agent.agent.code.normal.process_cli_1a18ca1aca6_3d11a297ccba": 1
+          },
+          "native_contains_case_id": true,
+          "request_contains_case_id": true,
+          "sdk_receipt": {
+            "session_id": "process_cli_1a18ca1aca6_3d11a297ccba",
+            "request_id": "466eee71-d1c6-454f-993e-017a7223115a",
+            "status": "completed",
+            "exit_code": 0,
+            "usage": {
+              "input_tokens": 240168,
+              "output_tokens": 1929,
+              "total_tokens": 242097,
+              "cache_tokens": 215424,
+              "cache_hit_rate": "89.7%",
+              "total_cost": 0.067787,
+              "model_calls": 10
+            },
+            "output_json": {
+              "finding": "根因：fault-release-749ee62c2f6e42de 将 apps/order_api/pricing.py 中 total_cents 的优惠券归一化由 `(coupon or '').strip().upper()` 改成 `coupon.strip().upper()`，丢弃了 None 兜底。app.py 的 Order 模型里 coupon 为 `str|None` 默认 None，因此所有不带 coupon 的 POST /orders 请求都会抛 `AttributeError: 'NoneType' object has no attribute 'strip'` 并返回 500（近 2 分钟约 32 次 500，而同窗口仅约 188 次 200；日志中该异常自 500 响应持续稳定复现，source_sha 与运行容器一致，属确定性回归而非偶发）。修复：恢复 None 安全写法 `(coupon or '').strip().upper()`，优惠券语义不变（SAVE10 仍为九折，其他非空值仍 ValueError → 422），与已知良好版本 release-case-dd97c79e87ab46e8 一致。新增回归测试 tests/order/test_pricing_optional_coupon.py，覆盖 coupon 为 None、空串/纯空格、合法 SAVE10 大小写与非法值四种场景；run_tests 全部 5 个用例通过（含原历史用例），HTTP 层面 null coupon 返回 20000 且持久化、幂等，非法输入仍被拒绝。改动仅限业务代码 pricing.py 与新增测试，未触碰 CI、契约、依赖或部署策略。PR #11 已创建，未合并、未部署。",
+              "evidence_ids": [
+                "ev-fcbe4c8fa7cf4d1e",
+                "ev-4f11e0b8173240b4",
+                "test-5d49b96e93aa4d91"
+              ],
+              "pr_number": 11,
+              "candidate_sha": "4825cd974591b0475a36e03472b945853054281d",
+              "needs_human": false
+            }
+          },
+          "live_native_revisions": [
+            {
+              "at": 1793360822.943702,
+              "case_state": "CI_PENDING",
+              "revision": 78,
+              "record_count": 51
+            },
+            {
+              "at": 1793360854.583659,
+              "case_state": "READY_TO_MERGE",
+              "revision": 78,
+              "record_count": 51
+            },
+            {
+              "at": 1793360859.6677818,
+              "case_state": "MERGING",
+              "revision": 78,
+              "record_count": 51
+            },
+            {
+              "at": 1793360871.988205,
+              "case_state": "BUILDING",
+              "revision": 78,
+              "record_count": 51
+            },
+            {
+              "at": 1793360992.086163,
+              "case_state": "DEPLOYING",
+              "revision": 78,
+              "record_count": 51
+            },
+            {
+              "at": 1793360998.25952,
+              "case_state": "VERIFYING",
+              "revision": 78,
+              "record_count": 51
+            },
+            {
+              "at": 1793361123.353285,
+              "case_state": "VERIFY_AGENT_RUNNING",
+              "revision": 78,
+              "record_count": 51
+            },
+            {
+              "at": 1793361149.414826,
+              "case_state": "RESOLVED_FIXED",
+              "revision": 78,
+              "record_count": 51
+            }
+          ],
+          "archive": "native-case-32afbd7df6a043a4-repair-attempt-c4fc94e15f3c4003.zip",
+          "archive_sha256": "9b045aa5dedd21c21863299723dd2eb8fb31eb245342d4d28f01a27fcdf21d50"
+        },
+        {
+          "attempt_id": "attempt-90c7027788ff4ab1",
+          "phase": "verify",
+          "session_id": "process_cli_1a18ca72470_b4bdee5cff29",
+          "request_id": "8649e78d-9289-4d10-b8e0-4cc2c6107d62",
+          "started_at": 1793361126.5391014,
+          "trace_ids": [
+            "0346fc9528710f41298848cdce80bd3e"
+          ],
+          "native_subjects": {
+            "schema_version": 1,
+            "session_id": "process_cli_1a18ca72470_b4bdee5cff29",
+            "items": [
+              {
+                "subject_id": "main",
+                "display_name": "Main Agent",
+                "kind": "main_agent",
+                "parent_id": null,
+                "record_count": 13,
+                "trace_count": 1,
+                "first_start_time_unix_nano": "1793361128081211835",
+                "last_observed_time_unix_nano": "1793361141727540039",
+                "first_revision": 1,
+                "revision": 19,
+                "has_error": false,
+                "running": false
+              }
+            ],
+            "watermark": 19,
+            "store_epoch": "bada9f895001449ca7af451408a697a6"
+          },
+          "native_span_names": {
+            "context.window.commit": 2,
+            "chat DeepSeek-V4.1-Flash-1017": 2,
+            "llm.reasoning": 2,
+            "execute_tool get_running_release": 1,
+            "execute_tool query_metrics": 1,
+            "execute_tool query_logs": 1,
+            "agent.ops-order-verify.react_iteration.1": 1,
+            "agent.ops-order-verify.react_iteration.2": 1,
+            "agent.ops-order-verify.task_iteration.1": 1,
+            "agent.agent.code.normal.process_cli_1a18ca72470_b4bdee5cff29": 1
+          },
+          "native_contains_case_id": true,
+          "request_contains_case_id": true,
+          "sdk_receipt": {
+            "session_id": "process_cli_1a18ca72470_b4bdee5cff29",
+            "request_id": "8649e78d-9289-4d10-b8e0-4cc2c6107d62",
+            "status": "completed",
+            "exit_code": 0,
+            "usage": {
+              "input_tokens": 167411,
+              "output_tokens": 1232,
+              "total_tokens": 168643,
+              "cache_tokens": 80896,
+              "cache_hit_rate": "48.3%",
+              "total_cost": 0.04722,
+              "model_calls": 2
+            },
+            "output_json": {
+              "finding": "复验通过：当前实际运行实例已回滚到已知良好版本，与验证契约一致。get_running_release 显示运行时 container 69e2f6ab…、image_id sha256:c1f0f1e5…ad36、source_sha d953a107…464e、release_id release-case-32afbd7df6a043a4，与账本 ledger（source_sha d953a107…、镜像 localhost:5000/jiuwen-order@sha256:c1f0f1e5…ad36）完全相同，consistent=true；该 release 的 previous 正是故障版本 fault-release-749ee62c2f6e42de（fe34e432…），known_good 为 release-case-dd97c79e87ab46e8（18fba681…），说明回滚关系正确、不是仍在故障版本上验证。Prometheus（ev-4f57a611687d4e46）在观测窗口内 /orders 与 /orders/{id} 均仅 status=200（约 630 次/2m），仅有 0 次 /orders 422 之外的异常，无 5xx。Loki（ev-1a053197e2064dd1）近 5 分钟 100 条返回日志全部 status=200，duration 约 2–18ms，每条日志的 source_sha 均为 d953a107…、release_id 均为 release-case-32afbd7df6a043a4，error 字段为 null（exactly 命中新版本，未混入旧 pod 流量）。随附验证报告显示两个 60s 窗口、共 216 次请求/窗口（coupon 与 no_coupon 各 108，均超过最低 30 次要求），全部 HTTP 200，含券订单总额 18000 分、无券 20000 分均与期望一致，persisted 记录与 database_row 完全对齐，old_order_ok=true、invalid_input_ok=true，before/after 的 source_sha 与镜像摘要均与本次发布一致，passed=true。指标、日志、运行身份与验证报告四方互相印证，未发现矛盾，可判定修复已验证，无需人工介入。",
+              "evidence_ids": [
+                "ev-4f57a611687d4e46",
+                "ev-1a053197e2064dd1"
+              ],
+              "pr_number": null,
+              "candidate_sha": null,
+              "needs_human": false
+            }
+          },
+          "live_native_revisions": [
+            {
+              "at": 1793361127.5368671,
+              "case_state": "VERIFY_AGENT_RUNNING",
+              "revision": 0,
+              "record_count": 0
+            },
+            {
+              "at": 1793361128.5817358,
+              "case_state": "VERIFY_AGENT_RUNNING",
+              "revision": 5,
+              "record_count": 5
+            },
+            {
+              "at": 1793361132.7366662,
+              "case_state": "VERIFY_AGENT_RUNNING",
+              "revision": 9,
+              "record_count": 8
+            },
+            {
+              "at": 1793361133.790497,
+              "case_state": "VERIFY_AGENT_RUNNING",
+              "revision": 14,
+              "record_count": 12
+            },
+            {
+              "at": 1793361142.0647109,
+              "case_state": "VERIFY_AGENT_RUNNING",
+              "revision": 19,
+              "record_count": 13
+            },
+            {
+              "at": 1793361149.414826,
+              "case_state": "RESOLVED_FIXED",
+              "revision": 19,
+              "record_count": 13
+            }
+          ],
+          "archive": "native-case-32afbd7df6a043a4-verify-attempt-90c7027788ff4ab1.zip",
+          "archive_sha256": "00797d7a23ce35ae37285866003bcc1984855cd896ea0f4ceebbc5344d6eaacd"
+        }
+      ]
+    }
+  ]
+}
