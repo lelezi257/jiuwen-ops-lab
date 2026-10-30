@@ -28,6 +28,7 @@ case "$command_name" in
   compose build control runner
   compose up -d --no-build
   if ! grep -q '^ORDER_IMAGE=' .local/runtime.env; then ./scripts/lab bootstrap-image; else docker start ops-order-api >/dev/null; fi
+  python3 scripts/wait_ready.py
   ;;
  bootstrap-image) exec python3 scripts/bootstrap_image.py ;;
 

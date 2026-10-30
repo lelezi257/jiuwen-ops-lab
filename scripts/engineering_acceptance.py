@@ -10,7 +10,7 @@ def request(base,path,body=None,role='control'):
  token=(root/'.local/secrets'/(role+'_token')).read_text().strip();data=json.dumps(body).encode() if body is not None else None
  r=urllib.request.Request(base+path,data=data,headers={'Authorization':'Bearer '+token,'Content-Type':'application/json'},method='POST' if body is not None else 'GET')
  try:
-  with urllib.request.urlopen(r,timeout=600) as response:return json.load(response)
+  with urllib.request.build_opener(urllib.request.ProxyHandler({})).open(r,timeout=600) as response:return json.load(response)
  except __import__('urllib.error').error.HTTPError as exc:raise RuntimeError(exc.read().decode()) from exc
 control='http://127.0.0.1:18780'
 # Tools are not exposed on host ports; exec this script in a temporary runtime

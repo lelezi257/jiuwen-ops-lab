@@ -4,7 +4,7 @@ import json,time,urllib.request,uuid
 from pathlib import Path
 root=Path(__file__).resolve().parents[1]
 def read(path,base='http://127.0.0.1:18780'):
- with urllib.request.urlopen(base+path,timeout=30) as r:return json.load(r)
+ with urllib.request.build_opener(urllib.request.ProxyHandler({})).open(base+path,timeout=30) as r:return json.load(r)
 status=read('/api/status');assert status['runner']['ok'],status['runner'];assert status['runner']['fake_model'] is False
 assert status['evidence']['ok'] and status['delivery']['ok'];assert status['release']['consistent'],status['release']
 report={'scope':'no_model_environment','time':time.time(),'status':status,'real_model_qualified':False,'full_agent_e2e':'PENDING_MODEL_CONFIGURATION'}
