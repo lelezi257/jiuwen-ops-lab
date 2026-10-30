@@ -17,14 +17,16 @@ try:
  with tempfile.TemporaryDirectory() as temp:
   secret=Path(temp)/'password';secret.write_text(password);secret.chmod(0o644)
   run(['docker','run','-d','--memory','512m','--cpus','1','--pids-limit','128','--name',tag+'-db','--network',net,'--network-alias','db','-e','POSTGRES_USER=orders','-e','POSTGRES_DB=orders','-e','POSTGRES_PASSWORD='+password,'postgres:16.9-alpine'],stdout=subprocess.DEVNULL)
-  for _ in range(60):
-   r=subprocess.run(['docker','exec',tag+'-db','pg_isready','-U','orders'],capture_output=True)
+  for _ in range(40):
+   if time.monotonic()>=deadline:raise TimeoutError('Candidate test deadline')
+   r=subprocess.run(['docker','exec',tag+'-db','pg_isready','-U','orders','-t','1'],capture_output=True,timeout=5)
    if r.returncode==0:break
    time.sleep(1)
   run(['docker','run','-d','--memory','256m','--cpus','1','--pids-limit','128','--name',tag+'-app','--network',net,'--network-alias','candidate','--read-only','--tmpfs','/tmp','--tmpfs','/logs','-e','DB_PASSWORD='+password,tag],stdout=subprocess.DEVNULL)
   # Oracle code comes from the trusted checkout, mounted read-only.
-  for _ in range(60):
-   r=subprocess.run(['docker','exec',tag+'-app','python','-c',"import urllib.request;urllib.request.urlopen('http://localhost:8080/health')"],capture_output=True)
+  for _ in range(40):
+   if time.monotonic()>=deadline:raise TimeoutError('Candidate test deadline')
+   r=subprocess.run(['docker','exec',tag+'-app','python','-c',"import urllib.request;urllib.request.urlopen('http://localhost:8080/health',timeout=2)"],capture_output=True,timeout=5)
    if r.returncode==0:break
    time.sleep(1)
   run(['docker','run','--rm','--name',tag+'-oracle','--memory','256m','--cpus','1','--pids-limit','128','--network',net,'--read-only','--tmpfs','/tmp','-e','CONTRACT_DB_PASSWORD='+password,'--mount',f"type=bind,src={a.oracle_host_path or str(trusted/'contracts')},dst=/oracle,readonly",tag,'python','/oracle/check_http.py','http://candidate:8080'])
@@ -32,6 +34,6 @@ try:
   cwd=str(candidate) if a.candidate_volume else '/candidate'
   run(['docker','run','--rm','--name',tag+'-unit','--memory','256m','--cpus','1','--pids-limit','128','--network','none','--read-only','--tmpfs','/tmp','--mount',mount,'-w',cwd,tag,'python','-m','unittest','discover','-s','tests/order','-v'],timeout=60)
 finally:
- for name in [tag+'-app',tag+'-db',tag+'-oracle',tag+'-unit']:subprocess.run(['docker','rm','-f',name],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
- subprocess.run(['docker','network','rm',net],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
- subprocess.run(['docker','image','rm',tag],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+ for name in [tag+'-app',tag+'-db',tag+'-oracle',tag+'-unit']:subprocess.run(['docker','rm','-f',name],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,timeout=15)
+ subprocess.run(['docker','network','rm',net],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,timeout=15)
+ subprocess.run(['docker','image','rm',tag],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,timeout=15)

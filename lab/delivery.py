@@ -103,7 +103,7 @@ def tool(name:str,args:dict):
   if name=='run_tests':
    check_changes(root,w['base_sha']);run_id=ident('test')
    argv=['python','/app/scripts/ci.py','--candidate',str(root),'--trusted','/app','--oracle-host-path',HOST_REPO+'/contracts','--candidate-volume','jiuwen-ops-lab_work']
-   result=subprocess.run(argv,capture_output=True,text=True,timeout=300)
+   result=subprocess.run(argv,capture_output=True,text=True,timeout=360)
    rec={'test_id':run_id,'passed':result.returncode==0,'output':(result.stdout+result.stderr)[-45000:],'tree_hash':cmd(['git','write-tree'],root)};put('test',cid,rec);return rec
   if name=='create_pull_request':
    check_changes(root,w['base_sha']);test=get('test',cid)

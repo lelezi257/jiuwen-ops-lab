@@ -17,7 +17,7 @@ control='http://127.0.0.1:18780'
 # container on the ops network, mounting ONLY the local identity directory.
 if '--in-container' not in sys.argv:
  import subprocess
- subprocess.run(['docker','run','--rm','--network','jiuwen-ops-lab_ops','-v',str(root)+':/checkout:ro','-w','/checkout','jiuwen-ops-runtime:local','python','scripts/engineering_acceptance.py','--in-container'],check=True);raise SystemExit
+ subprocess.run(['docker','run','--rm','--network','jiuwen-ops-lab_ops','-v',str(root/'scripts/engineering_acceptance.py')+':/checkout/scripts/engineering_acceptance.py:ro','-v',str(root/'.local/secrets/control_token')+':/checkout/.local/secrets/control_token:ro','-v',str(root/'.local/secrets/runner_token')+':/checkout/.local/secrets/runner_token:ro','-w','/checkout','jiuwen-ops-runtime:local','python','scripts/engineering_acceptance.py','--in-container'],check=True);raise SystemExit
 control='http://control:8080'
 for c in request(control,'/api/cases'):
  if c['state'] not in ['RESOLVED_FIXED','DELIVERY_ACCEPTANCE_PASSED','RECOVERED_ROLLBACK','NEEDS_HUMAN','CANCELLED','NO_ACTION']:request(control,'/api/cases/'+c['id']+'/cancel',{})
