@@ -1,0 +1,57 @@
+"""Independent real HTTP / PostgreSQL-backed order verification."""
+import asyncio,os,time,uuid
+from contextlib import asynccontextmanager
+import httpx
+from fastapi import FastAPI,Depends
+from lab.common import DATA,operator,put,get,init_store,ident
+BASE='http://order-api:8080';init_store()
+def sample(c,coupon):
+ payload={'quantity':2,'request_key':'probe-'+uuid.uuid4().hex}
+ if coupon is not None:payload['coupon']=coupon
+ start=time.time();r=c.post(BASE+'/orders',json=payload);result={'path':'coupon' if coupon else 'no_coupon','status':r.status_code,'elapsed_ms':round((time.time()-start)*1000,2),'ok':False}
+ if r.status_code==200:
+  row=r.json();read=c.get(BASE+'/orders/'+row['id']);want=18000 if coupon else 20000
+  result.update(order_id=row['id'],total_cents=row.get('total_cents'),persisted=read.json() if read.status_code==200 else None)
+  result['ok']=row.get('total_cents')==want and read.status_code==200 and read.json().get('total_cents')==want and read.json().get('quantity')==2
+  if result['ok'] and not get('baseline','old_order'):put('baseline','old_order',{'id':row['id'],'total_cents':want})
+ return result
+async def traffic():
+ while True:
+  try:
+   def cycle():
+    with httpx.Client(timeout=5,trust_env=False) as c:
+     for coupon in [None,'SAVE10']:sample(c,coupon)
+   await asyncio.to_thread(cycle)
+  except Exception:pass
+  await asyncio.sleep(1)
+@asynccontextmanager
+async def lifespan(app):
+ task=asyncio.create_task(traffic());yield;task.cancel()
+app=FastAPI(lifespan=lifespan)
+@app.get('/health')
+def health():return {'ok':True}
+@app.get('/reports/{key}',dependencies=[Depends(operator)])
+def report(key:str):return get('report',key)
+@app.post('/verify',dependencies=[Depends(operator)])
+def verify(args:dict):
+ seconds=int(os.getenv('LAB_VERIFY_SECONDS','60'));windows=int(os.getenv('LAB_VERIFY_WINDOWS','2'));minimum=int(os.getenv('LAB_VERIFY_MIN_REQUESTS','30'))
+ # No caller-supplied shortcuts to the trusted recovery contract.
+ report={'verification_id':ident('verify'),'release_id':args['release_id'],'started_at':time.time(),'windows':[],'passed':True,'contract':{'seconds':seconds,'windows':windows,'minimum_per_path':minimum}}
+ with httpx.Client(timeout=8,trust_env=False) as c:
+  report['before']=c.get(BASE+'/version').json()
+  for n in range(windows):
+   start=time.time();rows=[]
+   while time.time()-start<seconds:
+    for coupon in [None,'SAVE10']:
+     try:rows.append(sample(c,coupon))
+     except Exception as exc:rows.append({'path':'coupon' if coupon else 'no_coupon','ok':False,'error':type(exc).__name__})
+    time.sleep(.5)
+   counts={p:sum(r['path']==p for r in rows) for p in ['coupon','no_coupon']}
+   passed=all(r['ok'] for r in rows) and all(v>=minimum for v in counts.values())
+   report['windows'].append({'start':start,'end':time.time(),'counts':counts,'passed':passed,'requests':rows});report['passed'] &= passed
+  old=get('baseline','old_order');old_response=c.get(BASE+'/orders/'+old['id']) if old else None
+  report['old_order_ok']=bool(old_response is not None and old_response.status_code==200 and old_response.json().get('total_cents')==old['total_cents'])
+  bad=c.post(BASE+'/orders',json={'quantity':0,'request_key':uuid.uuid4().hex});bad_coupon=c.post(BASE+'/orders',json={'quantity':2,'coupon':'NOT_VALID','request_key':uuid.uuid4().hex})
+  report['invalid_input_ok']=bad.status_code==422 and bad_coupon.status_code==422
+  report['after']=c.get(BASE+'/version').json();report['passed'] &= report['old_order_ok'] and report['invalid_input_ok'] and report['before']==report['after'] and report['after'].get('release_id')==args['release_id']
+ report['finished_at']=time.time();put('report',report['verification_id'],report);return report

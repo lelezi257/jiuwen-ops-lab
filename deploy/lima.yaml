@@ -1,0 +1,48 @@
+{
+  "minimumLimaVersion": "2.1.0",
+  "vmType": "vz",
+  "arch": "aarch64",
+  "cpus": 4,
+  "memory": "10GiB",
+  "disk": "60GiB",
+  "images": [
+    {
+      "location": "https://cloud-images.ubuntu.com/releases/noble/release/ubuntu-24.04-server-cloudimg-arm64.img",
+      "arch": "aarch64"
+    }
+  ],
+  "mounts": [],
+  "containerd": {
+    "system": false,
+    "user": false
+  },
+  "ssh": {
+    "loadDotSSHPubKeys": false,
+    "forwardAgent": false
+  },
+  "portForwards": [
+    {
+      "guestPort": 18780,
+      "hostPort": 18780,
+      "hostIP": "127.0.0.1"
+    },
+    {
+      "guestPort": 18080,
+      "hostPort": 18080,
+      "hostIP": "127.0.0.1"
+    },
+    {
+      "guestPortRange": [
+        1,
+        65535
+      ],
+      "ignore": true
+    }
+  ],
+  "provision": [
+    {
+      "mode": "system",
+      "script": "#!/bin/bash\nset -euo pipefail\nexport DEBIAN_FRONTEND=noninteractive\napt-get -o Acquire::Retries=2 update\napt-get install -y docker.io docker-compose-v2 git python3 python3-venv curl ca-certificates\ninstall -d -m 0755 /etc/docker\ncat > /etc/docker/daemon.json <<'CONF'\n{\"log-driver\":\"json-file\",\"log-opts\":{\"max-size\":\"10m\",\"max-file\":\"3\"},\"builder\":{\"gc\":{\"enabled\":true,\"defaultKeepStorage\":\"6GB\"}}}\nCONF\nsystemctl enable docker\nsystemctl restart docker\n"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
+command_name="${1:-help}"
+shift || true
+compose() { docker compose --env-file .local/lab.env --env-file .local/runtime.env "$@"; }
+case "$command_name" in
+ init) python3 scripts/init_local.py "$@" ;;
+ vm-create) exec python3 scripts/vm.py ;;
+ vm-sync)
+  # VM is dedicated and has no host mounts. Copy source and explicit local config.
+  tar --exclude=.git --exclude=vendor --exclude=__pycache__ --exclude=.local/sync.tar.gz --exclude=.local/evidence --exclude=.local/lima.generated.yaml -czf .local/sync.tar.gz .
+  limactl shell jiuwen-ops-lab -- mkdir -p jiuwen-ops-lab
+  limactl copy .local/sync.tar.gz jiuwen-ops-lab:jiuwen-ops-lab/source.tar.gz
+  limactl shell jiuwen-ops-lab -- bash -lc 'cd ~/jiuwen-ops-lab && tar -xzf source.tar.gz && rm source.tar.gz && chmod -R go-rwx .local/secrets && chmod 600 .local/model.env && printf "HOST_REPO=%s\nLAB_TRUST_SHA=%s\n" "$PWD" "'"$(git rev-parse HEAD)"'" > .local/runtime.env'
+  ;;
+ vm-up) exec limactl shell jiuwen-ops-lab -- bash -lc 'cd ~/jiuwen-ops-lab && sudo --preserve-env=HTTP_PROXY,HTTPS_PROXY,NO_PROXY,http_proxy,https_proxy,no_proxy ./scripts/lab up' ;;
+ vm-status) exec limactl shell jiuwen-ops-lab -- bash -lc 'cd ~/jiuwen-ops-lab && sudo ./scripts/lab status' ;;
+ up)
+  test -f .local/runtime.env || { echo 'Run scripts/lab init and set HOST_REPO / LAB_TRUST_SHA in .local/runtime.env'; exit 1; }
+  compose up -d --build
+  ./scripts/lab bootstrap-image
+  ;;
+ bootstrap-image)
+  sha="$(sed -n 's/^LAB_TRUST_SHA=//p' .local/runtime.env)"
+  docker tag jiuwen-order:bootstrap "localhost:5000/jiuwen-order:$sha"
+  docker push "localhost:5000/jiuwen-order:$sha"
+  digest="$(docker image inspect "localhost:5000/jiuwen-order:$sha" --format '{{index .RepoDigests 0}}')"
+  if ! grep -q '^ORDER_IMAGE=' .local/runtime.env; then printf 'ORDER_IMAGE=%s\n' "$digest" >> .local/runtime.env; fi
+  compose up -d --no-deps order-api
+  ;;
+ status) compose ps ;;
+ logs) compose logs --tail=80 "$@" ;;
+ configure-model)
+  # On Mac, sync only the model file; never overwrite VM action state or credentials.
+  if [[ "$(uname)" == Darwin ]]; then
+   limactl copy .local/model.env jiuwen-ops-lab:jiuwen-ops-lab/.local/model.env
+   exec limactl shell jiuwen-ops-lab -- bash -lc 'cd ~/jiuwen-ops-lab && chmod 600 .local/model.env && sudo ./scripts/lab configure-model'
+  fi
+  compose up -d --no-deps --force-recreate runner
+  ;;
+ token) cat .local/secrets/control_token ;;
+ baseline|fault|investigate)
+  exec python3 scripts/api.py "$command_name" ;;
+ smoke) exec python3 scripts/smoke.py "$@" ;;
+ stop) compose stop ;;
+ *) printf '%s\n' 'init [--github] | vm-create | vm-sync | vm-up | vm-status | up | status | configure-model | token | baseline | fault | investigate | smoke | logs | stop' ;;
+esac
