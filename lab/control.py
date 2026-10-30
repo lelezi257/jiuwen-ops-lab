@@ -184,6 +184,7 @@ def result(cid:str,body:dict):
   c=case(cid)
   if c.get('attempt_id')!=body['attempt_id']:raise HTTPException(409,'Attempt changed')
   if c['cancelled'] or c['state'] in TERMINAL:return {'recorded':False,'reason':'Case already terminal'}
+  if c['state'] not in ['REPAIRING','VERIFY_AGENT_RUNNING']:return {'recorded':False,'reason':'Attempt already left Agent execution; do not replay result transitions'}
   event(cid,'sdk_result',body['result']);c['agent_result']=body['result'];save(c)
   if body['result'].get('status')!='completed' or body['result'].get('exit_code')!=0:return save(c,'NEEDS_HUMAN','Official SDK run did not complete successfully')
   output=body['result'].get('output_json') or {}

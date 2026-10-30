@@ -77,6 +77,14 @@ class ProductBoundaries(unittest.TestCase):
   self.assertEqual(get('case',c['id'])['state'],'CI_PENDING');self.assertEqual(get('case',c['id'])['agent_result'],receipt)
   self.assertIn(('/ops/test-evidence',{'case_id':c['id'],'evidence_id':'test-'+'b'*16}),calls)
 
+ def test_duplicate_receipt_cannot_reverse_delivery_progress(self):
+  for state in ['CI_PENDING','MERGING','BUILDING','REPAIR_QUEUED']:
+   c={'id':'duplicate-receipt','state':state,'cancelled':False,'phase':'repair','attempt_id':'a'};put('case',c['id'],c)
+   with patch('lab.control.call') as external:
+    answer=control.result(c['id'],{'attempt_id':'a','result':{'status':'completed','exit_code':0}})
+    self.assertFalse(answer['recorded']);external.assert_not_called()
+   self.assertEqual(get('case',c['id'])['state'],state)
+
  def test_bad_evidence_retains_official_receipt_and_stops(self):
   for evidence in [['ev-'+'a'*16],['test-'+'b'*16],['../../secret']]:
    c={'id':'bad-receipt-evidence','state':'REPAIRING','cancelled':False,'phase':'repair','attempt_id':'a'};put('case',c['id'],c)
