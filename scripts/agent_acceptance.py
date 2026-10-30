@@ -11,13 +11,14 @@ def api(path,body=None):
  with client.open(request,timeout=650) as r:return json.load(r)
 status=api('/api/status')
 if not status['runner'].get('model_configured'):raise SystemExit('Model not configured. No fault, patch, PR or model call was made by this command.')
-report={'scope':'real_model_agent_acceptance','started_at':time.time(),'requested_trials':args.trials,'trials':[],'passed':False}
+report={'scope':'real_model_agent_acceptance','started_at':time.time(),'requested_trials':args.trials,'trials':[],'errors':[],'passed':False}
 path=root/'.local/evidence'/('agent-acceptance-'+str(int(time.time()))+'.json');path.parent.mkdir(parents=True,exist_ok=True)
 terminal={'RESOLVED_FIXED','RECOVERED_ROLLBACK','NEEDS_HUMAN','CANCELLED','NO_ACTION'}
 try:
  for n in range(args.trials):
   current=api('/api/status')['release']['ledger'];cases=api('/api/cases')
   active=[c for c in cases if c.get('kind')!='engineering_acceptance' and c['state'] not in terminal]
+  fresh_reset=not active
   if active:case=active[0]
   else:
    api('/api/experiment/fault',{});case=None;start=time.time()
@@ -31,9 +32,11 @@ try:
    case=api('/api/cases/'+cid);print(f'trial {n+1}: {cid}: '+case['state'],flush=True)
    if case['state'] in terminal:break
    time.sleep(5)
-  report['trials'].append(case)
-  if case['state']!='RESOLVED_FIXED':raise RuntimeError('Real Agent did not reach RESOLVED_FIXED; retain failure evidence')
-  if not case.get('verification',{}).get('passed') or case.get('agent_result',{}).get('status')!='completed':raise RuntimeError('Missing actual SDK or business verification evidence')
- report['passed']=True
+  report['trials'].append({**case,'fresh_reset':fresh_reset})
+  if case['state'] not in terminal:raise RuntimeError('Case still active at observation deadline; do not create another fault')
+  if case['state']!='RESOLVED_FIXED':report['errors'].append({'case_id':cid,'error':'Real Agent terminal state: '+case['state']})
+  elif not case.get('verification',{}).get('passed') or case.get('agent_result',{}).get('status')!='completed':report['errors'].append({'case_id':cid,'error':'Missing actual SDK or business verification evidence'})
+ report['passed']=not report['errors']
 finally:
  report['finished_at']=time.time();path.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n');print('Evidence: '+str(path))
+if not report['passed']:raise SystemExit(1)

@@ -1,0 +1,59 @@
+{
+  "scope": "real_official_sdk_model_host_tool_and_cancellation",
+  "recorded_at": 1793343961.0157084,
+  "real_model_qualified": true,
+  "tool_effects": [
+    {
+      "source_sha": "9747c4cc85acafaa6858814a0931568dd2669b78",
+      "release_id": "fault-release-09f4cfcaf0bc484f"
+    },
+    {
+      "source_sha": "9747c4cc85acafaa6858814a0931568dd2669b78",
+      "release_id": "fault-release-09f4cfcaf0bc484f"
+    }
+  ],
+  "run": {
+    "request_id": "edb6c201-8352-4d02-bdf2-b904e63035a3",
+    "session_id": "process_cli_1a18b99354c_e36e65a0a641",
+    "status": "completed",
+    "exit_code": 0,
+    "output_json": {
+      "source_sha": "9747c4cc85acafaa6858814a0931568dd2669b78",
+      "observed": true
+    },
+    "usage": {
+      "input_tokens": 14309,
+      "output_tokens": 94,
+      "total_tokens": 14403,
+      "cache_tokens": 9088,
+      "cache_hit_rate": "63.5%",
+      "total_cost": 0.004033,
+      "model_calls": 2
+    }
+  },
+  "cancelled_run": {
+    "request_id": "6e39e1db-b0bc-4428-b090-7a5df538b318",
+    "session_id": "process_cli_1a18b99616b_e865f9ebd882",
+    "status": "cancelled",
+    "exit_code": 130,
+    "error": {
+      "code": "CANCELLED",
+      "message": "Command cancelled by its caller.",
+      "retryable": false,
+      "details": {}
+    },
+    "usage": {
+      "output_tokens": 54,
+      "total_tokens": 7166,
+      "cache_tokens": 6144,
+      "input_cost": 0.0,
+      "input_tokens": 7112,
+      "total_cost": 0.00200648,
+      "output_cost": 0.0,
+      "model_calls": 1
+    }
+  },
+  "live_official_cli_children_after_runs": [],
+  "child_cleanup_passed": true,
+  "upstream_modified": false
+}
