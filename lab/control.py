@@ -59,7 +59,7 @@ def transition(c):
  elif state=='VERIFYING':
   cur=call(DELIVERY,'/ops/current',{})
   if not cur['consistent']:raise RuntimeError('Runtime / release ledger differs')
-  report=call(PROBE,'/verify',{'release_id':cur['ledger']['release_id']},timeout=600)
+  report=call(PROBE,'/verify',{k:cur['ledger'][k] for k in ['release_id','source_sha','image_digest']},timeout=600)
   c['verification']=report
   if report['passed']:
    if c.get('kind')=='engineering_acceptance':
@@ -69,7 +69,7 @@ def transition(c):
  elif state=='ROLLING_BACK':
   cur=call(DELIVERY,'/ops/current',{})
   c['rollback']=call(DELIVERY,'/ops/rollback',{'expected_release':cur['ledger']['release_id']},timeout=240)
-  report=call(PROBE,'/verify',{'release_id':c['rollback']['ledger']['release_id']},timeout=600);c['rollback_verification']=report
+  report=call(PROBE,'/verify',{k:c['rollback']['ledger'][k] for k in ['release_id','source_sha','image_digest']},timeout=600);c['rollback_verification']=report
   save(c,'RECOVERED_ROLLBACK' if report['passed'] else 'NEEDS_HUMAN')
 
 async def scheduler():
@@ -145,7 +145,7 @@ def experiment(action:str,body:dict):
  if action=='bootstrap':return call(DELIVERY,'/ops/bootstrap',body,timeout=180)
  if action=='fault':return call(DELIVERY,'/ops/fault',{},timeout=600)
  if action=='baseline':
-  cur=call(DELIVERY,'/ops/register',{});report=call(PROBE,'/verify',{'release_id':cur['ledger']['release_id']},timeout=600)
+  cur=call(DELIVERY,'/ops/register',{});report=call(PROBE,'/verify',{k:cur['ledger'][k] for k in ['release_id','source_sha','image_digest']},timeout=600)
   if not report['passed']:raise HTTPException(409,'Baseline did not pass business contract')
   return call(DELIVERY,'/ops/mark-good',{'verification_id':report['verification_id']})
  raise HTTPException(404,'Unknown experiment action')

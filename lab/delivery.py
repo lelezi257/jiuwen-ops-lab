@@ -179,7 +179,10 @@ def ops(name:str,args:dict):
    if status['state']!='passed':raise HTTPException(409,'Exact candidate trusted CI has not passed')
    pr=status['pr'];put('merge-intent',cid,status);rec=gh('PUT',f"/pulls/{pr['number']}/merge",{'sha':pr['head_sha'],'merge_method':'merge','commit_title':'Verified order repair '+cid})
    if not rec.get('merged'):raise HTTPException(409,'Merge refused')
-   result={'state':'merged','merge_sha':rec['sha'],'pr':pr,'checked':status};put('merge',cid,result);return result
+   result={'state':'merged','merge_sha':rec['sha'],'pr':pr,'checked':status};put('merge',cid,result)
+   parents=gh('GET','/commits/'+rec['sha'])['parents']
+   if not parents or parents[0]['sha']!=pr['base_sha']:raise HTTPException(409,'Merge happened on a changed base; retain merge fact and stop before deployment')
+   return result
   if name=='build':
    cid=args['case_id'];merge=get('merge',cid)
    if not merge:raise HTTPException(409,'Merge ledger required')

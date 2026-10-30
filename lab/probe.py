@@ -41,7 +41,7 @@ def report(key:str):return get('report',key)
 def verify(args:dict):
  seconds=int(os.getenv('LAB_VERIFY_SECONDS','60'));windows=int(os.getenv('LAB_VERIFY_WINDOWS','2'));minimum=int(os.getenv('LAB_VERIFY_MIN_REQUESTS','30'))
  # No caller-supplied shortcuts to the trusted recovery contract.
- report={'verification_id':ident('verify'),'release_id':args['release_id'],'started_at':time.time(),'windows':[],'passed':True,'contract':{'seconds':seconds,'windows':windows,'minimum_per_path':minimum}}
+ report={'verification_id':ident('verify'),'release_id':args['release_id'],'expected_source_sha':args['source_sha'],'expected_image_digest':args['image_digest'],'started_at':time.time(),'windows':[],'passed':True,'contract':{'seconds':seconds,'windows':windows,'minimum_per_path':minimum}}
  with httpx.Client(timeout=8,trust_env=False) as c:
   report['before']=c.get(BASE+'/version').json()
   for n in range(windows):
@@ -58,5 +58,5 @@ def verify(args:dict):
   report['old_order_ok']=bool(old_response is not None and old_response.status_code==200 and old_response.json().get('total_cents')==old['total_cents'])
   bad=c.post(BASE+'/orders',json={'quantity':0,'request_key':uuid.uuid4().hex});bad_coupon=c.post(BASE+'/orders',json={'quantity':2,'coupon':'NOT_VALID','request_key':uuid.uuid4().hex})
   report['invalid_input_ok']=bad.status_code==422 and bad_coupon.status_code==422
-  report['after']=c.get(BASE+'/version').json();report['passed'] &= report['old_order_ok'] and report['invalid_input_ok'] and report['before']==report['after'] and report['after'].get('release_id')==args['release_id']
+  report['after']=c.get(BASE+'/version').json();report['passed'] &= report['old_order_ok'] and report['invalid_input_ok'] and report['before']==report['after'] and report['after'].get('release_id')==args['release_id'] and report['after'].get('source_sha')==args['source_sha'] and report['after'].get('image_digest')==args['image_digest']
  report['finished_at']=time.time();put('report',report['verification_id'],report);return report

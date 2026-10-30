@@ -31,6 +31,9 @@
       "cap_drop": [
         "ALL"
       ],
+      "cap_add": [
+        "DAC_OVERRIDE"
+      ],
       "environment": {
         "LAB_DATA": "/data",
         "LAB_AUTO_DELIVER": "${LAB_AUTO_DELIVER:-true}",
@@ -87,6 +90,9 @@
       "cap_drop": [
         "ALL"
       ],
+      "cap_add": [
+        "DAC_OVERRIDE"
+      ],
       "environment": {
         "LAB_DATA": "/data"
       },
@@ -137,6 +143,9 @@
         "no-new-privileges:true"
       ],
       "cap_drop": [],
+      "cap_add": [
+        "DAC_OVERRIDE"
+      ],
       "environment": {
         "LAB_DATA": "/data",
         "GITHUB_REPOSITORY": "${GITHUB_REPOSITORY}",
@@ -198,6 +207,9 @@
       "cap_drop": [
         "ALL"
       ],
+      "cap_add": [
+        "DAC_OVERRIDE"
+      ],
       "environment": {
         "LAB_DATA": "/data",
         "HOME": "/data/home"
@@ -254,6 +266,9 @@
       "cap_drop": [
         "ALL"
       ],
+      "cap_add": [
+        "DAC_OVERRIDE"
+      ],
       "environment": {
         "LAB_DATA": "/data",
         "LAB_VERIFY_SECONDS": "${LAB_VERIFY_SECONDS:-60}",
@@ -307,6 +322,9 @@
       ],
       "cap_drop": [
         "ALL"
+      ],
+      "cap_add": [
+        "DAC_OVERRIDE"
       ],
       "environment": {
         "LAB_DATA": "/data"

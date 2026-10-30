@@ -3,7 +3,7 @@
 import json
 from pathlib import Path
 root=Path(__file__).resolve().parents[1]
-base={'image':'jiuwen-ops-runtime:local','build':{'context':'.','dockerfile':'deploy/Dockerfile','args':{'HTTP_PROXY':'${HTTP_PROXY:-}','HTTPS_PROXY':'${HTTPS_PROXY:-}','NO_PROXY':'${NO_PROXY:-}','PIP_INDEX_URL':'${PIP_INDEX_URL:-https://pypi.org/simple}','UV_INDEX_URL':'${UV_INDEX_URL:-https://pypi.org/simple}','APT_MIRROR_SITE':'${APT_MIRROR_SITE:-}','PYTHON_BASE':'${PYTHON_BASE:-python:3.11-slim-bookworm}','DOCKER_CLI_IMAGE':'${DOCKER_CLI_IMAGE:-docker:29.1.3-cli}'}},'restart':'unless-stopped','networks':['ops'],'read_only':True,'tmpfs':['/tmp'],'security_opt':['no-new-privileges:true'],'cap_drop':['ALL'],'environment':{'LAB_DATA':'/data'},'volumes':[]}
+base={'image':'jiuwen-ops-runtime:local','build':{'context':'.','dockerfile':'deploy/Dockerfile','args':{'HTTP_PROXY':'${HTTP_PROXY:-}','HTTPS_PROXY':'${HTTPS_PROXY:-}','NO_PROXY':'${NO_PROXY:-}','PIP_INDEX_URL':'${PIP_INDEX_URL:-https://pypi.org/simple}','UV_INDEX_URL':'${UV_INDEX_URL:-https://pypi.org/simple}','APT_MIRROR_SITE':'${APT_MIRROR_SITE:-}','PYTHON_BASE':'${PYTHON_BASE:-python:3.11-slim-bookworm}','DOCKER_CLI_IMAGE':'${DOCKER_CLI_IMAGE:-docker:29.1.3-cli}'}},'restart':'unless-stopped','networks':['ops'],'read_only':True,'tmpfs':['/tmp'],'security_opt':['no-new-privileges:true'],'cap_drop':['ALL'],'cap_add':['DAC_OVERRIDE'],'environment':{'LAB_DATA':'/data'},'volumes':[]}
 def service(module,volume,secrets=(),networks=('ops',),env=None):
  x={**base,'command':['python','-m','uvicorn','lab.'+module+':app','--host','0.0.0.0','--port','8080'],'volumes':[volume+':/data'],'secrets':list(secrets),'networks':list(networks),'environment':{**base['environment'],**(env or {})}};return x
 s={}

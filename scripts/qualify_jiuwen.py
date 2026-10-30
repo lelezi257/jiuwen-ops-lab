@@ -8,6 +8,9 @@ async def main():
  report={'scope':'official_sdk_qualification','time':time.time(),'real_model_qualified':False}
  cli=client();cap=await cli.query('protocol.capabilities',deadline_seconds=90)
  assert cap['status']=='completed' and cap['data']['features']['host_tools'];report['capabilities']=cap
+ modes=await cli.query('mode.list',deadline_seconds=120)
+ assert modes['status']=='completed',modes
+ report['runtime_modes']=modes
  invalid=await cli.run({'input':'Invalid limits must fail before model execution','max_turns':0},deadline_seconds=90)
  assert invalid['status']=='failed' and invalid['exit_code']==2,invalid
  report['invalid_request']=invalid
