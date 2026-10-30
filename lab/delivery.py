@@ -116,7 +116,8 @@ def tool(name:str,args:dict):
     pr=gh('GET','/pulls/'+str(existing['number']))
    else:
     candidates=gh('GET','/pulls?state=open&head='+REPO.split('/')[0]+':'+w['branch'])
-    pr=candidates[0] if candidates else gh('POST','/pulls',{'head':w['branch'],'base':BRANCH,'title':'[Ops Lab] Order recovery '+cid,'body':'Real-model repair for `'+cid+'`.\n\n'+str(args.get('summary',''))[:5000]})
+    attribution='Human-authored engineering acceptance (model_calls=0; not Agent qualification)' if c.get('kind')=='engineering_acceptance' else 'Real-model repair'
+    pr=candidates[0] if candidates else gh('POST','/pulls',{'head':w['branch'],'base':BRANCH,'title':'[Ops Lab] Order recovery '+cid,'body':attribution+' for `'+cid+'`.\n\n'+str(args.get('summary',''))[:5000]})
    rec={'number':pr['number'],'url':pr['html_url'],'head_sha':sha,'base_sha':w['base_sha'],'case_id':cid};put('pr',cid,rec);return rec
  raise HTTPException(404,'Unknown agent tool')
 
