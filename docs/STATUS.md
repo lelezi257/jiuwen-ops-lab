@@ -47,10 +47,10 @@ ARM64 artifact: 12952050101
 
 默认 `main` 保存平台实现和正常应用源码；`lab-live` 独立保存故障与修复历史，运行镜像以实际提交 SHA 和 digest 核对。当时真实告警事件 `case-812a384054014495` 已排队、尝试次数为0，Runner 等待模型。配置后该事件已完成真实修复；原始等待现场保留用于核对实施过程。
 
-[配置前交接记录](evidence/handoff-before-model.json) · [配置前检查](evidence/verification-before-model.json) · [配置前截图](evidence/workbench.png)。匿名公开 clone 和本地空配置初始化已通过；未借用模型 Key。
+[配置前交接记录](evidence/handoff-before-model.json) · [配置前检查](evidence/verification-before-model.json) · [配置前截图](evidence/workbench-before-model.jpg)。匿名公开 clone 和本地空配置初始化已通过；未借用模型 Key。
 
 ## 完成审计
 
 G0 独立部署、关闭工作台后后台继续推进；G1 官方SDK真实模型/host tool/取消/错误/清理；G2 实际故障和自动告警；G3 模型生成修复、新增测试与正确提交的CI；G4 合并后重新构建、制品哈希、digest发布与运行版本；G5/G6 两个60秒分路径HTTP/金额/数据库/旧订单/非法输入合同；G7 无人推进、取消与失败边界。三轮正常路径实际通过，另有发布失败后的真实回滚证据和15项产品边界测试。未覆盖的生产可靠性范围仍按上文边界保留。
 
-[真实模型报告](REAL-MODEL-ACCEPTANCE.md) · [最终工作台](evidence/workbench-real-model-complete.png) · [最终核对](evidence/verification.json)。
+[真实模型报告](REAL-MODEL-ACCEPTANCE.md) · [最终工作台](evidence/workbench-real-model-complete.jpg) · [最终核对](evidence/verification.json)。

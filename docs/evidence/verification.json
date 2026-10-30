@@ -1,11 +1,52 @@
 {
-  "recorded_at": "2026-10-30T16:04:16.891448+08:00",
-  "model_configuration": "configured; private values omitted",
-  "official_sdk_model_host_tool_cancel_cleanup": "PASS; real-model-sdk.json",
-  "clean_trials": "PASS 3/3; real-model-three-clean-trials.json",
-  "operator_retries_in_clean_trials": 0,
+  "recorded_at": "2026-10-30T16:10:59.274357+08:00",
+  "implementation_sha": "113eaa09324974cd636de220bc71af3468f05240",
+  "code_ci": {
+    "conclusion": "success",
+    "headSha": "113eaa09324974cd636de220bc71af3468f05240",
+    "status": "completed",
+    "url": "https://github.com/lelezi257/jiuwen-ops-lab/actions/runs/41024221703"
+  },
+  "repository": {
+    "isTemplate": true,
+    "url": "https://github.com/lelezi257/jiuwen-ops-lab",
+    "viewerPermission": "ADMIN",
+    "visibility": "PUBLIC"
+  },
+  "platform_containers_plus_application": 12,
+  "distinct_running_container_pids": 12,
+  "all_cases_terminal": true,
+  "app_container_preserved_across_platform_refresh": true,
+  "current_release_consistent_and_known_good": true,
+  "model_configuration_present": true,
+  "private_model_file_mode": "0600",
+  "private_model_file_ignored": true,
+  "host_and_guest_private_configuration_match": true,
+  "secret_values_or_hashes_published": false,
   "product_boundary_tests": 15,
-  "release_consistent": true,
-  "all_required_user_configuration": "provided",
-  "final_runtime_refresh": "pending; this record will be replaced after final refresh"
+  "real_model_sdk_host_tool_cancel": "PASS; real-model-sdk.json",
+  "official_source_manifest_matches_lock": true,
+  "three_clean_trials": "PASS 3/3; real-model-three-clean-trials.json",
+  "zero_operator_retries_in_clean_trials": true,
+  "live_business_after_refresh": "PASS; final-live-business-smoke.json",
+  "official_cli_children_after_refresh": 0,
+  "environment_smoke_scope": "No model request; does not assert model qualification",
+  "vm": {
+    "name": "jiuwen-ops-lab",
+    "status": "Running",
+    "arch": "aarch64",
+    "cpus": 4,
+    "memory": 10737418240,
+    "disk": 64424509440
+  },
+  "public_credential_scan": "PASS; actual private values and credential patterns absent",
+  "local_HTML_and_Markdown_links": "PASS",
+  "inline_JavaScript_syntax": "PASS",
+  "workbench_viewport": {
+    "width": 1280,
+    "page_width": 1280
+  },
+  "workbench_three_completed_cases": "PASS; screenshot retained",
+  "workbench_screenshot": "workbench-real-model-complete.jpg",
+  "workbench_screenshot_format": "JPEG, 1280x720; saved file visually verified"
 }

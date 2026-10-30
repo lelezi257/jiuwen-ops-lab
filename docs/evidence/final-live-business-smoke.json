@@ -1,0 +1,46 @@
+{
+  "recorded_at": 1793347702.7778113,
+  "scope": "post_refresh_live_http_and_direct_database_smoke",
+  "model_request_made": false,
+  "passed": true,
+  "rows": [
+    {
+      "path": "no_coupon",
+      "status": 200,
+      "elapsed_ms": 8.28,
+      "ok": true,
+      "order_id": "7d97d1b3ec5a43dc93eda8269fe963a2",
+      "total_cents": 20000,
+      "persisted": {
+        "id": "7d97d1b3ec5a43dc93eda8269fe963a2",
+        "quantity": 2,
+        "coupon": null,
+        "total_cents": 20000
+      },
+      "database_row": [
+        "7d97d1b3ec5a43dc93eda8269fe963a2",
+        2,
+        20000
+      ]
+    },
+    {
+      "path": "coupon",
+      "status": 200,
+      "elapsed_ms": 5.26,
+      "ok": true,
+      "order_id": "fd93f0b707bd43a5b4f16feeedadbb97",
+      "total_cents": 18000,
+      "persisted": {
+        "id": "fd93f0b707bd43a5b4f16feeedadbb97",
+        "quantity": 2,
+        "coupon": "SAVE10",
+        "total_cents": 18000
+      },
+      "database_row": [
+        "fd93f0b707bd43a5b4f16feeedadbb97",
+        2,
+        18000
+      ]
+    }
+  ]
+}

@@ -1,0 +1,173 @@
+{
+  "recorded_at": 1793347702.4861424,
+  "scope": "final_independent_deployment",
+  "containers": [
+    {
+      "name": "/jiuwen-ops-lab-alertmanager-1",
+      "container_id": "45b362dfb0bfd6bf7a88391650a1d9453e46d8741626ef3ae47f83f93bf26329",
+      "image_id": "sha256:27c475db5fb156cab31d5c18a4251ac7ed567746a2483ff264516437a39b15ba",
+      "state": "running",
+      "pid": 296686,
+      "command": [
+        "--config.file=/etc/alertmanager/alertmanager.yml",
+        "--storage.path=/alertmanager"
+      ]
+    },
+    {
+      "name": "/jiuwen-ops-lab-collector-1",
+      "container_id": "d709c401c56254e878ab4d66f624b700f4875e1e17360807a3c7ac45c1f837cc",
+      "image_id": "sha256:be183115c5f5453eac11077a851889bf43e0edcbc279f154c6da4db7e71cf76e",
+      "state": "running",
+      "pid": 296188,
+      "command": [
+        "python",
+        "-m",
+        "lab.collector"
+      ]
+    },
+    {
+      "name": "/jiuwen-ops-lab-control-1",
+      "container_id": "4cadf9d91c212bf6da023081ba7c374ca4e270a53dab4108a2126d13f5202fc9",
+      "image_id": "sha256:be183115c5f5453eac11077a851889bf43e0edcbc279f154c6da4db7e71cf76e",
+      "state": "running",
+      "pid": 296219,
+      "command": [
+        "python",
+        "-m",
+        "uvicorn",
+        "lab.control:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8080"
+      ]
+    },
+    {
+      "name": "/jiuwen-ops-lab-db-1",
+      "container_id": "191d8dd64c223bd2a5a8d23004d32941d012a6c1132b503578dfdbb6e0ebf53a",
+      "image_id": "sha256:7c688148e5e156d0e86df7ba8ae5a05a2386aaec1e2ad8e6d11bdf10504b1fb7",
+      "state": "running",
+      "pid": 13264,
+      "command": [
+        "postgres"
+      ]
+    },
+    {
+      "name": "/jiuwen-ops-lab-delivery-1",
+      "container_id": "394c868fcfc7a0f2f45983c8a3aa117cc6eb468b18abe5ba3a82e908ade2cc4a",
+      "image_id": "sha256:be183115c5f5453eac11077a851889bf43e0edcbc279f154c6da4db7e71cf76e",
+      "state": "running",
+      "pid": 296217,
+      "command": [
+        "python",
+        "-m",
+        "uvicorn",
+        "lab.delivery:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8080"
+      ]
+    },
+    {
+      "name": "/jiuwen-ops-lab-evidence-1",
+      "container_id": "301ad1ea1ff1bc6909691d997a65a3b53d5d88c01f68101030f0983ecc5621cb",
+      "image_id": "sha256:be183115c5f5453eac11077a851889bf43e0edcbc279f154c6da4db7e71cf76e",
+      "state": "running",
+      "pid": 296195,
+      "command": [
+        "python",
+        "-m",
+        "uvicorn",
+        "lab.evidence:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8080"
+      ]
+    },
+    {
+      "name": "/jiuwen-ops-lab-loki-1",
+      "container_id": "99a9dd0ab817395446586c0fde4627f908f3087cb393617a5ba26e86e5ac8b80",
+      "image_id": "sha256:a74594532eec4cc313401beedc4dd2708c43674c032084b1aeb87c14a5be1745",
+      "state": "running",
+      "pid": 296674,
+      "command": [
+        "-config.file=/etc/loki/config.yml"
+      ]
+    },
+    {
+      "name": "/jiuwen-ops-lab-probe-1",
+      "container_id": "75b4e22789fbcd8b79403285593a858a6f869188c8949130cda42d7adc331c7b",
+      "image_id": "sha256:be183115c5f5453eac11077a851889bf43e0edcbc279f154c6da4db7e71cf76e",
+      "state": "running",
+      "pid": 296207,
+      "command": [
+        "python",
+        "-m",
+        "uvicorn",
+        "lab.probe:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8080"
+      ]
+    },
+    {
+      "name": "/jiuwen-ops-lab-prometheus-1",
+      "container_id": "0cff72857b2f855315f12c01cdf11a83962adfd2e5b6936546dd1f092815e2c9",
+      "image_id": "sha256:9abc6cf6aea7710d163dbb28d8eeb7dc5baef01e38fa4cd146a406dd9f07f70d",
+      "state": "running",
+      "pid": 296672,
+      "command": [
+        "--config.file=/etc/prometheus/prometheus.yml",
+        "--storage.tsdb.retention.time=3d"
+      ]
+    },
+    {
+      "name": "/jiuwen-ops-lab-registry-1",
+      "container_id": "28f5ae0cdbf979b1293fb4ebb38748dd219919fdf44e4eb95c7b8ecbbee41ee1",
+      "image_id": "sha256:a3d8aaa63ed8681a604f1dea0aa03f100d5895b6a58ace528858a7b332415373",
+      "state": "running",
+      "pid": 13468,
+      "command": [
+        "/etc/docker/registry/config.yml"
+      ]
+    },
+    {
+      "name": "/jiuwen-ops-lab-runner-1",
+      "container_id": "6f93cf81a86b0e5a7bb85203ab36571f1a8abef5cd9bc3f05300f6be99ae5f96",
+      "image_id": "sha256:e9c0f4a05a89bc1fa6dc31f549a597f8e06a2b0e645bb7a4f4d5b54c23701f31",
+      "state": "running",
+      "pid": 296203,
+      "command": [
+        "python",
+        "-m",
+        "uvicorn",
+        "lab.runner:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8080"
+      ]
+    },
+    {
+      "name": "/ops-order-api",
+      "container_id": "18097407fe30ed0b56ce3fc6326d4caf3901b0e63fef92730789853008392078",
+      "image_id": "sha256:b73802dca815a7ec05c99c442918bf01a59af13922d1e329d14dac72b7cb9621",
+      "state": "running",
+      "pid": 284361,
+      "command": [
+        "python",
+        "-m",
+        "uvicorn",
+        "app:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8080"
+      ]
+    }
+  ],
+  "environment_values_included": false
+}

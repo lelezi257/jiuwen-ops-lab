@@ -1,0 +1,96 @@
+{
+  "recorded_at": "2026-10-30T16:10:59.274357+08:00",
+  "objective_scope": "Published runnable Jiuwen Ops Lab v1 in the dedicated Mac/Linux VM; one controlled order regression case with real model and real delivery.",
+  "completion": "PROVEN_FOR_AGREED_V1_SCOPE",
+  "requirements": [
+    {
+      "id": "G0",
+      "requirement": "Independent VM/services, source/version/configuration and background continuation",
+      "result": "PROVEN",
+      "evidence": [
+        "runtime-components.json",
+        "clean-trials-platform.json",
+        "browser-independent-background.json",
+        "verification.json"
+      ]
+    },
+    {
+      "id": "G1",
+      "requirement": "Official SDK/CLI/Swarm/Core with real model, host tool, structured result, cancellation, errors and process cleanup",
+      "result": "PROVEN",
+      "evidence": [
+        "real-model-sdk.json",
+        "framework-source-manifest.json",
+        "real-model-integration-case.json",
+        "final-runner-cleanup.json"
+      ]
+    },
+    {
+      "id": "G2",
+      "requirement": "Actual coupon regression, real HTTP 500, logs, metrics and release-bound automatic alert",
+      "result": "PROVEN",
+      "evidence": [
+        "real-fault.json",
+        "real-model-three-clean-trials.json"
+      ]
+    },
+    {
+      "id": "G3",
+      "requirement": "Model-authored actual source/test diffs, PRs and trusted exact-candidate CI",
+      "result": "PROVEN",
+      "evidence": [
+        "real-model-three-clean-trials.json"
+      ]
+    },
+    {
+      "id": "G4",
+      "requirement": "Actual merged-source build, native architecture artifact/hash, immutable digest and deployed runtime identity",
+      "result": "PROVEN",
+      "evidence": [
+        "real-model-three-clean-trials.json",
+        "handoff.json"
+      ]
+    },
+    {
+      "id": "G5_G6",
+      "requirement": "Two 60-second windows per trial, each normal path at least 30 correct requests, direct PostgreSQL, old orders and invalid inputs",
+      "result": "PROVEN",
+      "evidence": [
+        "real-model-three-clean-trials.json",
+        "final-live-business-smoke.json"
+      ]
+    },
+    {
+      "id": "G7",
+      "requirement": "Three autonomous clean resets, failure retention, restricted tools, duplicate/cancel/retry gates and actual negative rollback",
+      "result": "PROVEN",
+      "evidence": [
+        "real-model-three-clean-trials.json",
+        "real-model-integration-case.json",
+        "rollback-e2e.json",
+        "verification.json"
+      ]
+    }
+  ],
+  "required_deliverables": {
+    "README.md": true,
+    "docs/design.html": true,
+    "docs/JIUWEN.md": true,
+    "docs/RUNBOOK.md": true,
+    "docs/REAL-MODEL-ACCEPTANCE.md": true,
+    "config/model.env.example": true,
+    "config/lab.env.example": true,
+    "config/framework.lock.json": true,
+    "compose.yaml": true,
+    "deploy/lima.yaml": true,
+    "scripts/lab": true,
+    ".github/workflows/contract.yml": true,
+    ".github/workflows/build.yml": true
+  },
+  "model_credentials_pending": false,
+  "remaining_required_work": [],
+  "scope_limits": [
+    "One controlled application/regression and this configured model/environment; no generic fault success-rate or production HA claim.",
+    "Source/fixture/session reset retains the VM/database and reported provider cache behavior."
+  ]
+}

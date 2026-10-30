@@ -1,7 +1,7 @@
 {
-  "recorded_at": "2026-10-30T16:04:16.891448+08:00",
+  "recorded_at": "2026-10-30T16:10:59.274357+08:00",
   "repository": "https://github.com/lelezi257/jiuwen-ops-lab",
-  "implementation_sha": "36d2f7112dbf4734fbee86d7fa1b8369251ef060",
+  "implementation_sha": "113eaa09324974cd636de220bc71af3468f05240",
   "workbench": "http://127.0.0.1:18780/",
   "order_api": "http://127.0.0.1:18080/docs",
   "vm": {
@@ -54,5 +54,9 @@
     "Open the workbench; completed cases and real PRs are retained.",
     "Use scripts/lab fault only when intentionally starting another charged real-model experiment."
   ],
-  "note": "Services and data retained. Three clean trials finished; idle runner does not make model calls. Initial integration retries are reported separately."
+  "note": "Services and data retained. Three clean trials finished; idle runner does not make model calls. Initial integration retries are reported separately.",
+  "runtime_components": "runtime-components.json",
+  "final_live_business_smoke": "final-live-business-smoke.json",
+  "final_runner_cleanup": "final-runner-cleanup.json",
+  "completion_audit": "completion-audit.json"
 }
