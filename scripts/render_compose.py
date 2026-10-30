@@ -14,10 +14,14 @@ s['delivery']=service('delivery','delivery',['runner_token','control_token','git
 s['delivery']['read_only']=False;s['delivery']['volumes']+=['work:/work','/var/run/docker.sock:/var/run/docker.sock'];s['delivery']['cap_drop']=[]
 s['runner']=service('runner','runner',['runner_token'])
 s['runner'].update(image='jiuwen-ops-runner:local',build={'context':'.','dockerfile':'deploy/Runner.Dockerfile','args':{'HTTP_PROXY':'${HTTP_PROXY:-}','HTTPS_PROXY':'${HTTPS_PROXY:-}','NO_PROXY':'${NO_PROXY:-}','PIP_INDEX_URL':'${PIP_INDEX_URL:-https://pypi.org/simple}','UV_INDEX_URL':'${UV_INDEX_URL:-https://pypi.org/simple}','APT_MIRROR_SITE':'${APT_MIRROR_SITE:-}','PYTHON_BASE':'${PYTHON_BASE:-python:3.11-slim-bookworm}','DOCKER_CLI_IMAGE':'${DOCKER_CLI_IMAGE:-docker:29.1.3-cli}'}},env_file=['.local/model.env'])
-s['runner']['volumes']+=['./.local/swarm:/config/swarm'];s['runner']['environment']['HOME']='/data/home'
+s['runner']['volumes']+=['./.local/swarm:/data/swarm/config'];s['runner']['environment']['HOME']='/data/home'
 s['runner']['environment'].update({'API_BASE':'${API_BASE:-}','API_KEY':'${API_KEY:-}','MODEL_NAME':'${MODEL_NAME:-}'})
 # Model values come ONLY from the per-service env_file, not global Compose env.
 for key in ['API_BASE','API_KEY','MODEL_NAME']:s['runner']['environment'].pop(key)
+s['runner']['environment'].update({'JIUWENSWARM_DATA_DIR':'/data/swarm','JIUWENSWARM_CONFIG_DIR':'/data/swarm/config'})
+s['native-web']=service('native_observer','observer',env={'HOME':'/data/home','JIUWENSWARM_DATA_DIR':'/data/state','LAB_RECORDINGS':'/recordings/swarm','JIUWENSWARM_ENABLE_ORIGIN_CHECK':'1','JIUWENSWARM_WS_ALLOWED_ORIGIN_HOSTS':'127.0.0.1,localhost,none'})
+s['native-web'].update(image='jiuwen-ops-observer:local',build={'context':'.','dockerfile':'deploy/Observer.Dockerfile','args':{'NODE_BASE':'${NODE_BASE:-node:22-bookworm-slim}','HTTP_PROXY':'${HTTP_PROXY:-}','HTTPS_PROXY':'${HTTPS_PROXY:-}','NO_PROXY':'${NO_PROXY:-}'}},ports=['127.0.0.1:18781:8080'],command=['python','/app/scripts/start_native_observer.py'])
+s['native-web']['volumes']+=['runner:/recordings:ro']
 s['probe']=service('probe','probe',['control_token','verify_db_password'],('ops','app'),{'LAB_VERIFY_SECONDS':'${LAB_VERIFY_SECONDS:-60}','LAB_VERIFY_WINDOWS':'${LAB_VERIFY_WINDOWS:-2}','LAB_VERIFY_MIN_REQUESTS':'${LAB_VERIFY_MIN_REQUESTS:-30}'})
 s['collector']={**base,'command':['python','-m','lab.collector'],'volumes':['collector:/data','logs:/logs:ro']}
 s['db']={'image':'${REGISTRY_MIRROR_PREFIX:-}library/postgres:16.9-alpine','restart':'unless-stopped','networks':['app'],'environment':{'POSTGRES_USER':'orders','POSTGRES_DB':'orders','POSTGRES_PASSWORD_FILE':'/run/secrets/db_password'},'secrets':['db_password','verify_db_password'],'volumes':['postgres:/var/lib/postgresql/data','./deploy/init-db.sh:/docker-entrypoint-initdb.d/10-verifier.sh:ro'],'healthcheck':{'test':['CMD-SHELL','pg_isready -U orders'],'interval':'3s','timeout':'3s','retries':30}}
@@ -25,6 +29,6 @@ s['prometheus']={'image':'${REGISTRY_MIRROR_PREFIX:-}prom/prometheus:v3.4.1','re
 s['alertmanager']={'image':'${REGISTRY_MIRROR_PREFIX:-}prom/alertmanager:v0.28.1','restart':'unless-stopped','networks':['ops'],'volumes':['./config/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro'],'secrets':['control_token'],'user':'0:0'}
 s['loki']={'image':'${REGISTRY_MIRROR_PREFIX:-}grafana/loki:3.5.1','restart':'unless-stopped','networks':['ops'],'volumes':['./config/loki.yml:/etc/loki/config.yml:ro','loki:/loki'],'command':['-config.file=/etc/loki/config.yml']}
 s['registry']={'image':'${REGISTRY_MIRROR_PREFIX:-}library/registry:2.8.3','restart':'unless-stopped','networks':['ops'],'ports':['127.0.0.1:5000:5000'],'volumes':['registry:/var/lib/registry']}
-volumes=['control','evidence','delivery','runner','probe','collector','work','postgres','logs','prometheus','loki','registry']
+volumes=['control','evidence','delivery','runner','probe','collector','work','postgres','logs','prometheus','loki','registry','observer']
 compose={'name':'jiuwen-ops-lab','services':s,'volumes':{v:{} for v in volumes},'networks':{'ops':{},'app':{}},'secrets':{k:{'file':'.local/secrets/'+k} for k in ['control_token','runner_token','db_password','verify_db_password','github_token']}}
 (root/'compose.yaml').write_text(json.dumps(compose,ensure_ascii=False,indent=2)+'\n')

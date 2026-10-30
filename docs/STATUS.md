@@ -1,12 +1,14 @@
 # 实施与验收状态
 
+新增实测：原版 WebUI 已能实时观察同一次 SDK 任务，最小探针及完整订单案例均通过。repair / verify 的 Session 身份、截图、原生归档和 PR #9 的恢复结果见 [原生 WebUI 验收](NATIVE-WEBUI-ACCEPTANCE.md)。此前各阶段证据继续保留。
+
 2026-10-30。**环境、真实故障和工程交付链已经实际通过；真实模型接线、首条集成闭环和三次独立重置验收均已实际通过。** 没有模型替身，也没有把人工补丁验收记成 Agent 修复成功。
 
 | 层次 | 当前结果 | 实际证据与边界 |
 |---|---|---|
 | 公开完整源码/脚本/学习文档 | 已发布 | `lelezi257/jiuwen-ops-lab`，公开且可用作模板；默认 main 保持正常业务源码 |
 | 专用 Lima VM | 已运行 | ARM64、4 vCPU、10 GiB、60 GiB 按需磁盘；未复用其他 VM |
-| 独立部署组件 | 已运行 | 自有 Web/API、runner、取证、工程、probe、日志采集、PostgreSQL、Prometheus、Alertmanager、Loki、registry；订单容器由工程服务独立管理 |
+| 独立部署组件 | 已运行 | 自有 Web/API、独立原版 WebUI 只读观测服务、runner、取证、工程、probe、日志采集、PostgreSQL、Prometheus、Alertmanager、Loki、registry；订单容器由工程服务独立管理 |
 | 九问源码与依赖 | 已安装/检查通过 | 官方固定 Swarm/Core/Protocol 源码；255个已安装包依赖兼容检查通过；未修改上游 Agent 实现 |
 | 官方 SDK / CLI / Runtime | 实测通过（无模型） | protocol.capabilities、实际 Runtime mode.list 启动/退出、非法参数失败终态/退出码；[报告](evidence/sdk-runtime.json) |
 | 正常业务基线 | 实测通过 | 连续两个60秒窗口，每窗口每条正常路径110次，金额、实际数据库记录、新旧订单与非法输入语义均通过；[报告](evidence/baseline.json) |

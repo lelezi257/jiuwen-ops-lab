@@ -6,8 +6,8 @@ from fastapi import FastAPI,Depends,HTTPException,Request
 from fastapi.responses import FileResponse,StreamingResponse
 from lab.common import *
 init_store();mutex=threading.RLock();DELIVERY='http://delivery:8080';PROBE='http://probe:8080'
-TERMINAL={'DELIVERY_ACCEPTANCE_PASSED','RESOLVED_FIXED','RECOVERED_ROLLBACK','NEEDS_HUMAN','CANCELLED','NO_ACTION'}
-AGENT_STATES={'REPAIR_QUEUED','REPAIRING','VERIFY_AGENT_QUEUED','VERIFY_AGENT_RUNNING'}
+TERMINAL={'DELIVERY_ACCEPTANCE_PASSED','RESOLVED_FIXED','RECOVERED_ROLLBACK','NEEDS_HUMAN','CANCELLED','NO_ACTION','TRACE_PROBE_COMPLETED'}
+AGENT_STATES={'REPAIR_QUEUED','REPAIRING','VERIFY_AGENT_QUEUED','VERIFY_AGENT_RUNNING','TRACE_PROBE_QUEUED','TRACE_PROBE_RUNNING'}
 def events(cid):return sorted((x for x in all_objects('event') if x['case_id']==cid),key=lambda x:x['time'])
 def event(cid,kind,data,key=None):
  key=key or ident('event')
@@ -31,7 +31,7 @@ def create_case(trigger):
    relevant=[a for a in trigger['alerts'] if not a.get('labels',{}).get('release_id') or a['labels']['release_id']==release['release_id']]
    if not relevant:return {'ignored':True,'reason':'Alert belongs to an older release'}
    trigger={**trigger,'alerts':relevant}
-  existing=next((c for c in all_objects('case') if c['observed_release']==release['release_id']),None)
+  existing=next((c for c in all_objects('case') if c.get('kind')!='trace_probe' and c['observed_release']==release['release_id']),None)
   if existing:return existing
   cid=ident('case');c={'id':cid,'created_at':now(),'state':'REPAIR_QUEUED','observed_release':release['release_id'],'observed_sha':release['source_sha'],'trigger':trigger,'cancelled':False,'attempt':0,'feedback':None}
   save(c,'REPAIR_QUEUED','Waiting for runner / real model configuration');return c
@@ -84,7 +84,7 @@ async def scheduler():
  while True:
   for c in all_objects('case'):
    try:
-    if c['state'] in ['REPAIRING','VERIFY_AGENT_RUNNING'] and now()-c.get('lease_at',now())>90:
+    if c['state'] in ['REPAIRING','VERIFY_AGENT_RUNNING','TRACE_PROBE_RUNNING'] and now()-c.get('lease_at',now())>90:
      c['cancelled']=True;save(c,'NEEDS_HUMAN','Runner lease lost; stop and reconcile existing effects, no automatic replay')
     elif c['state'] not in TERMINAL:await asyncio.to_thread(transition,c)
    except Exception as exc:
@@ -131,6 +131,14 @@ def stream(cid:str,request:Request,after:str=''):
     seen=row['id'];yield 'id: '+seen+'\nevent: timeline\ndata: '+json.dumps(row,ensure_ascii=False)+'\n\n'
    yield ': heartbeat\n\n';await asyncio.sleep(2)
  return StreamingResponse(generate(),media_type='text/event-stream')
+@app.post('/api/trace-probe',dependencies=[Depends(operator)])
+def trace_probe():
+ with mutex:
+  if any(c['state'] not in TERMINAL for c in all_objects('case')):raise HTTPException(409,'Finish active cases before the isolated trace probe')
+  cur=call(DELIVERY,'/ops/current',{})
+  if not cur['consistent']:raise HTTPException(409,'Release mismatch')
+  c={'id':ident('trace-probe'),'kind':'trace_probe','created_at':now(),'observed_release':cur['ledger']['release_id'],'observed_sha':cur['ledger']['source_sha'],'trigger':{'source':'operator_trace_probe'},'cancelled':False,'attempt':0,'feedback':None}
+  return save(c,'TRACE_PROBE_QUEUED','Read-only real-model diagnostic; no repair or deployment')
 @app.post('/api/investigate',dependencies=[Depends(operator)])
 def investigate():return create_case({'source':'operator','time':now()})
 @app.post('/alerts',dependencies=[Depends(operator)])
@@ -162,10 +170,10 @@ def internal_case(cid:str):return case(cid)
 @app.post('/internal/claim',dependencies=[Depends(worker)])
 def claim(body:dict):
  with mutex:
-  if any(x['state'] in ['REPAIRING','VERIFY_AGENT_RUNNING'] for x in all_objects('case')):return None
+  if any(x['state'] in ['REPAIRING','VERIFY_AGENT_RUNNING','TRACE_PROBE_RUNNING'] for x in all_objects('case')):return None
   for c in all_objects('case'):
-   if c['state'] not in ['REPAIR_QUEUED','VERIFY_AGENT_QUEUED'] or c['cancelled']:continue
-   c['phase']='repair' if c['state']=='REPAIR_QUEUED' else 'verify';c['attempt']+=1;c['attempt_id']=ident('attempt');c['lease_at']=now();save(c,'REPAIRING' if c['phase']=='repair' else 'VERIFY_AGENT_RUNNING');return c
+   if c['state'] not in ['REPAIR_QUEUED','VERIFY_AGENT_QUEUED','TRACE_PROBE_QUEUED'] or c['cancelled']:continue
+   c['phase']={'REPAIR_QUEUED':'repair','VERIFY_AGENT_QUEUED':'verify','TRACE_PROBE_QUEUED':'trace_probe'}[c['state']];c['attempt']+=1;c['attempt_id']=ident('attempt');c['lease_at']=now();save(c,{'repair':'REPAIRING','verify':'VERIFY_AGENT_RUNNING','trace_probe':'TRACE_PROBE_RUNNING'}[c['phase']]);return c
  return None
 @app.post('/internal/cases/{cid}/heartbeat',dependencies=[Depends(worker)])
 def heartbeat(cid:str,body:dict):
@@ -177,14 +185,23 @@ def heartbeat(cid:str,body:dict):
 def record(cid:str,body:dict):
  c=case(cid)
  if c.get('attempt_id')!=body['attempt_id']:raise HTTPException(409,'Attempt changed')
- key=cid+':'+body['attempt_id']+':'+str(body.get('sequence',ident('s')));event(cid,body['kind'],body['data'],key);return {'ok':True}
+ with mutex:
+  c=case(cid)
+  if c.get('attempt_id')!=body['attempt_id']:raise HTTPException(409,'Attempt changed')
+  data=body.get('data',{});sid=data.get('session_id') if isinstance(data,dict) else None
+  if sid:
+   runs=c.setdefault('sdk_runs',{});run=runs.get(body['attempt_id'])
+   if run and run['session_id']!=sid:raise HTTPException(409,'SDK session changed within one attempt')
+   if not run:
+    runs[body['attempt_id']]={'attempt_id':body['attempt_id'],'phase':c['phase'],'session_id':sid,'request_id':data.get('request_id'),'started_at':now()};save(c)
+  key=cid+':'+body['attempt_id']+':'+str(body.get('sequence',ident('s')));event(cid,body['kind'],body['data'],key);return {'ok':True}
 @app.post('/internal/cases/{cid}/result',dependencies=[Depends(worker)])
 def result(cid:str,body:dict):
  with mutex:
   c=case(cid)
   if c.get('attempt_id')!=body['attempt_id']:raise HTTPException(409,'Attempt changed')
   if c['cancelled'] or c['state'] in TERMINAL:return {'recorded':False,'reason':'Case already terminal'}
-  if c['state'] not in ['REPAIRING','VERIFY_AGENT_RUNNING']:return {'recorded':False,'reason':'Attempt already left Agent execution; do not replay result transitions'}
+  if c['state'] not in ['REPAIRING','VERIFY_AGENT_RUNNING','TRACE_PROBE_RUNNING']:return {'recorded':False,'reason':'Attempt already left Agent execution; do not replay result transitions'}
   event(cid,'sdk_result',body['result']);c['agent_result']=body['result'];save(c)
   if body['result'].get('status')!='completed' or body['result'].get('exit_code')!=0:return save(c,'NEEDS_HUMAN','Official SDK run did not complete successfully')
   output=body['result'].get('output_json') or {}
@@ -200,6 +217,9 @@ def result(cid:str,body:dict):
    if not diagnostic:raise ValueError('Actual diagnostic evidence references required')
   except Exception as exc:return save(c,'NEEDS_HUMAN','Evidence validation failed: '+str(exc)[:800])
   if not output.get('evidence_ids'):return save(c,'NEEDS_HUMAN','Actual evidence references required')
+  if c['phase']=='trace_probe':
+   if output.get('pr_number') is not None or output.get('candidate_sha') is not None:return save(c,'NEEDS_HUMAN','Read-only probe returned a write result')
+   return save(c,'TRACE_PROBE_COMPLETED','Real SDK diagnostic completed; native UI verification is recorded separately')
   if c['phase']=='repair':
    status=call(DELIVERY,'/ops/pr-status',{'case_id':cid});pr=status['pr']
    if output.get('pr_number')!=pr['number'] or output.get('candidate_sha')!=pr['head_sha']:return save(c,'NEEDS_HUMAN','Model output does not match actual broker PR')
@@ -229,7 +249,7 @@ def retry(cid:str):
   c=case(cid)
   if c['state'] not in ['NEEDS_HUMAN','CANCELLED'] or c.get('kind')=='engineering_acceptance':raise HTTPException(409,'Not a retriable Agent case')
   cur=call(DELIVERY,'/ops/current',{})
-  target='REPAIR_QUEUED'
+  target='TRACE_PROBE_QUEUED' if c.get('kind')=='trace_probe' else 'REPAIR_QUEUED'
   if c.get('phase')=='verify' and c.get('merge'):
    report=c.get('verification') or {};ledger=cur.get('ledger') or {}
    if not cur['consistent'] or not report.get('passed') or any(ledger.get(k)!=report.get(r) for k,r in [('release_id','release_id'),('source_sha','expected_source_sha'),('image_digest','expected_image_digest')]):raise HTTPException(409,'Verified deployment changed; do not retry an obsolete review')

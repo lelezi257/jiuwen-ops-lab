@@ -20,7 +20,7 @@ if '--in-container' not in sys.argv:
  subprocess.run(['docker','run','--rm','--network','jiuwen-ops-lab_ops','-v',str(root/'scripts/engineering_acceptance.py')+':/checkout/scripts/engineering_acceptance.py:ro','-v',str(root/'.local/secrets/control_token')+':/checkout/.local/secrets/control_token:ro','-v',str(root/'.local/secrets/runner_token')+':/checkout/.local/secrets/runner_token:ro','-w','/checkout','jiuwen-ops-runtime:local','python','scripts/engineering_acceptance.py','--in-container'],check=True);raise SystemExit
 control='http://control:8080'
 for c in request(control,'/api/cases'):
- if c['state'] not in ['RESOLVED_FIXED','DELIVERY_ACCEPTANCE_PASSED','RECOVERED_ROLLBACK','NEEDS_HUMAN','CANCELLED','NO_ACTION']:request(control,'/api/cases/'+c['id']+'/cancel',{})
+ if c['state'] not in ['RESOLVED_FIXED','DELIVERY_ACCEPTANCE_PASSED','RECOVERED_ROLLBACK','NEEDS_HUMAN','CANCELLED','NO_ACTION','TRACE_PROBE_COMPLETED']:request(control,'/api/cases/'+c['id']+'/cancel',{})
 c=request(control,'/api/engineering/start',{});cid=c['id'];print('ENGINEERING ACCEPTANCE ONLY; no model: '+cid,flush=True)
 stop=threading.Event()
 def heartbeat():

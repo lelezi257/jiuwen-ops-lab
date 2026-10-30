@@ -215,11 +215,13 @@
       ],
       "environment": {
         "LAB_DATA": "/data",
-        "HOME": "/data/home"
+        "HOME": "/data/home",
+        "JIUWENSWARM_DATA_DIR": "/data/swarm",
+        "JIUWENSWARM_CONFIG_DIR": "/data/swarm/config"
       },
       "volumes": [
         "runner:/data",
-        "./.local/swarm:/config/swarm"
+        "./.local/swarm:/data/swarm/config"
       ],
       "command": [
         "python",
@@ -236,6 +238,56 @@
       ],
       "env_file": [
         ".local/model.env"
+      ]
+    },
+    "native-web": {
+      "image": "jiuwen-ops-observer:local",
+      "build": {
+        "context": ".",
+        "dockerfile": "deploy/Observer.Dockerfile",
+        "args": {
+          "NODE_BASE": "${NODE_BASE:-node:22-bookworm-slim}",
+          "HTTP_PROXY": "${HTTP_PROXY:-}",
+          "HTTPS_PROXY": "${HTTPS_PROXY:-}",
+          "NO_PROXY": "${NO_PROXY:-}"
+        }
+      },
+      "restart": "unless-stopped",
+      "networks": [
+        "ops"
+      ],
+      "read_only": true,
+      "tmpfs": [
+        "/tmp"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "cap_drop": [
+        "ALL"
+      ],
+      "cap_add": [
+        "DAC_OVERRIDE"
+      ],
+      "environment": {
+        "LAB_DATA": "/data",
+        "HOME": "/data/home",
+        "JIUWENSWARM_DATA_DIR": "/data/state",
+        "LAB_RECORDINGS": "/recordings/swarm",
+        "JIUWENSWARM_ENABLE_ORIGIN_CHECK": "1",
+        "JIUWENSWARM_WS_ALLOWED_ORIGIN_HOSTS": "127.0.0.1,localhost,none"
+      },
+      "volumes": [
+        "observer:/data",
+        "runner:/recordings:ro"
+      ],
+      "command": [
+        "python",
+        "/app/scripts/start_native_observer.py"
+      ],
+      "secrets": [],
+      "ports": [
+        "127.0.0.1:18781:8080"
       ]
     },
     "probe": {
@@ -442,7 +494,8 @@
     "logs": {},
     "prometheus": {},
     "loki": {},
-    "registry": {}
+    "registry": {},
+    "observer": {}
   },
   "networks": {
     "ops": {},

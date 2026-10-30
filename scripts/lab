@@ -26,6 +26,7 @@ case "$command_name" in
   if [[ -f /etc/jiuwen-ops-lab-owner ]]; then python3 scripts/configure_guest_proxy.py; fi
   if ! grep -q '^ORDER_IMAGE=' .local/runtime.env; then python3 scripts/build_baseline.py; fi
   compose build control runner
+  compose build native-web
   compose up -d --no-build
   # File bind mounts retain old inodes; recreate config-driven services on up.
   compose up -d --no-build --no-deps --force-recreate prometheus alertmanager loki
@@ -51,7 +52,7 @@ case "$command_name" in
   compose exec -T runner python /app/scripts/qualify_jiuwen.py --lifecycle
   ;;
  token) cat .local/secrets/control_token ;;
- baseline|fault|investigate)
+ baseline|fault|investigate|trace-probe)
   exec python3 scripts/api.py "$command_name" ;;
  agent-acceptance) exec python3 scripts/agent_acceptance.py "$@" ;;
  smoke) exec python3 scripts/smoke.py "$@" ;;

@@ -6,6 +6,8 @@
 
 **当前：环境和工程交付链已实测通过；真实模型已生成修复与 PR #3，并通过发布后业务合同和新会话复核。首条集成案例含重试；随后三次独立故障重置全部闭环通过、零人工重试，见 STATUS 和真实模型报告。**
 
+**原生实时轨迹已接通并通过真实案例验收：** 工作台可跳转到同一次 SDK Session 的九问原版 WebUI；新增完整案例 PR #9 已恢复，见 [原生 WebUI 实测](docs/NATIVE-WEBUI-ACCEPTANCE.md)。
+
 **当前验收状态请先看 [STATUS](docs/STATUS.md)。模型未配置不代表 Agent 已验证；工程、环境和模型验收分别记录。** 本项目用于受控学习实验，自动操作仅针对你自己的演示仓库与专用 VM。
 
 ## 先理解组件
@@ -18,6 +20,9 @@ flowchart LR
   Runner -->|本地 JSONL 管道| Swarm[官方 Swarm CLI / Runtime]
   Swarm --> Core[官方 Core / DeepAgent]
   Core --> Model[真实模型 API]
+  Core --> Trace[(原生 OTel / SQLite)]
+  Trace -->|共享卷只读| Native[九问原版 WebUI :18781]
+  Control -->|SDK Session 深链接| Native
   Runner -->|host tool 回调 HTTP| Evidence[取证服务 / Loki 与指标]
   Runner -->|读写 / 测试 / PR| Delivery[工程交付服务]
   Control -->|门控合并 / 发布| Delivery
@@ -31,7 +36,7 @@ flowchart LR
 
 Swarm 和 Core 在执行服务的官方子进程里，不是两个 HTTP 服务。我们的 runner 只做 SDK 调用、事件持久化映射、工具回调、取消与错误处理，没有编写另一个模型循环。首版是单 Agent 按阶段执行，不声称使用 Swarm 多 Agent 团队。
 
-详细阅读：[D1 HTML 设计快照](docs/design.html) · [官方九问接线](docs/JIUWEN.md) · [运行与复现](docs/RUNBOOK.md) · [权限和版本链](docs/BOUNDARIES.md) · [验收记录](docs/STATUS.md) · [真实模型实测](docs/REAL-MODEL-ACCEPTANCE.md)。
+详细阅读：[原生 WebUI 与实时轨迹](docs/NATIVE-WEBUI.md) · [D1 HTML 设计快照](docs/design.html) · [官方九问接线](docs/JIUWEN.md) · [运行与复现](docs/RUNBOOK.md) · [权限和版本链](docs/BOUNDARIES.md) · [验收记录](docs/STATUS.md) · [真实模型实测](docs/REAL-MODEL-ACCEPTANCE.md)。
 
 ## Mac 快速开始
 
@@ -55,7 +60,7 @@ scripts/lab vm-sync
 scripts/lab vm-up
 ```
 
-4. 打开 `http://127.0.0.1:18780`；业务 API 在 `http://127.0.0.1:18080/docs`。用 `scripts/lab token` 获取本地工作台操作令牌。
+4. 打开 `http://127.0.0.1:18780`；原生 WebUI 在 `http://127.0.0.1:18781`，从事件内的 Session 链接打开「轨迹分析」。业务 API 在 `http://127.0.0.1:18080/docs`。用 `scripts/lab token` 获取本地工作台操作令牌。
 5. 验证正常基线，再制造故障：
 
 ```bash
@@ -110,6 +115,7 @@ Docker CLI/Compose 需可用。资源建议与 VM 相同。Docker socket 只给�
 scripts/lab vm-status
 scripts/lab token
 scripts/lab investigate
+scripts/lab trace-probe  # 只读模型任务，先验证原生实时轨迹
 scripts/lab configure-model
 scripts/lab smoke
 # VM 内：scripts/lab logs runner / scripts/lab logs delivery

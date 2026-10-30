@@ -104,3 +104,15 @@ python3 scripts/rollback_acceptance.py --case-id engineering-替换为实际ID
 Mac 上脚本通过专用 Lima VM 操作，VM/Linux 内需具备 Docker 权限。脚本只接受明确的人工工程验收事件，在实际部署成功进入 VERIFYING 后停止该订单容器，观察控制中心自动回滚与独立业务验证。正常工程脚本此时因未达到正向通过终态而退出；负向脚本应报告 RECOVERED_ROLLBACK，通过的是回滚保护分支，不是候选或 Agent 修复。两边日志和真实GitHub记录均保留。
 
 工作台“重新尝试”会检查实际副作用。修复阶段仅在原事故源码仍运行、尚未合并时允许重新排队；发布后的模型只读复核失败，只有原独立验证报告仍匹配当前 release/source/digest，才会重跑只读验证会话。源码修复、PR、合并与部署不会因此被回放。重复试验命令会记录每轮终态；一轮已经终止的失败不妨碍记录剩余轮次，但仍活动的任务超时会停止进一步注入故障，任一轮失败使最终退出码为1。
+
+## 原生实时轨迹
+
+从工作台事件中的 SDK Session 链接打开 `http://127.0.0.1:18781/chat/SESSION_ID`，再点「轨迹分析」。先用 `scripts/lab trace-probe` 验证只读最小链路，再跑完整修复。部署、旧配置/VM 升级、原版 UI 的只读能力边界和官方依据见 [NATIVE-WEBUI](NATIVE-WEBUI.md)。
+
+在 VM 内可对已有 Session 做不调用模型的传输与权限检查：
+
+```bash
+sudo docker compose --env-file .local/lab.env --env-file .local/runtime.env exec -T native-web python /app/scripts/check_native_observer.py SESSION_ID
+```
+
+原生 API 采样可在 Mac 执行 `python3 scripts/observe_native_trace.py CASE_ID`。它只读取现有事件和原生数据，不创建修复、不代替浏览器验收。

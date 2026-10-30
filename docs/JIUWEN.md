@@ -15,7 +15,7 @@
     runner --带任务身份的HTTP--> 我们的取证/工程服务
 ```
 
-首版不部署 Swarm Web、Gateway、AgentServer，不通过 WebSocket 私有消息驱动它，也不重写 `DeepAgent`。能力对应既有学习地图的 C3 单 Agent，宿主边界对应 S2 Process SDK。调查/修复任务与部署后验证任务使用不同新 Session；CI 等待和发布状态属于控制中心，不让模型空转等待。
+执行侧不部署完整 Gateway/AgentServer，不通过 WebSocket 消息驱动模型，也不重写 `DeepAgent`。现已增加原版 WebUI 与官方读取组件组成的独立只读观测服务，见 [原生轨迹接线](NATIVE-WEBUI.md)。能力对应既有学习地图的 C3 单 Agent，宿主边界对应 S2 Process SDK。调查/修复任务与部署后验证任务使用不同新 Session；CI 等待和发布状态属于控制中心，不让模型空转等待。
 
 ## 一次调用
 
@@ -29,7 +29,7 @@
 8. SDK 负责协议身份、连续 sequence、终态与 OS 退出码校验。宿主还检查业务结果与真实 PR 账本一致。`chat.final` 和 EOF 都不是成功。
 9. 取消传给同一个 run 的 asyncio.Event。已发生的工具副作用保留并对账，不盲目重试。
 
-配置入口是 `.local/model.env` 和单独挂载的 `.local/swarm/config.yaml`。模型 Key 不进入 run JSON、不挂入候选测试容器、不进入 Git。官方配置字段为 `models.defaults[].model_client_config`，使用 API_BASE/API_KEY/MODEL_NAME 等环境插值。
+配置入口是 `.local/model.env` 和单独挂载的 `.local/swarm/config.yaml`。目录实际挂在 `/data/swarm/config`，由 `JIUWENSWARM_DATA_DIR/config/config.yaml` 读取；仅设置 `JIUWENSWARM_CONFIG_DIR` 不足以更改读取位置。模型 Key 不进入 run JSON、不挂入候选测试容器、不进入 Git。官方配置字段为 `models.defaults[].model_client_config`，使用 API_BASE/API_KEY/MODEL_NAME 等环境插值。
 
 ## 固定源码
 

@@ -27,6 +27,11 @@
       "hostIP": "127.0.0.1"
     },
     {
+      "guestPort": 18781,
+      "hostPort": 18781,
+      "hostIP": "127.0.0.1"
+    },
+    {
       "guestPort": 18080,
       "hostPort": 18080,
       "hostIP": "127.0.0.1"

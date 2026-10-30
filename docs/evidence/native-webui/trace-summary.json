@@ -1,0 +1,485 @@
+{
+  "collected_at": 1793354051.58003,
+  "source": "Original Jiuwen trajectory HTTP API plus official SDK receipts; no business-event-to-span conversion",
+  "cases": [
+    {
+      "case_id": "trace-probe-472cb4b1fbb5462e",
+      "kind": "trace_probe",
+      "state": "TRACE_PROBE_COMPLETED",
+      "attempt": 1,
+      "sessions": [
+        {
+          "attempt_id": "attempt-951717613b3a4b23",
+          "phase": "trace_probe",
+          "session_id": "process_cli_1a18c30fde1_0bb38e92f0c2",
+          "request_id": "fded546b-224b-456a-a373-0506ed400d97",
+          "started_at": 1793353383.4118495,
+          "trace_ids": [
+            "bc21cd4b3fd1bf004aaba990758950a7"
+          ],
+          "native_subjects": {
+            "schema_version": 1,
+            "session_id": "process_cli_1a18c30fde1_0bb38e92f0c2",
+            "items": [
+              {
+                "subject_id": "main",
+                "display_name": "Main Agent",
+                "kind": "main_agent",
+                "parent_id": null,
+                "record_count": 25,
+                "trace_count": 1,
+                "first_start_time_unix_nano": "1793353384938387874",
+                "last_observed_time_unix_nano": "1793353424044973635",
+                "first_revision": 1,
+                "revision": 37,
+                "has_error": false,
+                "running": false
+              }
+            ],
+            "watermark": 37,
+            "store_epoch": "bfd588a4047c4fb4958a3f3f29d15a1f"
+          },
+          "native_span_names": {
+            "context.window.commit": 5,
+            "chat DeepSeek-V4.1-Flash-1017": 5,
+            "execute_tool query_metrics": 1,
+            "agent.ops-order-trace_probe.react_iteration.1": 1,
+            "llm.reasoning": 4,
+            "execute_tool query_logs": 1,
+            "agent.ops-order-trace_probe.react_iteration.2": 1,
+            "execute_tool get_running_release": 1,
+            "agent.ops-order-trace_probe.react_iteration.3": 1,
+            "execute_tool read_evidence": 1,
+            "agent.ops-order-trace_probe.react_iteration.4": 1,
+            "agent.ops-order-trace_probe.react_iteration.5": 1,
+            "agent.ops-order-trace_probe.task_iteration.1": 1,
+            "agent.agent.code.normal.process_cli_1a18c30fde1_0bb38e92f0c2": 1
+          },
+          "native_contains_case_id": true,
+          "request_contains_case_id": true,
+          "sdk_receipt": {
+            "session_id": "process_cli_1a18c30fde1_0bb38e92f0c2",
+            "request_id": "fded546b-224b-456a-a373-0506ed400d97",
+            "status": "completed",
+            "exit_code": 0,
+            "usage": {
+              "input_tokens": 77552,
+              "output_tokens": 1365,
+              "total_tokens": 78917,
+              "cache_tokens": 59008,
+              "cache_hit_rate": "76.1%",
+              "total_cost": 0.022097,
+              "model_calls": 5
+            },
+            "output_json": {
+              "finding": "trace_probe 完成，三项工具均返回真实结果。Prometheus：order_requests_total[2m] 仅 /orders 与 /orders/{id} 的 status=200，各约 203.3 次/2m，无任何非 200 状态。Loki：最近 300s、limit=100 共取回 100 条 order-api 请求日志，全部 status=200、error=null、duration_ms 约 3–12ms，source_sha=3cfdef1bc4d304448ea169cc2196e758f9580306、release_id=release-case-4b4e469413d44d37，与 incident 标识完全一致。get_running_release：容器 a309c5162c04… 运行中，image_id sha256:707382fd…，repo_digests localhost:5000/jiuwen-order@sha256:707382fd…，source_sha 与 release_id 与账本 known_good 一致（consistent=true，verification_id=verify-dfcc00a382464f99）；账本前一版本为 fault-release-bac6aa10b5b544e4，更早为 release-case-3e4736dcce344ac4。当前服务健康：无错误、无 5xx、延迟正常、运行身份与账本相符。唯一需注意的标注瑕疵：Loki 流标签 detected_level=error，但其下 100 条日志载荷均为 error=null、status=200，属流级标签与载荷不一致（不影响上述结论的实质一致性）。未做任何修复、PR 或部署操作。",
+              "evidence_ids": [
+                "ev-3e16d226cb324052",
+                "ev-6a8b65fd57124355"
+              ],
+              "pr_number": null,
+              "candidate_sha": null,
+              "needs_human": false
+            }
+          },
+          "live_native_revisions": [
+            {
+              "at": 1793353383.787219,
+              "case_state": "TRACE_PROBE_RUNNING",
+              "revision": 0,
+              "record_count": 0
+            },
+            {
+              "at": 1793353385.812757,
+              "case_state": "TRACE_PROBE_RUNNING",
+              "revision": 5,
+              "record_count": 5
+            },
+            {
+              "at": 1793353390.901729,
+              "case_state": "TRACE_PROBE_RUNNING",
+              "revision": 11,
+              "record_count": 9
+            },
+            {
+              "at": 1793353399.0828679,
+              "case_state": "TRACE_PROBE_RUNNING",
+              "revision": 13,
+              "record_count": 10
+            },
+            {
+              "at": 1793353400.0980911,
+              "case_state": "TRACE_PROBE_RUNNING",
+              "revision": 18,
+              "record_count": 14
+            },
+            {
+              "at": 1793353407.201149,
+              "case_state": "TRACE_PROBE_RUNNING",
+              "revision": 20,
+              "record_count": 15
+            },
+            {
+              "at": 1793353408.2520971,
+              "case_state": "TRACE_PROBE_RUNNING",
+              "revision": 25,
+              "record_count": 19
+            },
+            {
+              "at": 1793353413.346694,
+              "case_state": "TRACE_PROBE_RUNNING",
+              "revision": 27,
+              "record_count": 20
+            },
+            {
+              "at": 1793353414.3634439,
+              "case_state": "TRACE_PROBE_RUNNING",
+              "revision": 32,
+              "record_count": 24
+            },
+            {
+              "at": 1793353424.513761,
+              "case_state": "TRACE_PROBE_RUNNING",
+              "revision": 37,
+              "record_count": 25
+            },
+            {
+              "at": 1793353431.641195,
+              "case_state": "TRACE_PROBE_COMPLETED",
+              "revision": 37,
+              "record_count": 25
+            }
+          ],
+          "archive": "native-trace-probe-472cb4b1fbb5462e-trace_probe-attempt-951717613b3a4b23.zip",
+          "archive_sha256": "07866aa94e20b7119dc1c1b3ec880e7495487c96b2d176864a31da54a68e3099"
+        }
+      ]
+    },
+    {
+      "case_id": "case-299bde1cc66a4ca7",
+      "kind": "incident",
+      "state": "RESOLVED_FIXED",
+      "attempt": 2,
+      "sessions": [
+        {
+          "attempt_id": "attempt-00ade15a38d74c7a",
+          "phase": "repair",
+          "session_id": "process_cli_1a18c32c041_b4f3201e0834",
+          "request_id": "f2fb6f97-c143-48b2-9440-f6f062e0acbe",
+          "started_at": 1793353498.7039485,
+          "trace_ids": [
+            "672dcb5bd62b2e066d84c85dd64b5678"
+          ],
+          "native_subjects": {
+            "schema_version": 1,
+            "session_id": "process_cli_1a18c32c041_b4f3201e0834",
+            "items": [
+              {
+                "subject_id": "main",
+                "display_name": "Main Agent",
+                "kind": "main_agent",
+                "parent_id": null,
+                "record_count": 49,
+                "trace_count": 1,
+                "first_start_time_unix_nano": "1793353500125572923",
+                "last_observed_time_unix_nano": "1793353566128967950",
+                "first_revision": 1,
+                "revision": 73,
+                "has_error": false,
+                "running": false
+              }
+            ],
+            "watermark": 73,
+            "store_epoch": "57ea0bb714774f2d81f6451af488349d"
+          },
+          "native_span_names": {
+            "context.window.commit": 9,
+            "chat DeepSeek-V4.1-Flash-1017": 9,
+            "execute_tool get_running_release": 1,
+            "execute_tool query_metrics": 1,
+            "execute_tool query_logs": 1,
+            "agent.ops-order-repair.react_iteration.1": 1,
+            "llm.reasoning": 5,
+            "execute_tool get_release_diff": 1,
+            "execute_tool create_workspace": 1,
+            "agent.ops-order-repair.react_iteration.2": 1,
+            "execute_tool list_source": 1,
+            "execute_tool get_diff": 2,
+            "agent.ops-order-repair.react_iteration.3": 1,
+            "execute_tool read_source": 3,
+            "agent.ops-order-repair.react_iteration.4": 1,
+            "execute_tool write_source": 2,
+            "agent.ops-order-repair.react_iteration.5": 1,
+            "execute_tool run_tests": 1,
+            "agent.ops-order-repair.react_iteration.6": 1,
+            "agent.ops-order-repair.react_iteration.7": 1,
+            "execute_tool create_pull_request": 1,
+            "agent.ops-order-repair.react_iteration.8": 1,
+            "agent.ops-order-repair.react_iteration.9": 1,
+            "agent.ops-order-repair.task_iteration.1": 1,
+            "agent.agent.code.normal.process_cli_1a18c32c041_b4f3201e0834": 1
+          },
+          "native_contains_case_id": true,
+          "request_contains_case_id": true,
+          "sdk_receipt": {
+            "session_id": "process_cli_1a18c32c041_b4f3201e0834",
+            "request_id": "f2fb6f97-c143-48b2-9440-f6f062e0acbe",
+            "status": "completed",
+            "exit_code": 0,
+            "usage": {
+              "input_tokens": 219438,
+              "output_tokens": 1879,
+              "total_tokens": 221317,
+              "cache_tokens": 192256,
+              "cache_hit_rate": "87.6%",
+              "total_cost": 0.061969,
+              "model_calls": 9
+            },
+            "output_json": {
+              "finding": "POST /orders 在大约 16% 的请求上返回 HTTP 500（每 2 分钟约 35.9 次 500，而 200 为 191.3），错误为 AttributeError: 'NoneType' object has no attribute 'strip'；而 GET /orders/{id} 一直正常。调用栈指向 apps/order_api/pricing.py:total_cents。发布 fault-release-66ebf9bcff0946c1（ca2d05d）与已知正常的 release-case-4b4e469413d44d37（3cfdef1）之间的 diff 只做了一处改动：`normalized = (coupon or '').strip().upper()` 变成 `normalized = coupon.strip().upper()`，去掉了对 None 的处理；但 Order 模型将 coupon 声明为可选（`str|None = None`），因此省略该字段的客户端会触发 AttributeError，最终返回 500。我已在 apps/order_api/pricing.py 中恢复 `(coupon or '').strip().upper()`，并新增 tests/order/test_pricing_optional_coupon.py 覆盖 coupon=None、空字符串、纯空白、大小写和空白归一化的 SAVE10，以及非法 coupon 被拒绝。run_tests（test-6e654a4e4ade4a5c）通过：oracle 确认 coupon 为 null 时按 20000 下单并持久化且幂等，SAVE10 为 18000，空字符串为 20000，' save10 ' 为 18000，非法输入被拒绝；6/6 单元测试通过。PR #9 基于 ca2d05d 创建，head 为 60cd87a60485e002e17dab162878d83336cb8c2a。",
+              "evidence_ids": [
+                "ev-9750bdd2fbc9463b",
+                "ev-74cb19321b0b4cd9",
+                "test-6e654a4e4ade4a5c"
+              ],
+              "pr_number": 9,
+              "candidate_sha": "60cd87a60485e002e17dab162878d83336cb8c2a",
+              "needs_human": false
+            }
+          },
+          "live_native_revisions": [
+            {
+              "at": 1793353520.739509,
+              "case_state": "REPAIRING",
+              "revision": 40,
+              "record_count": 30
+            },
+            {
+              "at": 1793353524.788759,
+              "case_state": "REPAIRING",
+              "revision": 48,
+              "record_count": 36
+            },
+            {
+              "at": 1793353540.092597,
+              "case_state": "REPAIRING",
+              "revision": 50,
+              "record_count": 37
+            },
+            {
+              "at": 1793353544.203889,
+              "case_state": "REPAIRING",
+              "revision": 55,
+              "record_count": 40
+            },
+            {
+              "at": 1793353550.300075,
+              "case_state": "REPAIRING",
+              "revision": 62,
+              "record_count": 45
+            },
+            {
+              "at": 1793353554.3479412,
+              "case_state": "REPAIRING",
+              "revision": 63,
+              "record_count": 45
+            },
+            {
+              "at": 1793353555.364508,
+              "case_state": "REPAIRING",
+              "revision": 64,
+              "record_count": 46
+            },
+            {
+              "at": 1793353558.412639,
+              "case_state": "REPAIRING",
+              "revision": 69,
+              "record_count": 49
+            },
+            {
+              "at": 1793353566.57653,
+              "case_state": "REPAIRING",
+              "revision": 73,
+              "record_count": 49
+            },
+            {
+              "at": 1793353583.9174242,
+              "case_state": "CI_PENDING",
+              "revision": 73,
+              "record_count": 49
+            },
+            {
+              "at": 1793353606.379463,
+              "case_state": "READY_TO_MERGE",
+              "revision": 73,
+              "record_count": 49
+            },
+            {
+              "at": 1793353610.4674659,
+              "case_state": "MERGING",
+              "revision": 73,
+              "record_count": 49
+            },
+            {
+              "at": 1793353622.694565,
+              "case_state": "BUILDING",
+              "revision": 73,
+              "record_count": 49
+            },
+            {
+              "at": 1793353837.518471,
+              "case_state": "DEPLOYING",
+              "revision": 73,
+              "record_count": 49
+            },
+            {
+              "at": 1793353843.6643891,
+              "case_state": "VERIFYING",
+              "revision": 73,
+              "record_count": 49
+            },
+            {
+              "at": 1793353968.820332,
+              "case_state": "VERIFY_AGENT_QUEUED",
+              "revision": 73,
+              "record_count": 49
+            },
+            {
+              "at": 1793353969.856622,
+              "case_state": "VERIFY_AGENT_RUNNING",
+              "revision": 73,
+              "record_count": 49
+            },
+            {
+              "at": 1793354019.9737768,
+              "case_state": "RESOLVED_FIXED",
+              "revision": 73,
+              "record_count": 49
+            }
+          ],
+          "archive": "native-case-299bde1cc66a4ca7-repair-attempt-00ade15a38d74c7a.zip",
+          "archive_sha256": "2d87c9a1b6dadc7eaebbb5229f021265da3cf2289addb26bb703e6daa095b631"
+        },
+        {
+          "attempt_id": "attempt-23c8d3efe6b34f3d",
+          "phase": "verify",
+          "session_id": "process_cli_1a18c39fafb_a093c4bf9ee4",
+          "request_id": "a60e4c4e-33b2-4b29-9945-864916b5ffd3",
+          "started_at": 1793353972.49437,
+          "trace_ids": [
+            "0d6d6156a2bd80fddbeb21dc641cf470"
+          ],
+          "native_subjects": {
+            "schema_version": 1,
+            "session_id": "process_cli_1a18c39fafb_a093c4bf9ee4",
+            "items": [
+              {
+                "subject_id": "main",
+                "display_name": "Main Agent",
+                "kind": "main_agent",
+                "parent_id": null,
+                "record_count": 18,
+                "trace_count": 1,
+                "first_start_time_unix_nano": "1793353973906406949",
+                "last_observed_time_unix_nano": "1793354011454503320",
+                "first_revision": 1,
+                "revision": 27,
+                "has_error": false,
+                "running": false
+              }
+            ],
+            "watermark": 27,
+            "store_epoch": "736656556d2b42139ebc84c168e944c1"
+          },
+          "native_span_names": {
+            "context.window.commit": 3,
+            "chat DeepSeek-V4.1-Flash-1017": 3,
+            "llm.reasoning": 3,
+            "execute_tool get_running_release": 1,
+            "execute_tool query_metrics": 1,
+            "agent.ops-order-verify.react_iteration.1": 1,
+            "execute_tool query_logs": 1,
+            "execute_tool get_release_diff": 1,
+            "agent.ops-order-verify.react_iteration.2": 1,
+            "agent.ops-order-verify.react_iteration.3": 1,
+            "agent.ops-order-verify.task_iteration.1": 1,
+            "agent.agent.code.normal.process_cli_1a18c39fafb_a093c4bf9ee4": 1
+          },
+          "native_contains_case_id": true,
+          "request_contains_case_id": true,
+          "sdk_receipt": {
+            "session_id": "process_cli_1a18c39fafb_a093c4bf9ee4",
+            "request_id": "a60e4c4e-33b2-4b29-9945-864916b5ffd3",
+            "status": "completed",
+            "exit_code": 0,
+            "usage": {
+              "input_tokens": 231608,
+              "output_tokens": 2614,
+              "total_tokens": 234222,
+              "cache_tokens": 147712,
+              "cache_hit_rate": "63.8%",
+              "total_cost": 0.065582,
+              "model_calls": 3
+            },
+            "output_json": {
+              "finding": "复核通过，未发现不一致。运行时身份与验证报告的期望值完全一致：source_sha=cea20632b537196fe07092171762ff897e884e2d，image=localhost:5000/jiuwen-order@sha256:c80ede06cadbbacd149067cd3b9aa35fd3d382bb8e9cb7e20254727fce9ef139，容器 7fa18bcc… 处于 running 状态；发布记录（ledger）中 release-case-299bde1cc66a4ca7 为 ready，上一个版本是故障版本 fault-release-66ebf9bcff0946c1（ca2d05de…），consistent=true。独立验证的两个 60s 窗口均 passed（coupon 108/no_coupon 108、107/107，每路径均远高于 30 条下限），全部请求返回 200，写入数据库的行与返回一致（无券 total_cents=20000、SAVE10=18000），before/after 的 source_sha 与镜像 digest 完全相同，old_order_ok 与 invalid_input_ok 均为 true。Prometheus 2m 窗口内只有 /orders、/orders/{id} 的 200（约 611/612 次）及 /orders 422=0，无 5xx；Loki 近 5 分钟日志 status=200、error=null，仅验证边界处出现 2 条 /orders 422（非法输入探针，属预期行为）。唯一值得记录但不影响结论的点：release diff 显示 known_good（3cfdef1b…）到当前 running（cea20632…）为空，即修复后的源码内容与已知良好版本一致（revert 型修复导致 commit SHA 不同而 tree 相同），因此候选 SHA 与 known_good SHA 不同并不矛盾。未观察到回归，建议关闭 verify 阶段。",
+              "evidence_ids": [
+                "ev-ff998654f3fb40d7",
+                "ev-b1576235002142bd"
+              ],
+              "pr_number": null,
+              "candidate_sha": "cea20632b537196fe07092171762ff897e884e2d",
+              "needs_human": false
+            }
+          },
+          "live_native_revisions": [
+            {
+              "at": 1793353972.974169,
+              "case_state": "VERIFY_AGENT_RUNNING",
+              "revision": 0,
+              "record_count": 0
+            },
+            {
+              "at": 1793353975.0521631,
+              "case_state": "VERIFY_AGENT_RUNNING",
+              "revision": 5,
+              "record_count": 5
+            },
+            {
+              "at": 1793353982.401349,
+              "case_state": "VERIFY_AGENT_RUNNING",
+              "revision": 13,
+              "record_count": 11
+            },
+            {
+              "at": 1793353985.540576,
+              "case_state": "VERIFY_AGENT_RUNNING",
+              "revision": 16,
+              "record_count": 13
+            },
+            {
+              "at": 1793353986.579467,
+              "case_state": "VERIFY_AGENT_RUNNING",
+              "revision": 22,
+              "record_count": 17
+            },
+            {
+              "at": 1793354011.550047,
+              "case_state": "VERIFY_AGENT_RUNNING",
+              "revision": 27,
+              "record_count": 18
+            },
+            {
+              "at": 1793354019.9737768,
+              "case_state": "RESOLVED_FIXED",
+              "revision": 27,
+              "record_count": 18
+            }
+          ],
+          "archive": "native-case-299bde1cc66a4ca7-verify-attempt-23c8d3efe6b34f3d.zip",
+          "archive_sha256": "6c6d23e90a853452c4f4c736477cee12bfab87174eeff04793dcf7f89770cbd5"
+        }
+      ]
+    }
+  ]
+}

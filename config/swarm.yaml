@@ -19,3 +19,8 @@ models:
         verify_ssl: true
       model_config_obj: {}
       is_default: true
+
+trajectory_ui:
+  enabled: true
+  diagnosis_enabled: true
+  retention_days: 7

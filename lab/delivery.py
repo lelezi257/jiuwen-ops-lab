@@ -38,7 +38,7 @@ def current():
  return {'runtime':fact,'ledger':ledger,'known_good':get('release','good'),'consistent':bool(ledger and fact['source_sha']==ledger['source_sha'] and fact['release_id']==ledger['release_id'] and ledger['image_digest'] in fact['repo_digests'])}
 def case_active(cid):
  c=call('http://control:8080','/internal/cases/'+cid,role='runner')
- if c.get('cancelled') or c['state'] not in ['REPAIRING','INVESTIGATING','VERIFY_AGENT_RUNNING']:raise HTTPException(409,'Case does not allow agent tools')
+ if c.get('cancelled') or c['state'] not in ['REPAIRING','INVESTIGATING','VERIFY_AGENT_RUNNING','TRACE_PROBE_RUNNING']:raise HTTPException(409,'Case does not allow agent tools')
  return c
 
 def workspace(cid):
@@ -75,6 +75,7 @@ def health():return {'ok':True,'github_configured':bool(secret('github_token')),
 @app.post('/tools/{name}',dependencies=[Depends(worker)])
 def tool(name:str,args:dict):
  cid=args.get('case_id','');c=case_active(cid)
+ if c['state'] in ['VERIFY_AGENT_RUNNING','TRACE_PROBE_RUNNING'] and name not in ['get_running_release','get_release_diff']:raise HTTPException(403,'This Agent phase is read-only')
  with lock:
   if name=='get_running_release':return current()
   if name=='get_release_diff':
@@ -244,7 +245,7 @@ def ops(name:str,args:dict):
    rec={'release_id':fact['release_id'],'source_sha':fact['source_sha'],'image_digest':image,'state':'ready','time':now()};put('release','current',rec);return current()
   if name=='fault':
    active=call('http://control:8080','/api/cases')
-   if any(x['state'] not in ['DELIVERY_ACCEPTANCE_PASSED','RESOLVED_FIXED','RECOVERED_ROLLBACK','NEEDS_HUMAN','CANCELLED','NO_ACTION'] for x in active):raise HTTPException(409,'Finish/cancel the current experiment first')
+   if any(x['state'] not in ['DELIVERY_ACCEPTANCE_PASSED','RESOLVED_FIXED','RECOVERED_ROLLBACK','NEEDS_HUMAN','CANCELLED','NO_ACTION','TRACE_PROBE_COMPLETED'] for x in active):raise HTTPException(409,'Finish/cancel the current experiment first')
    good=get('release','good')
    if not good:raise HTTPException(409,'Verify and mark a healthy baseline first')
    root=repository();branch=gh('GET','/branches/'+BRANCH)['commit']['sha'] if args.get('branch_exists') else None

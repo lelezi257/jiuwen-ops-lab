@@ -6,7 +6,9 @@ while time.monotonic()<deadline:
  try:
   with client.open('http://127.0.0.1:18780/api/status',timeout=10) as r:status=json.load(r)
   if all(status.get(x,{}).get('ok') for x in ['runner','delivery','evidence']) and status.get('release',{}).get('consistent'):
-   print('Ready: http://127.0.0.1:18780 ; runner='+status['runner']['state']);break
+   with client.open('http://127.0.0.1:18781/',timeout=10) as native:
+    if native.status!=200:raise RuntimeError('Native frontend not ready')
+   print('Ready: http://127.0.0.1:18780 ; native WebUI http://127.0.0.1:18781 ; runner='+status['runner']['state']);break
   last='Components or release identity are not ready'
  except Exception as exc:last=type(exc).__name__
  time.sleep(1)

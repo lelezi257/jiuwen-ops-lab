@@ -106,3 +106,30 @@ class ProductBoundaries(unittest.TestCase):
  def test_test_evidence_is_case_bound(self):
   put('test','test-owner',{'test_id':'test-'+'b'*16,'passed':True})
   with patch('lab.delivery.lock'),self.assertRaises(Exception):delivery.ops('test-evidence',{'case_id':'other-case','evidence_id':'test-'+'b'*16})
+
+ def test_sdk_session_binding_is_live_and_cannot_change_within_attempt(self):
+  c={'id':'trace-binding','state':'REPAIRING','cancelled':False,'phase':'repair','attempt_id':'a'};put('case',c['id'],c)
+  body={'attempt_id':'a','kind':'run.started','sequence':0,'data':{'session_id':'process_cli_actual','request_id':'r'}}
+  control.record(c['id'],body)
+  self.assertEqual(get('case',c['id'])['sdk_runs']['a']['session_id'],'process_cli_actual')
+  with self.assertRaises(Exception):control.record(c['id'],{**body,'sequence':1,'data':{'session_id':'another'}})
+  with self.assertRaises(Exception):control.record(c['id'],{**body,'attempt_id':'old'})
+
+ def test_readonly_probe_cannot_claim_repair_success_or_submit_pr(self):
+  for pr,state in [(None,'TRACE_PROBE_COMPLETED'),(7,'NEEDS_HUMAN')]:
+   c={'id':'probe-result','kind':'trace_probe','state':'TRACE_PROBE_RUNNING','cancelled':False,'phase':'trace_probe','attempt_id':'a'};put('case',c['id'],c)
+   receipt={'status':'completed','exit_code':0,'output_json':{'evidence_ids':['ev-'+'a'*16],'pr_number':pr,'candidate_sha':None}}
+   with patch('lab.control.call',return_value={'case_id':c['id']}) as external:control.result(c['id'],{'attempt_id':'a','result':receipt})
+   self.assertEqual(get('case',c['id'])['state'],state)
+   self.assertFalse(any('/ops/' in x.args[1] for x in external.call_args_list))
+
+ def test_readonly_phases_cannot_create_engineering_workspace(self):
+  for phase in ['TRACE_PROBE_RUNNING','VERIFY_AGENT_RUNNING']:
+   with patch('lab.delivery.case_active',return_value={'state':phase}),patch('lab.delivery.repository') as repository:
+    with self.assertRaises(Exception):delivery.tool('create_workspace',{'case_id':'readonly'})
+    repository.assert_not_called()
+
+ def test_probe_retry_remains_readonly(self):
+  c={'id':'probe-retry','kind':'trace_probe','state':'NEEDS_HUMAN','cancelled':False,'phase':'trace_probe','observed_sha':'a'*40,'attempt_id':'old'};put('case',c['id'],c)
+  with patch('lab.control.call',return_value={'consistent':True,'runtime':{'source_sha':'a'*40}}):answer=control.retry(c['id'])
+  self.assertEqual(answer['state'],'TRACE_PROBE_QUEUED')

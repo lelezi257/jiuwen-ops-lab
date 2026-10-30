@@ -13,7 +13,7 @@ status=api('/api/status')
 if not status['runner'].get('model_configured'):raise SystemExit('Model not configured. No fault, patch, PR or model call was made by this command.')
 report={'scope':'real_model_agent_acceptance','started_at':time.time(),'requested_trials':args.trials,'trials':[],'errors':[],'passed':False}
 path=root/'.local/evidence'/('agent-acceptance-'+str(int(time.time()))+'.json');path.parent.mkdir(parents=True,exist_ok=True)
-terminal={'RESOLVED_FIXED','RECOVERED_ROLLBACK','NEEDS_HUMAN','CANCELLED','NO_ACTION'}
+terminal={'RESOLVED_FIXED','RECOVERED_ROLLBACK','NEEDS_HUMAN','CANCELLED','NO_ACTION','TRACE_PROBE_COMPLETED'}
 try:
  for n in range(args.trials):
   current=api('/api/status')['release']['ledger'];cases=api('/api/cases')
