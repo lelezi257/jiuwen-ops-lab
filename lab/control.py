@@ -62,15 +62,18 @@ def transition(c):
    c['deployment']=call(DELIVERY,'/ops/deploy',{'case_id':cid,'expected_release':c['observed_release']},timeout=240);save(c,'VERIFYING')
   except Exception as exc:c['failure']=str(exc);save(c,'ROLLING_BACK')
  elif state=='VERIFYING':
-  cur=call(DELIVERY,'/ops/current',{})
-  if not cur['consistent']:raise RuntimeError('Runtime / release ledger differs')
-  report=call(PROBE,'/verify',{k:cur['ledger'][k] for k in ['release_id','source_sha','image_digest']},timeout=600)
-  c['verification']=report
-  if report['passed']:
-   if c.get('kind')=='engineering_acceptance':
-    call(DELIVERY,'/ops/mark-good',{'verification_id':report['verification_id']});save(c,'DELIVERY_ACCEPTANCE_PASSED','Engineering chain only; human-authored patch, no model or Agent qualification')
-   else:save(c,'VERIFY_AGENT_QUEUED','Independent contract passed; new Jiuwen session reads deployment evidence')
-  else:save(c,'ROLLING_BACK','Candidate did not recover business paths')
+  try:
+   cur=call(DELIVERY,'/ops/current',{})
+   if not cur['consistent']:raise RuntimeError('Runtime / release ledger differs')
+   report=call(PROBE,'/verify',{k:cur['ledger'][k] for k in ['release_id','source_sha','image_digest']},timeout=600)
+   c['verification']=report
+   if report['passed']:
+    if c.get('kind')=='engineering_acceptance':
+     call(DELIVERY,'/ops/mark-good',{'verification_id':report['verification_id']});save(c,'DELIVERY_ACCEPTANCE_PASSED','Engineering chain only; human-authored patch, no model or Agent qualification')
+    else:save(c,'VERIFY_AGENT_QUEUED','Independent contract passed; new Jiuwen session reads deployment evidence')
+   else:save(c,'ROLLING_BACK','Candidate did not recover business paths')
+  except Exception as exc:
+   c['failure']='Independent verification failed: '+str(exc)[:1000];save(c,'ROLLING_BACK',c['failure'])
  elif state=='ROLLING_BACK':
   cur=call(DELIVERY,'/ops/current',{})
   c['rollback']=call(DELIVERY,'/ops/rollback',{'expected_release':cur['ledger']['release_id']},timeout=240)

@@ -57,3 +57,9 @@ class ProductBoundaries(unittest.TestCase):
   with patch('lab.common.secret',side_effect=lambda name:{'runner_token':'runner-secret','control_token':'control-secret'}.get(name,'')),patch('lab.control.call',return_value={'consistent':True,'runtime':{'source_sha':'b'*40}}):
    r=client.post('/api/cases/retry-test/retry',json={},headers={'Authorization':'Bearer control-secret'});self.assertEqual(r.status_code,200);self.assertNotEqual(r.json()['attempt_id'],'old-attempt')
    old=client.post('/internal/cases/retry-test/result',json={'attempt_id':'old-attempt','result':{'status':'completed','exit_code':0}},headers={'Authorization':'Bearer runner-secret'});self.assertEqual(old.status_code,409)
+
+ def test_verification_failure_goes_to_rollback(self):
+  c={'id':'verify-error-test','state':'VERIFYING','cancelled':False};put('case',c['id'],c)
+  current={'consistent':True,'ledger':{'release_id':'candidate','source_sha':'a'*40,'image_digest':'sha256:abc'}}
+  with patch('lab.control.call',side_effect=[current,RuntimeError('Probe transport unavailable')]):control.transition(c)
+  saved=get('case',c['id']);self.assertEqual(saved['state'],'ROLLING_BACK');self.assertIn('Probe transport unavailable',saved['failure'])
