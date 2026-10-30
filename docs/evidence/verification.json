@@ -1,0 +1,20 @@
+{
+  "recorded_at": "2026-10-30T03:57:29.127362+00:00",
+  "public_clone": {
+    "scope": "fresh_public_clone_and_local_configuration",
+    "commit": "b3f3f5764f0e950c30dd27a9c047a9d24d2a809e",
+    "clone_without_credential_helper": "PASS",
+    "empty_model_template": "PASS",
+    "no_borrowed_github_token": "PASS",
+    "private_config_ignored_by_git": "PASS",
+    "new_vm_or_model_calls": false
+  },
+  "model_credential_state": "empty; no model calls",
+  "current_release_alert_matches": true,
+  "pending_attempts": 0,
+  "product_unit_tests": 10,
+  "main_contract_ci": "https://github.com/lelezi257/jiuwen-ops-lab/actions/runs/40999785970",
+  "main_contract_ci_result": "success",
+  "tested_recovery_scope": "controller restarted during BUILDING; durable action continued without another PR or merge; not general Core checkpoint proof",
+  "credential_file_mode": "0600"
+}

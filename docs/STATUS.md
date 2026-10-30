@@ -41,3 +41,9 @@ ARM64 artifact: 12952050101
 在 `.local/model.env` 配置真实供应商、API地址、模型和Key，运行 `scripts/lab configure-model`。单独的真实接线与取消检查使用 `scripts/lab qualify`；再观察排队的真实故障事件。真实模型异常会如实进入需人工状态，可在核对实际副作用后显式重新尝试，不自动退回脚本补丁。
 
 最终运行现场和最新待处理事件见工作台及 `evidence/handoff.json`。本地原始日志、订单探测、SDK回执、代码工作区与动作账本保存在专用VM及 `.local/evidence/`；公开的是脱敏摘要。其他人的操作系统/模型/网络组合需要自行按同一层次验收。
+
+## 配置前交接现场
+
+默认 `main` 保存平台实现和正常应用源码；`lab-live` 独立保存故障与修复历史，运行镜像以实际提交 SHA 和 digest 核对。当前真实告警事件 `case-812a384054014495` 已排队，尝试次数为0；Runner 等待模型。配置生效后会开始领取这条事件。
+
+[交接记录](evidence/handoff.json) · [配置前检查](evidence/verification.json) · [工作台截图](evidence/workbench.png)。匿名公开 clone 和本地空配置初始化已通过；未借用模型 Key。
