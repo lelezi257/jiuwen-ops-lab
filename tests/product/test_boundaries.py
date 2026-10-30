@@ -85,6 +85,17 @@ class ProductBoundaries(unittest.TestCase):
     self.assertFalse(answer['recorded']);external.assert_not_called()
    self.assertEqual(get('case',c['id'])['state'],state)
 
+ def test_review_retry_is_read_only_and_requires_exact_verified_release(self):
+  base={'id':'review-retry','state':'NEEDS_HUMAN','cancelled':False,'phase':'verify','attempt_id':'old','attempt':2,'merge':{'merge_sha':'a'*40},'verification':{'passed':True,'release_id':'r','expected_source_sha':'a'*40,'expected_image_digest':'sha256:x'}}
+  for changed in [False,True]:
+   put('case',base['id'],dict(base));current={'consistent':True,'ledger':{'release_id':'r','source_sha':'a'*40,'image_digest':'sha256:other' if changed else 'sha256:x'}}
+   with patch('lab.control.call',return_value=current):
+    if changed:
+     with self.assertRaises(Exception):control.retry(base['id'])
+     self.assertEqual(get('case',base['id'])['state'],'NEEDS_HUMAN')
+    else:
+     answer=control.retry(base['id']);self.assertEqual(answer['state'],'VERIFY_AGENT_QUEUED');self.assertNotEqual(answer['attempt_id'],'old');self.assertEqual(answer['merge'],base['merge'])
+
  def test_bad_evidence_retains_official_receipt_and_stops(self):
   for evidence in [['ev-'+'a'*16],['test-'+'b'*16],['../../secret']]:
    c={'id':'bad-receipt-evidence','state':'REPAIRING','cancelled':False,'phase':'repair','attempt_id':'a'};put('case',c['id'],c)

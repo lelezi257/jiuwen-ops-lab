@@ -229,6 +229,11 @@ def retry(cid:str):
   c=case(cid)
   if c['state'] not in ['NEEDS_HUMAN','CANCELLED'] or c.get('kind')=='engineering_acceptance':raise HTTPException(409,'Not a retriable Agent case')
   cur=call(DELIVERY,'/ops/current',{})
-  if not cur['consistent'] or cur['runtime']['source_sha']!=c['observed_sha'] or c.get('merge'):raise HTTPException(409,'External state changed; investigate and reconcile before retry')
+  target='REPAIR_QUEUED'
+  if c.get('phase')=='verify' and c.get('merge'):
+   report=c.get('verification') or {};ledger=cur.get('ledger') or {}
+   if not cur['consistent'] or not report.get('passed') or any(ledger.get(k)!=report.get(r) for k,r in [('release_id','release_id'),('source_sha','expected_source_sha'),('image_digest','expected_image_digest')]):raise HTTPException(409,'Verified deployment changed; do not retry an obsolete review')
+   target='VERIFY_AGENT_QUEUED'
+  elif not cur['consistent'] or cur['runtime']['source_sha']!=c['observed_sha'] or c.get('merge'):raise HTTPException(409,'External state changed; investigate and reconcile before retry')
   c['cancelled']=False;c['attempt_id']=ident('retry-reservation');c['feedback']={'previous_result':c.get('agent_result'),'operator_retry':True};put('case',cid,c)
-  return save(c,'REPAIR_QUEUED','Operator requested new attempt; prior attempts retained')
+  return save(c,target,'Operator requested new attempt; prior attempts retained; no replay of completed delivery')
