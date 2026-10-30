@@ -32,8 +32,9 @@ class ProductBoundaries(unittest.TestCase):
   self.assertEqual(c.post('/api/cases/x/cancel',json={}).status_code,403)
  def test_delayed_result_does_not_reverse_cancellation(self):
   c={'id':'cancel-test','state':'CANCELLED','cancelled':True};put('case',c['id'],c)
-  stale={**c,'state':'REPAIRING','cancelled':False};control.save(stale,'CI_PENDING')
-  self.assertTrue(get('case',c['id'])['cancelled']);self.assertEqual(get('case',c['id'])['state'],'CANCELLED')
+  for state in ['CI_PENDING',None]:
+   stale={**c,'state':'REPAIRING','cancelled':False};control.save(stale,state)
+   self.assertTrue(get('case',c['id'])['cancelled']);self.assertEqual(get('case',c['id'])['state'],'CANCELLED')
  def test_cli_key_is_not_in_committed_template(self):
   text=(Path(__file__).resolve().parents[2]/'config/model.env.example').read_text();self.assertIn('API_KEY=\n',text)
  def test_ci_gate_rejects_non_success_and_changed_code(self):

@@ -16,7 +16,7 @@ def event(cid,kind,data,key=None):
 def save(c,state=None,detail=None):
  existing=get('case',c['id'])
  if existing and existing.get('cancelled'):
-  c['cancelled']=True
+  c['cancelled']=True;c['state']=existing['state']
   if state:state='CANCELLED' if existing['state']=='CANCELLED' else existing['state']
  if state:
   c['state']=state;event(c['id'],'state',{'state':state,'detail':detail})
