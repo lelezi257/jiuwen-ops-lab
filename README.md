@@ -4,7 +4,7 @@
 
 维护对象是独立运行的订单 API + PostgreSQL。一次优惠码空值处理回归会让普通下单返回 500。目标流程：实际告警 → 模型读取实际日志/指标/源码 → 生成修复与回归测试 → 真实 GitHub PR/CI → 按规则合并 → 构建精确提交 → 发布不可变镜像 → 独立验证业务恢复。
 
-**当前：环境和工程交付链已实测通过；真实模型已生成修复与 PR #3，并通过发布后业务合同和新会话复核。首条集成案例含重试，三次独立重置试验正在执行，见 STATUS。**
+**当前：环境和工程交付链已实测通过；真实模型已生成修复与 PR #3，并通过发布后业务合同和新会话复核。首条集成案例含重试；随后三次独立故障重置全部闭环通过、零人工重试，见 STATUS 和真实模型报告。**
 
 **当前验收状态请先看 [STATUS](docs/STATUS.md)。模型未配置不代表 Agent 已验证；工程、环境和模型验收分别记录。** 本项目用于受控学习实验，自动操作仅针对你自己的演示仓库与专用 VM。
 
@@ -31,7 +31,7 @@ flowchart LR
 
 Swarm 和 Core 在执行服务的官方子进程里，不是两个 HTTP 服务。我们的 runner 只做 SDK 调用、事件持久化映射、工具回调、取消与错误处理，没有编写另一个模型循环。首版是单 Agent 按阶段执行，不声称使用 Swarm 多 Agent 团队。
 
-详细阅读：[D1 HTML 设计快照](docs/design.html) · [官方九问接线](docs/JIUWEN.md) · [运行与复现](docs/RUNBOOK.md) · [权限和版本链](docs/BOUNDARIES.md) · [验收记录](docs/STATUS.md)。
+详细阅读：[D1 HTML 设计快照](docs/design.html) · [官方九问接线](docs/JIUWEN.md) · [运行与复现](docs/RUNBOOK.md) · [权限和版本链](docs/BOUNDARIES.md) · [验收记录](docs/STATUS.md) · [真实模型实测](docs/REAL-MODEL-ACCEPTANCE.md)。
 
 ## Mac 快速开始
 

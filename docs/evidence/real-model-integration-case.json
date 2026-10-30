@@ -1,6 +1,6 @@
 {
   "scope": "controlled_real_model_agent_cases",
-  "recorded_at": 1793344808.466632,
+  "recorded_at": 1793347251.5584562,
   "cases": [
     {
       "id": "case-812a384054014495",
@@ -69,6 +69,31 @@
           "run_id": "41017706644"
         }
       },
+      "trigger": {
+        "source": "alertmanager",
+        "alerts": [
+          {
+            "status": "firing",
+            "labels": {
+              "alertname": "OrderNoCouponErrors",
+              "release_id": "fault-release-09f4cfcaf0bc484f",
+              "service": "order-api"
+            },
+            "startsAt": "2026-10-30T03:53:59.495Z"
+          }
+        ]
+      },
+      "operator_retry_count": 3,
+      "controller_error_count": 2,
+      "repair_runs": 3,
+      "verification_runs": 2,
+      "incident_runtime": {
+        "release_id": "fault-release-09f4cfcaf0bc484f",
+        "source_sha": "9747c4cc85acafaa6858814a0931568dd2669b78",
+        "image_digest": "localhost:5000/jiuwen-order@sha256:c157013d4c100fcdeb2eb8e2992852960d1d069d3d8353dcf36225c701419aaa",
+        "time": 1793332410.3810441
+      },
+      "detection_delay_seconds": 34.188,
       "patch_author": "real_model_via_official_jiuwen",
       "first_agent_request_at": 1793343428.2028968,
       "end_to_end_seconds": 12325.856,

@@ -1,0 +1,27 @@
+{
+  "swarm": {
+    "repository": "https://github.com/openJiuwen-ai/jiuwenswarm",
+    "commit": "32d75d7d3a0b466412ee64d77c29460297515119",
+    "archive_sha256": "ae64a957a48f0dfc286527906d0cd9714b85f7c5cce98a464dde21c07980887b"
+  },
+  "core": {
+    "repository": "https://github.com/openJiuwen-ai/agent-core",
+    "commit": "e089198835426cd7681761b0cc278670cd83031f",
+    "archive_sha256": "2b1c8ab462e0470ff34c6843b8dbeff1e593692429d34d1aec7d497e0234708c"
+  },
+  "protocol": {
+    "repository": "https://github.com/openJiuwen-ai/agent-protocol",
+    "commit": "2a0457e5e01152e9ca5f8afdffd84716227046ca",
+    "archive_sha256": "c0c069eb78323ed5cd594bf75a888da87671d1ce5236a314cffc273a21aa1ba6"
+  },
+  "a4p": {
+    "repository": "https://github.com/openJiuwen-ai/agent-protocol",
+    "commit": "1699ea352a08430731c6dddac0fc46a1b1a385f2",
+    "archive_sha256": "6521ab1e03066fad034a57aa2fc675cff0e54f0b7926339315fd16b9282b4f34"
+  },
+  "router": {
+    "repository": "https://github.com/openJiuwen-ai/agent-protocol",
+    "commit": "e83f98f2251e889d1f51a7b631aa675c0e43168d",
+    "archive_sha256": "cc4f0b9d39b8f3596ac0f2227a105bdec3a061ce531914d885db7764d656e1b9"
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "recorded_at": 1793346381.6188824,
+  "scope": "compose_platform_during_clean_trials",
+  "containers": [
+    {
+      "name": "/jiuwen-ops-lab-alertmanager-1",
+      "image_id": "sha256:27c475db5fb156cab31d5c18a4251ac7ed567746a2483ff264516437a39b15ba",
+      "state": "running"
+    },
+    {
+      "name": "/jiuwen-ops-lab-collector-1",
+      "image_id": "sha256:cec4c4024897788e5dd9e5144994ba14f60fcaaed8feed033d8a710669af5237",
+      "state": "running"
+    },
+    {
+      "name": "/jiuwen-ops-lab-control-1",
+      "image_id": "sha256:cec4c4024897788e5dd9e5144994ba14f60fcaaed8feed033d8a710669af5237",
+      "state": "running"
+    },
+    {
+      "name": "/jiuwen-ops-lab-db-1",
+      "image_id": "sha256:7c688148e5e156d0e86df7ba8ae5a05a2386aaec1e2ad8e6d11bdf10504b1fb7",
+      "state": "running"
+    },
+    {
+      "name": "/jiuwen-ops-lab-delivery-1",
+      "image_id": "sha256:cec4c4024897788e5dd9e5144994ba14f60fcaaed8feed033d8a710669af5237",
+      "state": "running"
+    },
+    {
+      "name": "/jiuwen-ops-lab-evidence-1",
+      "image_id": "sha256:cec4c4024897788e5dd9e5144994ba14f60fcaaed8feed033d8a710669af5237",
+      "state": "running"
+    },
+    {
+      "name": "/jiuwen-ops-lab-loki-1",
+      "image_id": "sha256:a74594532eec4cc313401beedc4dd2708c43674c032084b1aeb87c14a5be1745",
+      "state": "running"
+    },
+    {
+      "name": "/jiuwen-ops-lab-probe-1",
+      "image_id": "sha256:cec4c4024897788e5dd9e5144994ba14f60fcaaed8feed033d8a710669af5237",
+      "state": "running"
+    },
+    {
+      "name": "/jiuwen-ops-lab-prometheus-1",
+      "image_id": "sha256:9abc6cf6aea7710d163dbb28d8eeb7dc5baef01e38fa4cd146a406dd9f07f70d",
+      "state": "running"
+    },
+    {
+      "name": "/jiuwen-ops-lab-registry-1",
+      "image_id": "sha256:a3d8aaa63ed8681a604f1dea0aa03f100d5895b6a58ace528858a7b332415373",
+      "state": "running"
+    },
+    {
+      "name": "/jiuwen-ops-lab-runner-1",
+      "image_id": "sha256:770c869f745822cc3e2a63a38a1ec611e335fbabd11bba48da977546035fbff5",
+      "state": "running"
+    }
+  ],
+  "trust_sha": "36d2f7112dbf4734fbee86d7fa1b8369251ef060",
+  "runner_engine": "official Process SDK -> official Swarm CLI/Runtime -> Core",
+  "model_configured": true,
+  "fake_model": false,
+  "framework_lock_sha256": "f39cab9cfbbaa51b70eefc0214456813805972d3ec68fdbcf9ed303ae1a1584b",
+  "harness_last_commit": "0e1fb72a8ec34a0fe07bc5491b4955ac454e00cd",
+  "harness_blob_sha": "92f04cf5a213b02a278a31136742cb684d1bfa6e",
+  "note": "Runtime platform fixed during three clean trials. Application containers change by verified deployment digest. Later source edits during the cohort only affect reports or human-engineering PR attribution; no platform redeployment during the cohort."
+}

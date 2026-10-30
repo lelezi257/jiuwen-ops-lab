@@ -1,6 +1,6 @@
 # 实施与验收状态
 
-2026-10-30。**环境、真实故障和工程交付链已经实际通过；真实模型接线及首条自主修复闭环已通过，三次独立重置验收正在进行。** 没有模型替身，也没有把人工补丁验收记成 Agent 修复成功。
+2026-10-30。**环境、真实故障和工程交付链已经实际通过；真实模型接线、首条集成闭环和三次独立重置验收均已实际通过。** 没有模型替身，也没有把人工补丁验收记成 Agent 修复成功。
 
 | 层次 | 当前结果 | 实际证据与边界 |
 |---|---|---|
@@ -17,7 +17,7 @@
 | 产品边界单测 | 本地15项通过 | 角色分离、路径/symlink、取消与重试身份、CI failure/neutral/skipped、过期 head/base 等；单元测试不是模型效果证明 |
 | 真实模型/host tool/取消 | 实测通过 | 实际模型与 host tool、结构化结果、取消130和子进程清理；[报告](evidence/real-model-sdk.json) |
 | 模型自主诊断与代码修复 E2E | 首条集成案例通过（含重试） | 真实模型生成修复/测试与 PR #3，CI、构建、发布、两个60秒业务窗口、新会话复核完成，终态 RESOLVED_FIXED；早期失败和重试保留；[完整摘要](evidence/real-model-integration-case.json) |
-| 三次独立故障重置 | 正在执行 | 固定修正后的实现、独立故障提交/事件/工作区/SDK会话；不将首条含人工重试的集成调通记成干净首试成功 |
+| 三次独立故障重置 | 3/3 实测通过，零人工重试 | 每轮修复/只读复核各一个新会话；PR #4/#5/#6、真实CI与双平台构建、独立两窗HTTP/DB合同全部通过；[完整结果](REAL-MODEL-ACCEPTANCE.md) · [证据](evidence/real-model-three-clean-trials.json) |
 | 自动回滚保护 | 故障注入实测通过 | [PR #2](https://github.com/lelezi257/jiuwen-ops-lab/pull/2) 发布后停止真实订单容器，验证失败后自动回滚到上一已验证镜像；两个60秒窗口每路径106次全部通过；[证据](evidence/rollback-e2e.json)；不计修复成功 |
 
 ## 本次版本证据链
@@ -37,14 +37,20 @@ ARM64 artifact: 12952050101
 
 仍未证明所有异常重启/长期运行分支、Core Checkpoint 恢复或生产可靠性。
 
-## 下一步
+## 当前运行与复现
 
-本次用户已在本地配置真实模型，`scripts/lab qualify` 实测通过。首条真实修复已经完成，正在用 `scripts/lab agent-acceptance --trials 3` 从独立故障版本重复运行。真实模型异常如实进入需人工状态；早期结果接收失败和被拒绝的 bash 调用均保留，不自动退回脚本补丁。
+本次用户已在本地配置真实模型，`scripts/lab qualify` 实测通过。首条真实修复和 `scripts/lab agent-acceptance --trials 3` 的三轮独立故障复跑均已完成。真实模型异常如实进入需人工状态；早期结果接收失败和被拒绝的 bash 调用均保留，不自动退回脚本补丁。
 
-最终运行现场和最新待处理事件见工作台及 `evidence/handoff.json`。本地原始日志、订单探测、SDK回执、代码工作区与动作账本保存在专用VM及 `.local/evidence/`；公开的是脱敏摘要。其他人的操作系统/模型/网络组合需要自行按同一层次验收。
+最终运行现场和已完成事件见工作台及 [交接记录](evidence/handoff.json)。本地原始日志、订单探测、SDK回执、代码工作区与动作账本保存在专用VM及 `.local/evidence/`；公开的是脱敏摘要。其他人的操作系统/模型/网络组合需要自行按同一层次验收。
 
-## 配置前交接现场
+## 配置前交接现场（历史快照）
 
-默认 `main` 保存平台实现和正常应用源码；`lab-live` 独立保存故障与修复历史，运行镜像以实际提交 SHA 和 digest 核对。当前真实告警事件 `case-812a384054014495` 已排队，尝试次数为0；Runner 等待模型。配置生效后会开始领取这条事件。
+默认 `main` 保存平台实现和正常应用源码；`lab-live` 独立保存故障与修复历史，运行镜像以实际提交 SHA 和 digest 核对。当时真实告警事件 `case-812a384054014495` 已排队、尝试次数为0，Runner 等待模型。配置后该事件已完成真实修复；原始等待现场保留用于核对实施过程。
 
-[交接记录](evidence/handoff.json) · [配置前检查](evidence/verification.json) · [工作台截图](evidence/workbench.png)。匿名公开 clone 和本地空配置初始化已通过；未借用模型 Key。
+[配置前交接记录](evidence/handoff-before-model.json) · [配置前检查](evidence/verification-before-model.json) · [配置前截图](evidence/workbench.png)。匿名公开 clone 和本地空配置初始化已通过；未借用模型 Key。
+
+## 完成审计
+
+G0 独立部署、关闭工作台后后台继续推进；G1 官方SDK真实模型/host tool/取消/错误/清理；G2 实际故障和自动告警；G3 模型生成修复、新增测试与正确提交的CI；G4 合并后重新构建、制品哈希、digest发布与运行版本；G5/G6 两个60秒分路径HTTP/金额/数据库/旧订单/非法输入合同；G7 无人推进、取消与失败边界。三轮正常路径实际通过，另有发布失败后的真实回滚证据和15项产品边界测试。未覆盖的生产可靠性范围仍按上文边界保留。
+
+[真实模型报告](REAL-MODEL-ACCEPTANCE.md) · [最终工作台](evidence/workbench-real-model-complete.png) · [最终核对](evidence/verification.json)。

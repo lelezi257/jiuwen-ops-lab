@@ -45,6 +45,15 @@ for cid in a.cases:
  totals={k:sum(u[k] for u in usage) if usage and all(isinstance(u,dict) and isinstance(u.get(k),(int,float)) for u in usage) else None for k in ['model_calls','input_tokens','output_tokens','total_tokens','total_cost']}
  first=lambda name:next((e['at'] for e in effects if e['tool']==name),None)
  summary={k:case.get(k) for k in ['id','created_at','updated_at','state','attempt','observed_release','observed_sha','pr','ci','merge','build']}
+ trigger=case.get('trigger') or {}
+ summary['trigger']={'source':trigger.get('source'),'alerts':[{k:alert.get(k) for k in ['status','labels','startsAt']} for alert in trigger.get('alerts',[])]}
+ summary['operator_retry_count']=sum(e['kind']=='state' and isinstance(e['data'].get('detail'),str) and e['data']['detail'].startswith('Operator requested new attempt') for e in events)
+ summary['controller_error_count']=sum(e['kind']=='controller_error' for e in events)
+ summary['repair_runs']=sum(r['phase']=='repair' for r in runs.values())
+ summary['verification_runs']=sum(r['phase']=='verify' for r in runs.values())
+ incident=((case.get('deployment') or {}).get('ledger') or {}).get('previous') or {}
+ summary['incident_runtime']=({k:incident.get(k) for k in ['release_id','source_sha','image_digest','time']} if incident.get('release_id')==case['observed_release'] else None)
+ summary['detection_delay_seconds']=round(case['created_at']-incident['time'],3) if summary['incident_runtime'] and incident.get('time') else None
  summary.update(patch_author='real_model_via_official_jiuwen',first_agent_request_at=first_agent,end_to_end_seconds=round(case['updated_at']-case['created_at'],3),after_model_start_seconds=round(case['updated_at']-first_agent,3) if first_agent else None,diagnostic_first_at=first('query_logs'),pr_first_at=first('create_pull_request'),timeline=timeline,state_seconds=stages,model_runs=list(runs.values()),reported_usage_totals=totals,unknown_usage_fields=[k for k,v in totals.items() if v is None],tool_effects=effects,verification=verification(case.get('verification')),rollback_verification=verification(case.get('rollback_verification')),deployment_runtime=(case.get('deployment') or {}).get('runtime'))
  cases.append(summary)
 report={'scope':'controlled_real_model_agent_cases','recorded_at':time.time(),'cases':cases,'passed':all(c['state']=='RESOLVED_FIXED' and c.get('verification',{}).get('passed') for c in cases),'note':'All listed attempts and failures are retained. Not a general AIOps success-rate benchmark. Unknown usage is null, not zero; total_cost is only the model provider/framework reported amount.'}

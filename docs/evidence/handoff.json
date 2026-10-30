@@ -1,7 +1,9 @@
 {
-  "recorded_at": "2026-10-30T03:57:29.127362+00:00",
-  "implementation_sha": "b3f3f5764f0e950c30dd27a9c047a9d24d2a809e",
+  "recorded_at": "2026-10-30T16:04:16.891448+08:00",
   "repository": "https://github.com/lelezi257/jiuwen-ops-lab",
+  "implementation_sha": "36d2f7112dbf4734fbee86d7fa1b8369251ef060",
+  "workbench": "http://127.0.0.1:18780/",
+  "order_api": "http://127.0.0.1:18080/docs",
   "vm": {
     "name": "jiuwen-ops-lab",
     "architecture": "arm64",
@@ -10,52 +12,47 @@
     "disk_gib_sparse": 60,
     "host_mounts": false
   },
-  "workbench": "http://127.0.0.1:18780/",
-  "order_api": "http://127.0.0.1:18080/docs",
   "runner": {
     "ok": true,
-    "model_configured": false,
-    "state": "WAITING_MODEL",
+    "model_configured": true,
+    "state": "READY",
     "protocol_revision": 1,
     "error": null,
     "engine": "official Process SDK -> official Swarm CLI/Runtime -> Core",
     "fake_model": false
   },
-  "pending_case": {
-    "id": "case-812a384054014495",
-    "state": "REPAIR_QUEUED",
-    "observed_release": "fault-release-09f4cfcaf0bc484f",
-    "observed_sha": "9747c4cc85acafaa6858814a0931568dd2669b78",
-    "attempt": 0
-  },
-  "trigger": "real Alertmanager firing alert with matching release_id",
   "current_runtime": {
-    "container_id": "ace693787583c94b5f94b4a218ef92fcc947405634bff9de49c1730f0c7baa94",
-    "image_id": "sha256:c157013d4c100fcdeb2eb8e2992852960d1d069d3d8353dcf36225c701419aaa",
+    "container_id": "18097407fe30ed0b56ce3fc6326d4caf3901b0e63fef92730789853008392078",
+    "image_id": "sha256:b73802dca815a7ec05c99c442918bf01a59af13922d1e329d14dac72b7cb9621",
     "repo_digests": [
-      "localhost:5000/jiuwen-order@sha256:c157013d4c100fcdeb2eb8e2992852960d1d069d3d8353dcf36225c701419aaa"
+      "order-build@sha256:b73802dca815a7ec05c99c442918bf01a59af13922d1e329d14dac72b7cb9621",
+      "localhost:5000/jiuwen-order@sha256:b73802dca815a7ec05c99c442918bf01a59af13922d1e329d14dac72b7cb9621"
     ],
-    "source_sha": "9747c4cc85acafaa6858814a0931568dd2669b78",
+    "source_sha": "e35050216e432a7488cbaaec88ca738894530790",
     "running": true,
-    "release_id": "fault-release-09f4cfcaf0bc484f"
+    "release_id": "release-case-2407f41e88154f49"
   },
   "known_good": {
-    "release_id": "release-engineering-7c3f9342759b4a0b",
-    "source_sha": "3e1e80e1aa3994b6f18e767c9a98647212691998",
-    "image_digest": "localhost:5000/jiuwen-order@sha256:eed0247991192fb5a437d51f7031a072a19b4337870740fb958551c3de414524",
-    "verification_id": "verify-71517ae897d14e80"
+    "release_id": "release-case-2407f41e88154f49",
+    "source_sha": "e35050216e432a7488cbaaec88ca738894530790",
+    "image_digest": "localhost:5000/jiuwen-order@sha256:b73802dca815a7ec05c99c442918bf01a59af13922d1e329d14dac72b7cb9621",
+    "verification_id": "verify-d10c554b19a041c9"
   },
+  "pending_cases": [],
+  "real_model_agent_e2e": "PASS",
+  "clean_reset_trials": {
+    "requested": 3,
+    "passed": 3,
+    "operator_retries": 0,
+    "evidence": "real-model-three-clean-trials.json"
+  },
+  "integration_case_with_retries": "real-model-integration-case.json",
   "engineering_acceptance": "engineering-e2e.json",
   "negative_rollback_acceptance": "rollback-e2e.json",
-  "real_model_agent_e2e": "PENDING_MODEL_CONFIGURATION",
-  "model_calls": 0,
-  "private_configuration": ".local/model.env",
-  "public_template": "../../config/model.env.example",
+  "configuration": ".local/model.env (private, ignored, never publish)",
   "next_steps": [
-    "Fill API_BASE, MODEL_NAME, API_KEY and matching provider/profile in private .local/model.env",
-    "scripts/lab configure-model",
-    "scripts/lab qualify",
-    "Observe queued incident; then scripts/lab agent-acceptance --trials 3"
+    "Open the workbench; completed cases and real PRs are retained.",
+    "Use scripts/lab fault only when intentionally starting another charged real-model experiment."
   ],
-  "caution": "Applying model configuration allows the waiting real incident to start. Engineering acceptance used an explicitly human-authored patch, not a model."
+  "note": "Services and data retained. Three clean trials finished; idle runner does not make model calls. Initial integration retries are reported separately."
 }
