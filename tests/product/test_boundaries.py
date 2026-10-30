@@ -64,3 +64,26 @@ class ProductBoundaries(unittest.TestCase):
   current={'consistent':True,'ledger':{'release_id':'candidate','source_sha':'a'*40,'image_digest':'sha256:abc'}}
   with patch('lab.control.call',side_effect=[current,RuntimeError('Probe transport unavailable')]):control.transition(c)
   saved=get('case',c['id']);self.assertEqual(saved['state'],'ROLLING_BACK');self.assertIn('Probe transport unavailable',saved['failure'])
+
+ def test_model_receipt_accepts_case_bound_test_evidence(self):
+  c={'id':'receipt-evidence','state':'REPAIRING','cancelled':False,'phase':'repair','attempt_id':'a'};put('case',c['id'],c)
+  receipt={'status':'completed','exit_code':0,'output_json':{'evidence_ids':['ev-'+'a'*16,'test-'+'b'*16],'pr_number':3,'candidate_sha':'c'*40}}
+  calls=[]
+  def external(base,path,body=None):
+   calls.append((path,body))
+   if path=='/ops/pr-status':return {'pr':{'number':3,'head_sha':'c'*40}}
+   return {'case_id':c['id']}
+  with patch('lab.control.call',side_effect=external):control.result(c['id'],{'attempt_id':'a','result':receipt})
+  self.assertEqual(get('case',c['id'])['state'],'CI_PENDING');self.assertEqual(get('case',c['id'])['agent_result'],receipt)
+  self.assertIn(('/ops/test-evidence',{'case_id':c['id'],'evidence_id':'test-'+'b'*16}),calls)
+
+ def test_bad_evidence_retains_official_receipt_and_stops(self):
+  for evidence in [['ev-'+'a'*16],['test-'+'b'*16],['../../secret']]:
+   c={'id':'bad-receipt-evidence','state':'REPAIRING','cancelled':False,'phase':'repair','attempt_id':'a'};put('case',c['id'],c)
+   receipt={'status':'completed','exit_code':0,'output_json':{'evidence_ids':evidence}}
+   with patch('lab.control.call',side_effect=RuntimeError('Unavailable or wrong evidence')):control.result(c['id'],{'attempt_id':'a','result':receipt})
+   saved=get('case',c['id']);self.assertEqual(saved['state'],'NEEDS_HUMAN');self.assertEqual(saved['agent_result'],receipt)
+
+ def test_test_evidence_is_case_bound(self):
+  put('test','test-owner',{'test_id':'test-'+'b'*16,'passed':True})
+  with patch('lab.delivery.lock'),self.assertRaises(Exception):delivery.ops('test-evidence',{'case_id':'other-case','evidence_id':'test-'+'b'*16})

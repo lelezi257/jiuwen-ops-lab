@@ -175,6 +175,10 @@ def ops(name:str,args:dict):
    if args['source_sha']!=os.environ['LAB_TRUST_SHA']:raise HTTPException(409,'Bootstrap must use the selected trusted source')
    return deploy(args['image_digest'],args['source_sha'],'release-baseline',None)
   if name=='pr-status':return pr_status(args['case_id'])
+  if name=='test-evidence':
+   rec=get('test',args['case_id'])
+   if not rec or rec['test_id']!=args.get('evidence_id'):raise HTTPException(404,'Test evidence does not belong to this case/current candidate')
+   return {**rec,'case_id':args['case_id'],'source':'independent_business_tests'}
   if name=='merge':
    cid=args['case_id'];c=call('http://control:8080','/internal/cases/'+cid,role='runner')
    if c['cancelled']:raise HTTPException(409,'Cancelled')

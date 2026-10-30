@@ -61,8 +61,20 @@ async def execute(case):
   await record('run.request',request)
   result=await client().run(request,on_event=on_event,on_tool_call=on_tool,on_interaction=interaction,cancel=cancel,deadline_seconds=float(os.getenv('LAB_RUN_TIMEOUT','900'))+180)
  except Exception as exc:result={'status':'failed','exit_code':1,'error':{'code':'HOST_OR_TRANSPORT_ERROR','message':type(exc).__name__+': '+str(exc)[:600]}}
+ result_body={'attempt_id':attempt,'result':redact(result)}
+ # Keep the exact official receipt before transport; retry delivery, never replay tools.
+ (session_dir/'official-result.json').write_text(json.dumps(result_body,ensure_ascii=False,indent=2)+'\n')
+ try:
+  for retry in range(4):
+   try:
+    await api('/internal/cases/'+cid+'/result',result_body);break
+   except httpx.HTTPStatusError as exc:
+    if exc.response.status_code<500 or retry==3:raise
+    await asyncio.sleep(2**retry)
+   except httpx.TransportError:
+    if retry==3:raise
+    await asyncio.sleep(2**retry)
  finally:task.cancel()
- await api('/internal/cases/'+cid+'/result',{'attempt_id':attempt,'result':redact(result)})
 
 async def loop():
  global capability,worker_error

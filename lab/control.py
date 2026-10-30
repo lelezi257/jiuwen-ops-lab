@@ -184,13 +184,20 @@ def result(cid:str,body:dict):
   c=case(cid)
   if c.get('attempt_id')!=body['attempt_id']:raise HTTPException(409,'Attempt changed')
   if c['cancelled'] or c['state'] in TERMINAL:return {'recorded':False,'reason':'Case already terminal'}
-  event(cid,'sdk_result',body['result']);c['agent_result']=body['result']
+  event(cid,'sdk_result',body['result']);c['agent_result']=body['result'];save(c)
   if body['result'].get('status')!='completed' or body['result'].get('exit_code')!=0:return save(c,'NEEDS_HUMAN','Official SDK run did not complete successfully')
   output=body['result'].get('output_json') or {}
   if output.get('needs_human'):return save(c,'NEEDS_HUMAN',output.get('finding'))
-  for eid in output.get('evidence_ids',[]):
-   fact=call('http://evidence:8080','/evidence/'+eid)
-   if fact.get('case_id')!=cid:return save(c,'NEEDS_HUMAN','Evidence does not belong to this case')
+  try:
+   diagnostic=False
+   for eid in output.get('evidence_ids',[]):
+    if not __import__('re').fullmatch(r'(ev|test)-[0-9a-f]{16}',eid):raise ValueError('Invalid evidence identifier')
+    if eid.startswith('test-'):fact=call(DELIVERY,'/ops/test-evidence',{'case_id':cid,'evidence_id':eid})
+    else:
+     fact=call('http://evidence:8080','/evidence/'+eid);diagnostic=True
+    if fact.get('case_id')!=cid:raise ValueError('Evidence does not belong to this case')
+   if not diagnostic:raise ValueError('Actual diagnostic evidence references required')
+  except Exception as exc:return save(c,'NEEDS_HUMAN','Evidence validation failed: '+str(exc)[:800])
   if not output.get('evidence_ids'):return save(c,'NEEDS_HUMAN','Actual evidence references required')
   if c['phase']=='repair':
    status=call(DELIVERY,'/ops/pr-status',{'case_id':cid});pr=status['pr']
