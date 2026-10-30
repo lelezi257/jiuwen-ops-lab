@@ -20,6 +20,10 @@
 
 第二次模型尝试调用未授权的 `bash`，官方九问 allowlist 拒绝执行，产品进入 `NEEDS_HUMAN`。没有扩大权限。[d4b2314](https://github.com/lelezi257/jiuwen-ops-lab/commit/d4b2314d007ddf0b17706728ea3cd65e38e590ff) 仅补充领域任务说明：业务文件在独立工程服务中，检查已有修改使用 `get_diff`，重试可复用已有 PR。第三次由真实模型重新检查、测试和提交；早期失败与重试全部保留，不计为干净首次成功。
 
+首轮发布后，独立业务验证已通过，但只读模型复核在 JSON 前输出了说明文字，官方 SDK 以 `OUTPUT_SCHEMA_MISMATCH` 拒收，产品保持 `NEEDS_HUMAN`。没有自行截取 JSON 或把失败改成完成。[36d2f71](https://github.com/lelezi257/jiuwen-ops-lab/commit/36d2f7112dbf4734fbee86d7fa1b8369251ef060) 明确了只输出 JSON 的要求，并增加只读复核重试：必须仍是独立报告所验证的同一个 release/source/digest，保留原有合并与发布事实，只创建新的验证 Agent 会话。
+
+结果投递允许重试，但迟到或重复的 SDK 结果不能将 CI/合并/构建状态倒退回去；相关边界测试与原有测试合计15项通过。
+
 ## 如何复核结果
 
 `scripts/lab agent-acceptance --trials 3` 只制造真实故障、观察真实状态和保存原始报告，不生成修复、不伪造 SDK 结果。没有模型配置时，它在制造故障前退出。

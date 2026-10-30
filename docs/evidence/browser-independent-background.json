@@ -1,0 +1,21 @@
+{
+  "browser_workbench_closed_at": 1793343903.577588,
+  "case_id": "case-812a384054014495",
+  "state_after_closing": "BUILDING",
+  "note": "Actual IAB workbench tab closed using CUA; no API mutations or controller/runner restarts during observation.",
+  "observed_at": 1793344513.4755719,
+  "state_while_page_closed": "VERIFYING",
+  "build_state": "ready",
+  "deployment_runtime": {
+    "container_id": "b62cf437d0f158fe242bb57660e2dbf4f6e531b2f6e26ec165452f255e1453c9",
+    "image_id": "sha256:de2b88a0bdf64c38702cee1573df659ac2b28774e1704f7d68b4d6ebe83fa891",
+    "repo_digests": [
+      "order-build@sha256:de2b88a0bdf64c38702cee1573df659ac2b28774e1704f7d68b4d6ebe83fa891",
+      "localhost:5000/jiuwen-order@sha256:de2b88a0bdf64c38702cee1573df659ac2b28774e1704f7d68b4d6ebe83fa891"
+    ],
+    "source_sha": "e0515bcd1b51382be82bf2cf0e51b26ea9ed8c8b",
+    "running": true,
+    "release_id": "release-case-812a384054014495"
+  },
+  "background_progress_passed": true
+}

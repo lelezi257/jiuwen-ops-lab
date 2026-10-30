@@ -1,0 +1,619 @@
+{
+  "scope": "controlled_real_model_agent_cases",
+  "recorded_at": 1793344808.466632,
+  "cases": [
+    {
+      "id": "case-812a384054014495",
+      "created_at": 1793332444.5690022,
+      "updated_at": 1793344770.4254315,
+      "state": "RESOLVED_FIXED",
+      "attempt": 5,
+      "observed_release": "fault-release-09f4cfcaf0bc484f",
+      "observed_sha": "9747c4cc85acafaa6858814a0931568dd2669b78",
+      "pr": {
+        "number": 3,
+        "url": "https://github.com/lelezi257/jiuwen-ops-lab/pull/3",
+        "head_sha": "0d4fbfe7a017eacc5bcf470837f01e54741358f9",
+        "base_sha": "9747c4cc85acafaa6858814a0931568dd2669b78",
+        "case_id": "case-812a384054014495"
+      },
+      "ci": {
+        "state": "passed",
+        "run_id": 41017176054,
+        "run_url": "https://github.com/lelezi257/jiuwen-ops-lab/actions/runs/41017176054",
+        "test_merge_sha": "34954cfbb6c8f69acc87f19f7c7b4a126db3c218",
+        "pr": {
+          "number": 3,
+          "url": "https://github.com/lelezi257/jiuwen-ops-lab/pull/3",
+          "head_sha": "0d4fbfe7a017eacc5bcf470837f01e54741358f9",
+          "base_sha": "9747c4cc85acafaa6858814a0931568dd2669b78",
+          "case_id": "case-812a384054014495"
+        }
+      },
+      "merge": {
+        "state": "merged",
+        "merge_sha": "e0515bcd1b51382be82bf2cf0e51b26ea9ed8c8b",
+        "pr": {
+          "number": 3,
+          "url": "https://github.com/lelezi257/jiuwen-ops-lab/pull/3",
+          "head_sha": "0d4fbfe7a017eacc5bcf470837f01e54741358f9",
+          "base_sha": "9747c4cc85acafaa6858814a0931568dd2669b78",
+          "case_id": "case-812a384054014495"
+        },
+        "checked": {
+          "state": "passed",
+          "run_id": 41017176054,
+          "run_url": "https://github.com/lelezi257/jiuwen-ops-lab/actions/runs/41017176054",
+          "test_merge_sha": "34954cfbb6c8f69acc87f19f7c7b4a126db3c218",
+          "pr": {
+            "number": 3,
+            "url": "https://github.com/lelezi257/jiuwen-ops-lab/pull/3",
+            "head_sha": "0d4fbfe7a017eacc5bcf470837f01e54741358f9",
+            "base_sha": "9747c4cc85acafaa6858814a0931568dd2669b78",
+            "case_id": "case-812a384054014495"
+          }
+        }
+      },
+      "build": {
+        "source_sha": "e0515bcd1b51382be82bf2cf0e51b26ea9ed8c8b",
+        "dispatched_at": 1793343794.36886,
+        "state": "ready",
+        "run_id": 41017706644,
+        "run_url": "https://github.com/lelezi257/jiuwen-ops-lab/actions/runs/41017706644",
+        "image_digest": "localhost:5000/jiuwen-order@sha256:de2b88a0bdf64c38702cee1573df659ac2b28774e1704f7d68b4d6ebe83fa891",
+        "artifact_id": 12960645696,
+        "provenance": {
+          "source_sha": "e0515bcd1b51382be82bf2cf0e51b26ea9ed8c8b",
+          "architecture": "arm64",
+          "archive_sha256": "1d7c6df78a82bd8a92a4f3875da849db40f4499579f19d002139fbab33aeda92",
+          "run_id": "41017706644"
+        }
+      },
+      "patch_author": "real_model_via_official_jiuwen",
+      "first_agent_request_at": 1793343428.2028968,
+      "end_to_end_seconds": 12325.856,
+      "after_model_start_seconds": 1342.223,
+      "diagnostic_first_at": 1793343437.8259993,
+      "pr_first_at": 1793343479.0419285,
+      "timeline": [
+        {
+          "at": 1793332444.5692918,
+          "state": "REPAIR_QUEUED"
+        },
+        {
+          "at": 1793343428.1730893,
+          "state": "REPAIRING"
+        },
+        {
+          "at": 1793343571.600435,
+          "state": "NEEDS_HUMAN"
+        },
+        {
+          "at": 1793343604.8825278,
+          "state": "REPAIR_QUEUED"
+        },
+        {
+          "at": 1793343605.4513328,
+          "state": "REPAIRING"
+        },
+        {
+          "at": 1793343635.8295383,
+          "state": "NEEDS_HUMAN"
+        },
+        {
+          "at": 1793343724.0631907,
+          "state": "REPAIR_QUEUED"
+        },
+        {
+          "at": 1793343725.2334056,
+          "state": "REPAIRING"
+        },
+        {
+          "at": 1793343767.588944,
+          "state": "CI_PENDING"
+        },
+        {
+          "at": 1793343772.823487,
+          "state": "READY_TO_MERGE"
+        },
+        {
+          "at": 1793343776.3473341,
+          "state": "MERGING"
+        },
+        {
+          "at": 1793343788.5310016,
+          "state": "BUILDING"
+        },
+        {
+          "at": 1793344469.9462783,
+          "state": "DEPLOYING"
+        },
+        {
+          "at": 1793344474.9226992,
+          "state": "VERIFYING"
+        },
+        {
+          "at": 1793344599.1102998,
+          "state": "VERIFY_AGENT_QUEUED"
+        },
+        {
+          "at": 1793344600.7670007,
+          "state": "VERIFY_AGENT_RUNNING"
+        },
+        {
+          "at": 1793344626.1025114,
+          "state": "NEEDS_HUMAN"
+        },
+        {
+          "at": 1793344741.761327,
+          "state": "VERIFY_AGENT_QUEUED"
+        },
+        {
+          "at": 1793344742.1242728,
+          "state": "VERIFY_AGENT_RUNNING"
+        },
+        {
+          "at": 1793344770.4242072,
+          "state": "RESOLVED_FIXED"
+        }
+      ],
+      "state_seconds": {
+        "REPAIR_QUEUED": 10985.343,
+        "REPAIRING": 216.161,
+        "NEEDS_HUMAN": 237.175,
+        "CI_PENDING": 5.235,
+        "READY_TO_MERGE": 3.524,
+        "MERGING": 12.184,
+        "BUILDING": 681.415,
+        "DEPLOYING": 4.976,
+        "VERIFYING": 124.188,
+        "VERIFY_AGENT_QUEUED": 2.02,
+        "VERIFY_AGENT_RUNNING": 53.636,
+        "RESOLVED_FIXED": 0.001
+      },
+      "model_runs": [
+        {
+          "request_id": "564dc786-4932-4536-bad7-c501be87bfda",
+          "session_id": "process_cli_1a18b992507_7a4077cdd4ed",
+          "phase": "repair",
+          "started_at": 1793343428.2028968,
+          "received_at": 1793343484.8961828,
+          "status": "completed",
+          "exit_code": 0,
+          "error_code": null,
+          "usage": {
+            "input_tokens": 228961,
+            "output_tokens": 1893,
+            "total_tokens": 230854,
+            "cache_tokens": 200448,
+            "cache_hit_rate": "87.5%",
+            "total_cost": 0.064639,
+            "model_calls": 9
+          },
+          "output_json": {
+            "finding": "根因定位：故障版本 fault-release-09f4cfcaf0bc484f（9747c4cc…）把 apps/order_api/pricing.py 的 coupon 归一化从 `(coupon or '').strip().upper()` 改成了 `coupon.strip().upper()`，而 Order.coupon 是可选字段（默认 None），因此所有不带 coupon 的 POST /orders 请求都会抛 AttributeError: 'NoneType' object has no attribute 'strip'，被中间件记为 500。证据一致：Loki 近 5 分钟 /orders 每约 1s 出现一条 status=500 error=AttributeError，而 /orders/{id} 与带 coupon 的 /orders 请求仍为 200；get_running_release 显示容器实际 source_sha 与 ledger 的 incident release 一致（consistent=true），known_good 为 release-engineering-7c3f9342759b4a0b（3e1e80e1…），其 diff 正是该行被引入的位置。修复方式：仅恢复 `(coupon or '')` 的 None 保护，不改动 app.py 的指标/日志改动，也不触碰 CI、依赖与部署策略。新增回归测试 tests/order/test_pricing_optional_coupon.py，覆盖 coupon=None、空白 coupon、大小写/空格归一化以及非法 coupon 仍抛 ValueError；run_tests 独立 HTTP/DB 业务校验全部通过（coupon=null 返回 total_cents=20000 且持久化、幂等；SAVE10 为 18000；空串 20000；' save10 ' 18000；非法输入被拒），历史测试 test_valid_coupon 仍通过，共 5 个用例 OK。已创建 PR #3（head 0d4fbfe7a017eacc5bcf470837f01e54741358f9，base 9747c4cc85acafaa6858814a0931568dd2669b78），未合并、未部署。",
+            "evidence_ids": [
+              "ev-3beccf04087d4811",
+              "ev-162c0675b2e84831",
+              "test-865f045ab32d40c7"
+            ],
+            "pr_number": 3,
+            "candidate_sha": "0d4fbfe7a017eacc5bcf470837f01e54741358f9",
+            "needs_human": false
+          }
+        },
+        {
+          "request_id": "4a745dc4-6f85-43f4-bcb7-bd337af6eec9",
+          "session_id": "process_cli_1a18b9bd897_76ab7346ebf0",
+          "phase": "repair",
+          "started_at": 1793343605.485148,
+          "received_at": 1793343635.8271496,
+          "status": "failed",
+          "exit_code": 1,
+          "error_code": "RUNTIME_ERROR",
+          "usage": {
+            "input_cost": 0.0,
+            "output_tokens": 902,
+            "input_tokens": 112866,
+            "cache_tokens": 89216,
+            "total_tokens": 113768,
+            "output_cost": 0.0,
+            "total_cost": 0.03185504,
+            "model_calls": 5
+          },
+          "output_json": null
+        },
+        {
+          "request_id": "15b387f0-86b6-4bc7-b7b4-78a59f6a4655",
+          "session_id": "process_cli_1a18b9dac2f_3348d0c74cf5",
+          "phase": "repair",
+          "started_at": 1793343725.2597878,
+          "received_at": 1793343763.563211,
+          "status": "completed",
+          "exit_code": 0,
+          "error_code": null,
+          "usage": {
+            "input_tokens": 146121,
+            "output_tokens": 1238,
+            "total_tokens": 147359,
+            "cache_tokens": 119168,
+            "cache_hit_rate": "81.6%",
+            "total_cost": 0.041261,
+            "model_calls": 6
+          },
+          "output_json": {
+            "finding": "根因确认：`apps/order_api/pricing.py` 在 fault-release-09f4cfcaf0bc484f 中把空值安全的 `(coupon or '').strip().upper()` 改成了 `coupon.strip().upper()`，导致 `POST /orders` 在未携带 coupon 时抛出 `AttributeError: 'NoneType' object has no attribute 'strip'` 并返回 500。指标显示 `/orders` 同时存在 500 与 200 请求，日志中所有 500 均为该 AttributeError，且 running source_sha/镜像与 release ledger 一致（consistent=true），与 known-good 的差异仅两处：`app.py` 的 metrics label 增列（无害）与该 pricing 回归。workspace 中已有上一轮留下的最小修复（恢复 `(coupon or '')` 判空）及新增回归测试 `tests/order/test_pricing_optional_coupon.py`（覆盖 None、空白、` save10 ` 归一化、非法 coupon 拒绝），已重新运行测试：5/5 通过，业务侧 coupon=null/''/SAVE10/' save10 ' 的持久化与幂等校验均通过，非法输入被拒。PR 复用/创建为 lelezi257/jiuwen-ops-lab#3，head SHA 0d4fbfe7a017eacc5bcf470837f01e54741358f9。未合并、未部署。",
+            "evidence_ids": [
+              "ev-40ceaf5cf98b4588",
+              "ev-930246bb15534a16",
+              "test-f1db053129d844ca"
+            ],
+            "pr_number": 3,
+            "candidate_sha": "0d4fbfe7a017eacc5bcf470837f01e54741358f9",
+            "needs_human": false
+          }
+        },
+        {
+          "request_id": "14159b33-2726-401c-823f-44119938330a",
+          "session_id": "process_cli_1a18bab07e7_eec79303eeaa",
+          "phase": "verify",
+          "started_at": 1793344600.8082736,
+          "received_at": 1793344626.0895276,
+          "status": "failed",
+          "exit_code": 1,
+          "error_code": "OUTPUT_SCHEMA_MISMATCH",
+          "usage": {
+            "input_tokens": 159930,
+            "output_tokens": 1725,
+            "total_tokens": 161655,
+            "cache_tokens": 74496,
+            "cache_hit_rate": "46.6%",
+            "total_cost": 0.045263,
+            "model_calls": 2
+          },
+          "output_json": null
+        },
+        {
+          "request_id": "28c166f8-0b1f-4334-aa79-3bb97879bc55",
+          "session_id": "process_cli_1a18bad301c_74630b06cd7c",
+          "phase": "verify",
+          "started_at": 1793344742.160656,
+          "received_at": 1793344770.2952335,
+          "status": "completed",
+          "exit_code": 0,
+          "error_code": null,
+          "usage": {
+            "input_tokens": 161016,
+            "output_tokens": 1984,
+            "total_tokens": 163000,
+            "cache_tokens": 75136,
+            "cache_hit_rate": "46.7%",
+            "total_cost": 0.04564,
+            "model_calls": 2
+          },
+          "output_json": {
+            "finding": "独立只读核对通过，运行时身份、指标、日志与源码差异彼此一致，未发现需要人工介入的矛盾。运行时侧：正在运行 release-case-812a384054014495，source_sha=e0515bcd1b51382be82bf2cf0e51b26ea9ed8c8b，image_id=sha256:de2b88a0bdf64c38702cee1573df659ac2b28774e1704f7d68b4d6ebe83fa891，与验证记录期望的 expected_source_sha / expected_image_digest 完全相同，ledger consistent=true；事故版本 fault-release-09f4cfcaf0bc484f(9747c4cc…) 已作为 previous 被替换，已知好版本为 release-engineering-7c3f9342759b4a0b(3e1e80e1…)。验证侧：2 个 60 秒窗口均 passed，coupon/no_coupon 分别 107 与 106 次请求全部 200，远高于每路径 30 次下限；带券 total_cents=18000、无券=20000，persisted 与 database_row 完全一致（如 189675c2…/18000、02019d97…/20000），old_order_ok=true、invalid_input_ok=true，前后 source_sha 与 image_digest 未发生变化。指标侧：Prometheus 2 分钟窗口 /orders 与 /orders/{id} 均仅有 200（约 204/205 次），/orders 422 计数为 0，无任何 5xx；该窗口起点晚于验证结束时间，属验证后常态流量，与验证期请求量不冲突。日志侧：Loki 最近 5 分钟 order-api 记录全部 status=200、error=null、duration 约 3–15ms，且每条日志内 source_sha=e0515bcd… 、release_id=release-case-812a384054014495，与本次发布一致；未见 AttributeError: 'NoneType' object has no attribute 'strip' 等事故期异常残留。源码差异：已知好 3e1e80e1… 到运行 e0515bcd… 仅改动 apps/order_api/app.py，为 order_requests_total 增加 release_id 标签并传入 os.getenv('RELEASE_ID')，pricing.py 无差异，说明 coupon=None 判空逻辑已回到已知好版本，事故根因已消除。上一轮失败仅因输出不是 JSON 对象（OUTPUT_SCHEMA_MISMATCH，属格式/工程问题，非业务失败），本轮结论不受影响。本次判定无需人工介入，也未提供 PR 编号或候选提交。",
+            "evidence_ids": [
+              "ev-cebfdc82f1db4578",
+              "ev-f8e3c51c7df5469e"
+            ],
+            "pr_number": null,
+            "candidate_sha": null,
+            "needs_human": false
+          }
+        }
+      ],
+      "reported_usage_totals": {
+        "model_calls": 24,
+        "input_tokens": 808894,
+        "output_tokens": 7742,
+        "total_tokens": 816636,
+        "total_cost": 0.22865804
+      },
+      "unknown_usage_fields": [],
+      "tool_effects": [
+        {
+          "at": 1793343437.7240999,
+          "tool": "query_metrics",
+          "evidence_id": "ev-3beccf04087d4811"
+        },
+        {
+          "at": 1793343437.8259993,
+          "tool": "query_logs",
+          "evidence_id": "ev-162c0675b2e84831"
+        },
+        {
+          "at": 1793343437.946874,
+          "tool": "get_running_release"
+        },
+        {
+          "at": 1793343442.2713065,
+          "tool": "get_release_diff",
+          "base_sha": "3e1e80e1aa3994b6f18e767c9a98647212691998"
+        },
+        {
+          "at": 1793343444.28547,
+          "tool": "create_workspace",
+          "base_sha": "9747c4cc85acafaa6858814a0931568dd2669b78",
+          "path": "/work/candidates/case-812a384054014495"
+        },
+        {
+          "at": 1793343446.6869106,
+          "tool": "list_source"
+        },
+        {
+          "at": 1793343446.772725,
+          "tool": "read_source",
+          "path": "apps/order_api/pricing.py",
+          "sha256": "054be9db85b97aa3c20b7ce8a97e1c74fa1b3d5bc4f7a1491d83821905b2f937"
+        },
+        {
+          "at": 1793343457.0580153,
+          "tool": "read_source",
+          "path": "apps/order_api/app.py",
+          "sha256": "536ac2828b0678ac2ffb8631c7fce5a6a618cc659e4e34ced7af876e7eafc8de"
+        },
+        {
+          "at": 1793343457.1497643,
+          "tool": "read_source",
+          "path": "tests/order/test_pricing.py",
+          "sha256": "86f45cea203a8e4906d10ec86d758cddedd08e6264fdcdd13a299fb3872cecad"
+        },
+        {
+          "at": 1793343461.8225746,
+          "tool": "write_source",
+          "path": "apps/order_api/pricing.py",
+          "sha256": "3509e6fc7480c2693bc6371350838e88979d9ea121b4ccca29f997ec78afd589"
+        },
+        {
+          "at": 1793343461.9078808,
+          "tool": "write_source",
+          "path": "tests/order/test_pricing_optional_coupon.py",
+          "sha256": "ef821887feee95b987199cd172c391481cbf00ac617603223182033e69ac4e7c"
+        },
+        {
+          "at": 1793343469.7164738,
+          "tool": "run_tests",
+          "test_id": "test-865f045ab32d40c7",
+          "passed": true,
+          "tree_hash": "2dd0d39b9763667aff868f925f7bd7566b4cdfa5"
+        },
+        {
+          "at": 1793343472.0344515,
+          "tool": "get_diff",
+          "base_sha": "9747c4cc85acafaa6858814a0931568dd2669b78"
+        },
+        {
+          "at": 1793343479.0419285,
+          "tool": "create_pull_request",
+          "number": 3,
+          "url": "https://github.com/lelezi257/jiuwen-ops-lab/pull/3",
+          "head_sha": "0d4fbfe7a017eacc5bcf470837f01e54741358f9",
+          "base_sha": "9747c4cc85acafaa6858814a0931568dd2669b78"
+        },
+        {
+          "at": 1793343616.975462,
+          "tool": "query_metrics",
+          "evidence_id": "ev-69e5aa07a3354f5c"
+        },
+        {
+          "at": 1793343617.067768,
+          "tool": "query_logs",
+          "evidence_id": "ev-bf7b805d14414875"
+        },
+        {
+          "at": 1793343617.186026,
+          "tool": "get_running_release"
+        },
+        {
+          "at": 1793343620.511895,
+          "tool": "get_release_diff",
+          "base_sha": "3e1e80e1aa3994b6f18e767c9a98647212691998"
+        },
+        {
+          "at": 1793343620.6014416,
+          "tool": "create_workspace",
+          "base_sha": "9747c4cc85acafaa6858814a0931568dd2669b78",
+          "path": "/work/candidates/case-812a384054014495"
+        },
+        {
+          "at": 1793343623.0957057,
+          "tool": "list_source"
+        },
+        {
+          "at": 1793343623.1739357,
+          "tool": "read_source",
+          "path": "apps/order_api/pricing.py",
+          "sha256": "3509e6fc7480c2693bc6371350838e88979d9ea121b4ccca29f997ec78afd589"
+        },
+        {
+          "at": 1793343631.1749816,
+          "tool": "read_source",
+          "path": "apps/order_api/app.py",
+          "sha256": "536ac2828b0678ac2ffb8631c7fce5a6a618cc659e4e34ced7af876e7eafc8de"
+        },
+        {
+          "at": 1793343631.2528725,
+          "tool": "read_source",
+          "path": "tests/order/test_pricing.py",
+          "sha256": "86f45cea203a8e4906d10ec86d758cddedd08e6264fdcdd13a299fb3872cecad"
+        },
+        {
+          "at": 1793343631.3400097,
+          "tool": "read_source",
+          "path": "tests/order/test_pricing_optional_coupon.py",
+          "sha256": "ef821887feee95b987199cd172c391481cbf00ac617603223182033e69ac4e7c"
+        },
+        {
+          "at": 1793343733.86959,
+          "tool": "query_metrics",
+          "evidence_id": "ev-40ceaf5cf98b4588"
+        },
+        {
+          "at": 1793343733.9549525,
+          "tool": "query_logs",
+          "evidence_id": "ev-930246bb15534a16"
+        },
+        {
+          "at": 1793343734.0726573,
+          "tool": "get_running_release"
+        },
+        {
+          "at": 1793343735.1881323,
+          "tool": "get_release_diff",
+          "base_sha": "3e1e80e1aa3994b6f18e767c9a98647212691998"
+        },
+        {
+          "at": 1793343741.2539127,
+          "tool": "create_workspace",
+          "base_sha": "9747c4cc85acafaa6858814a0931568dd2669b78",
+          "path": "/work/candidates/case-812a384054014495"
+        },
+        {
+          "at": 1793343741.33966,
+          "tool": "list_source"
+        },
+        {
+          "at": 1793343746.3527684,
+          "tool": "get_diff",
+          "base_sha": "9747c4cc85acafaa6858814a0931568dd2669b78"
+        },
+        {
+          "at": 1793343746.427385,
+          "tool": "read_source",
+          "path": "apps/order_api/pricing.py",
+          "sha256": "3509e6fc7480c2693bc6371350838e88979d9ea121b4ccca29f997ec78afd589"
+        },
+        {
+          "at": 1793343746.517876,
+          "tool": "read_source",
+          "path": "tests/order/test_pricing.py",
+          "sha256": "86f45cea203a8e4906d10ec86d758cddedd08e6264fdcdd13a299fb3872cecad"
+        },
+        {
+          "at": 1793343746.6170876,
+          "tool": "read_source",
+          "path": "tests/order/test_pricing_optional_coupon.py",
+          "sha256": "ef821887feee95b987199cd172c391481cbf00ac617603223182033e69ac4e7c"
+        },
+        {
+          "at": 1793343753.1154087,
+          "tool": "run_tests",
+          "test_id": "test-f1db053129d844ca",
+          "passed": true,
+          "tree_hash": "2dd0d39b9763667aff868f925f7bd7566b4cdfa5"
+        },
+        {
+          "at": 1793343758.3543503,
+          "tool": "create_pull_request",
+          "number": 3,
+          "url": "https://github.com/lelezi257/jiuwen-ops-lab/pull/3",
+          "head_sha": "0d4fbfe7a017eacc5bcf470837f01e54741358f9",
+          "base_sha": "9747c4cc85acafaa6858814a0931568dd2669b78"
+        },
+        {
+          "at": 1793344610.0087583,
+          "tool": "get_running_release"
+        },
+        {
+          "at": 1793344610.1100304,
+          "tool": "query_metrics",
+          "evidence_id": "ev-5e3e22ba49e54e62"
+        },
+        {
+          "at": 1793344610.2103574,
+          "tool": "query_logs",
+          "evidence_id": "ev-4f936fd203c34ee0"
+        },
+        {
+          "at": 1793344611.2976046,
+          "tool": "get_release_diff",
+          "base_sha": "3e1e80e1aa3994b6f18e767c9a98647212691998"
+        },
+        {
+          "at": 1793344753.2260942,
+          "tool": "get_running_release"
+        },
+        {
+          "at": 1793344754.31868,
+          "tool": "get_release_diff",
+          "base_sha": "3e1e80e1aa3994b6f18e767c9a98647212691998"
+        },
+        {
+          "at": 1793344754.42731,
+          "tool": "query_metrics",
+          "evidence_id": "ev-cebfdc82f1db4578"
+        },
+        {
+          "at": 1793344754.5263784,
+          "tool": "query_logs",
+          "evidence_id": "ev-f8e3c51c7df5469e"
+        }
+      ],
+      "verification": {
+        "verification_id": "verify-e8348665b81f4cbe",
+        "release_id": "release-case-812a384054014495",
+        "expected_source_sha": "e0515bcd1b51382be82bf2cf0e51b26ea9ed8c8b",
+        "expected_image_digest": "localhost:5000/jiuwen-order@sha256:de2b88a0bdf64c38702cee1573df659ac2b28774e1704f7d68b4d6ebe83fa891",
+        "started_at": 1793344478.5435848,
+        "finished_at": 1793344599.0854087,
+        "contract": {
+          "seconds": 60,
+          "windows": 2,
+          "minimum_per_path": 30
+        },
+        "before": {
+          "source_sha": "e0515bcd1b51382be82bf2cf0e51b26ea9ed8c8b",
+          "release_id": "release-case-812a384054014495",
+          "image_digest": "localhost:5000/jiuwen-order@sha256:de2b88a0bdf64c38702cee1573df659ac2b28774e1704f7d68b4d6ebe83fa891"
+        },
+        "after": {
+          "source_sha": "e0515bcd1b51382be82bf2cf0e51b26ea9ed8c8b",
+          "release_id": "release-case-812a384054014495",
+          "image_digest": "localhost:5000/jiuwen-order@sha256:de2b88a0bdf64c38702cee1573df659ac2b28774e1704f7d68b4d6ebe83fa891"
+        },
+        "passed": true,
+        "old_order_ok": true,
+        "invalid_input_ok": true,
+        "windows": [
+          {
+            "start": 1793344478.5539024,
+            "end": 1793344538.8684006,
+            "counts": {
+              "coupon": 107,
+              "no_coupon": 107
+            },
+            "passed": true,
+            "all_database_rows_match": true,
+            "failed_requests": 0
+          },
+          {
+            "start": 1793344538.8684032,
+            "end": 1793344599.0651505,
+            "counts": {
+              "coupon": 106,
+              "no_coupon": 106
+            },
+            "passed": true,
+            "all_database_rows_match": true,
+            "failed_requests": 0
+          }
+        ]
+      },
+      "rollback_verification": null,
+      "deployment_runtime": {
+        "container_id": "b62cf437d0f158fe242bb57660e2dbf4f6e531b2f6e26ec165452f255e1453c9",
+        "image_id": "sha256:de2b88a0bdf64c38702cee1573df659ac2b28774e1704f7d68b4d6ebe83fa891",
+        "repo_digests": [
+          "order-build@sha256:de2b88a0bdf64c38702cee1573df659ac2b28774e1704f7d68b4d6ebe83fa891",
+          "localhost:5000/jiuwen-order@sha256:de2b88a0bdf64c38702cee1573df659ac2b28774e1704f7d68b4d6ebe83fa891"
+        ],
+        "source_sha": "e0515bcd1b51382be82bf2cf0e51b26ea9ed8c8b",
+        "running": true,
+        "release_id": "release-case-812a384054014495"
+      }
+    }
+  ],
+  "passed": true,
+  "note": "All listed attempts and failures are retained. Not a general AIOps success-rate benchmark. Unknown usage is null, not zero; total_cost is only the model provider/framework reported amount."
+}
