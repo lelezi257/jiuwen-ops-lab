@@ -27,6 +27,8 @@ case "$command_name" in
   if ! grep -q '^ORDER_IMAGE=' .local/runtime.env; then python3 scripts/build_baseline.py; fi
   compose build control runner
   compose up -d --no-build
+  # File bind mounts retain old inodes; recreate config-driven services on up.
+  compose up -d --no-build --no-deps --force-recreate prometheus alertmanager loki
   if ! grep -q '^ORDER_IMAGE=' .local/runtime.env; then ./scripts/lab bootstrap-image; else docker start ops-order-api >/dev/null; fi
   python3 scripts/wait_ready.py
   ;;

@@ -7,7 +7,7 @@ from fastapi import FastAPI,Depends
 from lab.common import DATA,operator,put,get,init_store,ident
 BASE='http://order-api:8080';init_store()
 DSN='host=db dbname=orders user=verifier password='+secret('verify_db_password')
-def sample(c,coupon):
+def sample_request(c,coupon):
  payload={'quantity':2,'request_key':'probe-'+uuid.uuid4().hex}
  if coupon is not None:payload['coupon']=coupon
  start=time.time();r=c.post(BASE+'/orders',json=payload);result={'path':'coupon' if coupon else 'no_coupon','status':r.status_code,'elapsed_ms':round((time.time()-start)*1000,2),'ok':False}
@@ -20,12 +20,15 @@ def sample(c,coupon):
   result['ok']=bool(stored and stored[1]==2 and stored[2]==want) and row.get('total_cents')==want and read.status_code==200 and read.json().get('total_cents')==want and read.json().get('quantity')==2
   if result['ok'] and not get('baseline','old_order'):put('baseline','old_order',{'id':row['id'],'total_cents':want})
  return result
+def sample(coupon):
+ # A failed ASGI request can close its keepalive connection. Isolate paths so
+ # an expected 500 cannot suppress the next healthy-path observation.
+ with httpx.Client(timeout=8,trust_env=False) as c:return sample_request(c,coupon)
 async def traffic():
  while True:
   try:
    def cycle():
-    with httpx.Client(timeout=5,trust_env=False) as c:
-     for coupon in [None,'SAVE10']:sample(c,coupon)
+    for coupon in [None,'SAVE10']:sample(coupon)
    await asyncio.to_thread(cycle)
   except Exception:pass
   await asyncio.sleep(1)
@@ -48,7 +51,7 @@ def verify(args:dict):
    start=time.time();rows=[]
    while time.time()-start<seconds:
     for coupon in [None,'SAVE10']:
-     try:rows.append(sample(c,coupon))
+     try:rows.append(sample(coupon))
      except Exception as exc:rows.append({'path':'coupon' if coupon else 'no_coupon','ok':False,'error':type(exc).__name__})
     time.sleep(.5)
    counts={p:sum(r['path']==p for r in rows) for p in ['coupon','no_coupon']}
