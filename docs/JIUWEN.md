@@ -49,3 +49,6 @@
 执行 `scripts/lab qualify`：真实 SDK 发现、非法输入失败、模型读取实际运行版本的 host tool、结构化结果，以及在实际工具回调后取消同一个 run。结果写入 runner 数据卷的 `/data/qualification/report.json`。这条命令会调用真实模型并产生供应商费用；它还不是订单故障修复 E2E。
 
 不配 Key 也可在 VM 内执行 `sudo docker compose --env-file .local/lab.env --env-file .local/runtime.env exec -T runner python /app/scripts/qualify_jiuwen.py --discovery-only`，只检查协议和非法输入；报告保留 `real_model_qualified=false`。
+
+
+只读容器部署需显式处理写入目录：SDK 子进程 cwd 使用可写的 `/data`；Core 默认日志随 cwd 写入；Swarm 扩展管理器会确保安装根下的 `application_plugins` 存在，本镜像在构建时预建空目录。会话/日志在独立数据卷，配置在单独挂载目录，框架源码不做运行时修改。

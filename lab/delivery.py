@@ -35,7 +35,7 @@ def inspect():
  return {'container_id':r['Id'],'image_id':r['Image'],'repo_digests':image.get('RepoDigests',[]),'source_sha':image['Config'].get('Labels',{}).get('org.opencontainers.image.revision'),'running':r['State']['Running'],'release_id':next((x.split('=',1)[1] for x in r['Config']['Env'] if x.startswith('RELEASE_ID=')),None)}
 def current():
  fact=inspect();ledger=get('release','current')
- return {'runtime':fact,'ledger':ledger,'consistent':bool(ledger and fact['source_sha']==ledger['source_sha'] and fact['release_id']==ledger['release_id'] and ledger['image_digest'] in fact['repo_digests'])}
+ return {'runtime':fact,'ledger':ledger,'known_good':get('release','good'),'consistent':bool(ledger and fact['source_sha']==ledger['source_sha'] and fact['release_id']==ledger['release_id'] and ledger['image_digest'] in fact['repo_digests'])}
 def case_active(cid):
  c=call('http://control:8080','/internal/cases/'+cid,role='runner')
  if c.get('cancelled') or c['state'] not in ['REPAIRING','INVESTIGATING','VERIFY_AGENT_RUNNING']:raise HTTPException(409,'Case does not allow agent tools')
@@ -102,7 +102,7 @@ def tool(name:str,args:dict):
   if name=='get_diff':return {'base_sha':w['base_sha'],'diff':cmd(['git','diff',w['base_sha']],root)[:50000]}
   if name=='run_tests':
    check_changes(root,w['base_sha']);run_id=ident('test')
-   argv=['python','/app/scripts/ci.py','--candidate',str(root),'--trusted','/app','--oracle-host-path',HOST_REPO+'/contracts']
+   argv=['python','/app/scripts/ci.py','--candidate',str(root),'--trusted','/app','--oracle-host-path',HOST_REPO+'/contracts','--candidate-volume','jiuwen-ops-lab_work']
    result=subprocess.run(argv,capture_output=True,text=True,timeout=300)
    rec={'test_id':run_id,'passed':result.returncode==0,'output':(result.stdout+result.stderr)[-45000:],'tree_hash':cmd(['git','write-tree'],root)};put('test',cid,rec);return rec
   if name=='create_pull_request':
@@ -230,7 +230,7 @@ def ops(name:str,args:dict):
   if name=='mark-good':
    cur=current();report=call('http://probe:8080','/reports/'+args['verification_id'])
    if not report or not report['passed'] or report['release_id']!=cur['ledger']['release_id'] or not cur['consistent']:raise HTTPException(409,'Independent verification for current release required')
-   put('release','good',cur['ledger']);return cur
+   put('release','good',{**cur['ledger'],'verification_id':args['verification_id'],'verified_at':now()});return current()
   if name=='register':
    fact=inspect();image=next((x for x in fact['repo_digests'] if x.startswith(IMAGE+'@')),None)
    if not image:raise HTTPException(409,'Bootstrap image must be pushed to local registry first')

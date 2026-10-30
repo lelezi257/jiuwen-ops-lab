@@ -206,3 +206,13 @@ def engineering_submit(cid:str):
  c=case(cid)
  if c.get('kind')!='engineering_acceptance' or c['cancelled'] or c['state']!='REPAIRING':raise HTTPException(409,'Not an active engineering case')
  status=call(DELIVERY,'/ops/pr-status',{'case_id':cid});c['pr']=status['pr'];return save(c,'CI_PENDING','Human-authored candidate; real delivery acceptance only')
+
+@app.post('/api/cases/{cid}/retry',dependencies=[Depends(operator)])
+def retry(cid:str):
+ with mutex:
+  c=case(cid)
+  if c['state'] not in ['NEEDS_HUMAN','CANCELLED'] or c.get('kind')=='engineering_acceptance':raise HTTPException(409,'Not a retriable Agent case')
+  cur=call(DELIVERY,'/ops/current',{})
+  if not cur['consistent'] or cur['runtime']['source_sha']!=c['observed_sha'] or c.get('merge'):raise HTTPException(409,'External state changed; investigate and reconcile before retry')
+  c['cancelled']=False;c['attempt_id']=ident('retry-reservation');c['feedback']={'previous_result':c.get('agent_result'),'operator_retry':True};put('case',cid,c)
+  return save(c,'REPAIR_QUEUED','Operator requested new attempt; prior attempts retained')

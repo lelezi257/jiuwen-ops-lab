@@ -24,7 +24,7 @@ async function refresh(){try{
  $('#case-summary').replaceChildren(node('h2',c.id),node('div',stateNames[c.state]||c.state,'phase'),node('p','事故版本：'+c.observed_sha));
  if(c.pr){const a=node('a','PR #'+c.pr.number);a.href=c.pr.url;a.target='_blank';a.rel='noopener';$('#case-summary').append(a)}
  if(c.verification)$('#case-summary').append(node('p','独立业务验证：'+(c.verification.passed?'通过':'失败')));
- const buttons=node('div',undefined,'actions');for(const [action,label] of [['cancel','停止后续动作'],['approve','批准交付']]){const b=node('button',label);b.onclick=async()=>{try{await request('/api/cases/'+c.id+'/'+action,{});refresh()}catch(e){message(e.message)}};buttons.append(b)}$('#case-summary').append(buttons);
+ const buttons=node('div',undefined,'actions');for(const [action,label] of [['cancel','停止后续动作'],['retry','重新尝试'],['approve','批准交付']]){const b=node('button',label);b.onclick=async()=>{try{await request('/api/cases/'+c.id+'/'+action,{});refresh()}catch(e){message(e.message)}};buttons.append(b)}$('#case-summary').append(buttons);
  const detail=node('details');detail.append(node('summary','事件完整数据'),node('pre',JSON.stringify(c,null,2)));$('#case-summary').append(detail);
  const rows=await request('/api/cases/'+c.id+'/events');$('#timeline').replaceChildren();for(const row of rows){const block=node('div',undefined,'event');block.append(node('time',new Date(row.time*1000).toLocaleTimeString()));const d=node('details');d.append(node('summary',row.kind+(row.data?.state?' · '+row.data.state:'')),node('pre',JSON.stringify(row.data,null,2)));block.append(d);$('#timeline').append(block)}
 }catch(e){$('#model-hint').textContent='暂时无法读取后台：'+e.message}}
