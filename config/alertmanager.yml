@@ -2,7 +2,7 @@ global:
   resolve_timeout: 30s
 route:
   receiver: ops-control
-  group_by: [alertname, service]
+  group_by: [alertname, service, release_id]
   group_wait: 5s
   group_interval: 30s
   repeat_interval: 10m

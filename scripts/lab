@@ -51,9 +51,10 @@ case "$command_name" in
  token) cat .local/secrets/control_token ;;
  baseline|fault|investigate)
   exec python3 scripts/api.py "$command_name" ;;
+ agent-acceptance) exec python3 scripts/agent_acceptance.py "$@" ;;
  smoke) exec python3 scripts/smoke.py "$@" ;;
  stop) compose stop
   docker stop ops-order-api
   ;;
- *) printf '%s\n' 'init [--github] | vm-create | vm-sync | vm-up | vm-status | up | status | configure-model | qualify | token | baseline | fault | investigate | smoke | logs | stop' ;;
+ *) printf '%s\n' 'init [--github] | vm-create | vm-sync | vm-up | vm-status | up | status | configure-model | qualify | token | baseline | fault | investigate | agent-acceptance [--trials 3] | smoke | logs | stop' ;;
 esac

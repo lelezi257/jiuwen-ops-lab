@@ -88,3 +88,6 @@ sudo python3 scripts/engineering_acceptance.py
 
 
 代码同步会核对已有 VM 的数据库身份。换一个 clone 后若 `.local` 是新生成的，不能直接覆盖旧 VM 的配置；恢复原配置后再同步。模型 Key 只更新使用 `scripts/lab configure-model`，不需要覆盖整个 VM 配置。
+
+
+真实模型配置后，可运行 `scripts/lab agent-acceptance --trials 3`。它只发实验请求并等待真实 Agent / GitHub / 业务验证结果，不提供补丁；每次使用新的故障提交和按 release 分组的真实告警。全部尝试与失败保存在 `.local/evidence/agent-acceptance-*.json`，不会挑选最好轨迹。该命令会使用已配置的真实模型并产生供应商费用。

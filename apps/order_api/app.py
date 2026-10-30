@@ -11,7 +11,7 @@ from pricing import total_cents
 
 password=os.getenv('DB_PASSWORD') or Path(os.getenv('DB_PASSWORD_FILE','/run/secrets/db_password')).read_text().strip()
 DSN=f"host={os.getenv('DB_HOST','db')} dbname=orders user=orders password={password}"
-requests=Counter('order_requests_total','HTTP requests',['path','status'])
+requests=Counter('order_requests_total','HTTP requests',['path','status','release_id'])
 latency=Histogram('order_request_seconds','HTTP request duration',['path'])
 log=logging.getLogger('order');log.setLevel(logging.INFO)
 Path('/logs').mkdir(exist_ok=True)
@@ -31,7 +31,7 @@ async def record(request:Request,call_next):
  finally:
   path=request.url.path;path='/orders/{id}' if path.startswith('/orders/') else path
   if path not in ['/metrics','/health']:
-   requests.labels(path,str(status)).inc();latency.labels(path).observe(time.time()-start)
+   requests.labels(path,str(status),os.getenv('RELEASE_ID','bootstrap')).inc();latency.labels(path).observe(time.time()-start)
    log.info(json.dumps({'time':time.time(),'service':'order-api','path':path,'status':status,'duration_ms':round((time.time()-start)*1000,2),'error':error,'source_sha':os.getenv('SOURCE_SHA','unknown'),'release_id':os.getenv('RELEASE_ID','bootstrap')},ensure_ascii=False))
 class Order(BaseModel):
  quantity:int=Field(ge=1,le=100)

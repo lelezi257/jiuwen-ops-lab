@@ -26,7 +26,12 @@ def create_case(trigger):
  with mutex:
   cur=call(DELIVERY,'/ops/current',{})
   if not cur['consistent']:raise HTTPException(409,'Running version is not registered consistently')
-  release=cur['ledger'];existing=next((c for c in all_objects('case') if c['observed_release']==release['release_id']),None)
+  release=cur['ledger']
+  if trigger.get('source')=='alertmanager':
+   relevant=[a for a in trigger['alerts'] if not a.get('labels',{}).get('release_id') or a['labels']['release_id']==release['release_id']]
+   if not relevant:return {'ignored':True,'reason':'Alert belongs to an older release'}
+   trigger={**trigger,'alerts':relevant}
+  existing=next((c for c in all_objects('case') if c['observed_release']==release['release_id']),None)
   if existing:return existing
   cid=ident('case');c={'id':cid,'created_at':now(),'state':'REPAIR_QUEUED','observed_release':release['release_id'],'observed_sha':release['source_sha'],'trigger':trigger,'cancelled':False,'attempt':0,'feedback':None}
   save(c,'REPAIR_QUEUED','Waiting for runner / real model configuration');return c
