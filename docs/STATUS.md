@@ -1,6 +1,6 @@
 # 实施与验收状态
 
-2026-10-30。**环境、真实故障和工程交付链已经实际通过；真实模型与 Agent 完整闭环仍等待用户配置。** 没有模型替身，也没有把人工补丁验收记成 Agent 修复成功。
+2026-10-30。**环境、真实故障和工程交付链已经实际通过；真实模型接线也已通过，自主修复发布与重复验收正在进行。** 没有模型替身，也没有把人工补丁验收记成 Agent 修复成功。
 
 | 层次 | 当前结果 | 实际证据与边界 |
 |---|---|---|
@@ -14,9 +14,9 @@
 | 真实候选、PR与CI | 实测通过（人工补丁工程验收） | [PR #1](https://github.com/lelezi257/jiuwen-ops-lab/pull/1)；[候选CI](https://github.com/lelezi257/jiuwen-ops-lab/actions/runs/40996229012)；真实代码、独立HTTP/DB合同与新增回归测试 |
 | 合并后构建与发布 | 实测通过 | 控制中心自动合并到实验分支；[构建](https://github.com/lelezi257/jiuwen-ops-lab/actions/runs/40996327233) 在 AMD64/ARM64 都重查实际 merge SHA；导入 ARM64 制品后以真实 registry digest 发布 |
 | 发布后业务恢复 | 实测通过 | 连续两个60秒窗口，每窗口每条路径109次且全部通过；数据库直接读取、旧订单与非法输入保持；[完整工程证据链](evidence/engineering-e2e.json) |
-| 产品边界单测 | 本地10项通过 | 角色分离、路径/symlink、取消与重试身份、CI failure/neutral/skipped、过期 head/base 等；单元测试不是模型效果证明 |
-| 真实模型/host tool/取消 | 待配置后实测 | 已提供 `scripts/lab qualify`；未发外部模型请求 |
-| 模型自主诊断与代码修复 E2E | 尚未验收 | 人工补丁不是模型生成修复；尚无外部LLM成功率或三次干净重置结果 |
+| 产品边界单测 | 本地13项通过 | 角色分离、路径/symlink、取消与重试身份、CI failure/neutral/skipped、过期 head/base 等；单元测试不是模型效果证明 |
+| 真实模型/host tool/取消 | 实测通过 | 实际模型与 host tool、结构化结果、取消130和子进程清理；[报告](evidence/real-model-sdk.json) |
+| 模型自主诊断与代码修复 E2E | 交付验收中 | 真实模型已生成修复、新增测试并提交 PR #3，真实CI通过；发布后恢复和三次干净重置尚在验收；[接线经过](REAL-MODEL-ACCEPTANCE.md) |
 | 自动回滚保护 | 故障注入实测通过 | [PR #2](https://github.com/lelezi257/jiuwen-ops-lab/pull/2) 发布后停止真实订单容器，验证失败后自动回滚到上一已验证镜像；两个60秒窗口每路径106次全部通过；[证据](evidence/rollback-e2e.json)；不计修复成功 |
 
 ## 本次版本证据链
@@ -38,7 +38,7 @@ ARM64 artifact: 12952050101
 
 ## 下一步
 
-在 `.local/model.env` 配置真实供应商、API地址、模型和Key，运行 `scripts/lab configure-model`。单独的真实接线与取消检查使用 `scripts/lab qualify`；再观察排队的真实故障事件。真实模型异常会如实进入需人工状态，可在核对实际副作用后显式重新尝试，不自动退回脚本补丁。
+本次用户已在本地配置真实模型，`scripts/lab qualify` 实测通过。正在等待自主修复的部署后验收，再用 `scripts/lab agent-acceptance --trials 3` 从独立故障版本重复运行。真实模型异常如实进入需人工状态；早期结果接收失败和被拒绝的 bash 调用均保留，不自动退回脚本补丁。
 
 最终运行现场和最新待处理事件见工作台及 `evidence/handoff.json`。本地原始日志、订单探测、SDK回执、代码工作区与动作账本保存在专用VM及 `.local/evidence/`；公开的是脱敏摘要。其他人的操作系统/模型/网络组合需要自行按同一层次验收。
 
