@@ -350,36 +350,6 @@
         "retries": 30
       }
     },
-    "order-api": {
-      "image": "${ORDER_IMAGE:-jiuwen-order:bootstrap}",
-      "container_name": "ops-order-api",
-      "restart": "unless-stopped",
-      "read_only": true,
-      "tmpfs": [
-        "/tmp"
-      ],
-      "networks": [
-        "app"
-      ],
-      "ports": [
-        "127.0.0.1:18080:8080"
-      ],
-      "secrets": [
-        "db_password"
-      ],
-      "volumes": [
-        "logs:/logs"
-      ],
-      "environment": {
-        "RELEASE_ID": "release-baseline",
-        "IMAGE_DIGEST": "${ORDER_IMAGE:-bootstrap}"
-      },
-      "depends_on": {
-        "db": {
-          "condition": "service_healthy"
-        }
-      }
-    },
     "prometheus": {
       "image": "${REGISTRY_MIRROR_PREFIX:-}prom/prometheus:v3.4.1",
       "restart": "unless-stopped",

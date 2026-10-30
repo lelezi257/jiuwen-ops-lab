@@ -161,6 +161,13 @@ def deploy(image,sha,release_id,expected):
 def ops(name:str,args:dict):
  with lock:
   if name=='current':return current()
+  if name=='bootstrap':
+   if get('release','current'):
+    cur=current()
+    if cur['consistent']:return cur
+    raise HTTPException(409,'Existing release requires reconciliation')
+   if args['source_sha']!=os.environ['LAB_TRUST_SHA']:raise HTTPException(409,'Bootstrap must use the selected trusted source')
+   return deploy(args['image_digest'],args['source_sha'],'release-baseline',None)
   if name=='pr-status':return pr_status(args['case_id'])
   if name=='merge':
    cid=args['case_id'];c=call('http://control:8080','/internal/cases/'+cid,role='runner')

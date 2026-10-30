@@ -1,6 +1,8 @@
 # 启动、学习和诊断
 
-按 README 启动。Mac 用专用 Lima VM，项目代码复制到 VM 的 `~/jiuwen-ops-lab`，没有共享可写宿主目录。VM 名固定 `jiuwen-ops-lab`，现有其他 VM 不复用、不修改。
+按 README 启动。Mac 用专用 Lima VM，项目代码复制到 VM 的 `~/jiuwen-ops-lab`，没有共享可写宿主目录。订单容器由工程交付服务独立管理，Compose 管理其余支撑服务；重新启动支撑服务不会把已修复应用重置为旧基线。
+
+VM 名固定 `jiuwen-ops-lab`，现有其他 VM 不复用、不修改。
 
 ## 模型稍后配置
 

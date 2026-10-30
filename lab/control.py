@@ -141,7 +141,8 @@ def approve(cid:str):
  if c['state']!='READY_TO_MERGE':raise HTTPException(409,'Not awaiting delivery authorization')
  c['approved']=True;save(c);return c
 @app.post('/api/experiment/{action}',dependencies=[Depends(operator)])
-def experiment(action:str):
+def experiment(action:str,body:dict):
+ if action=='bootstrap':return call(DELIVERY,'/ops/bootstrap',body,timeout=180)
  if action=='fault':return call(DELIVERY,'/ops/fault',{},timeout=600)
  if action=='baseline':
   cur=call(DELIVERY,'/ops/register',{});report=call(PROBE,'/verify',{'release_id':cur['ledger']['release_id']},timeout=600)

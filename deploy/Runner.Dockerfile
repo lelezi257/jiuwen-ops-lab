@@ -14,5 +14,6 @@ RUN python scripts/fetch_framework.py
 RUN uv pip install --no-cache -r vendor/requirements-framework.txt
 RUN python -c 'import json,subprocess; subprocess.run(["uv","pip","install","--no-deps",*json.load(open("vendor/projects.json"))],check=True)'
 COPY lab /app/lab
+COPY scripts/qualify_jiuwen.py /app/scripts/qualify_jiuwen.py
 RUN ln -s /app/vendor /vendor
 CMD ["python","-m","uvicorn","lab.runner:app","--host","0.0.0.0","--port","8080"]

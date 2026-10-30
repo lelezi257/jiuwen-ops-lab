@@ -42,3 +42,10 @@
 构建从官方 GitHub 下载固定提交的源码。上游元数据声明的部分依赖使用 GitCode Git URL，因此安装脚本只把这些固定依赖的下载通道换成官方 GitHub 快照：先解析非 Git 依赖，再 `--no-deps` 安装原样源码；不修改上游 Agent 实现。上游 Core 对 intelliRouter 使用浮动分支，本项目额外固定了分支当时的 SHA，见 lock。完整下载与包版本记录在构建容器 `/app/vendor/source-manifest.json` 和后续验收材料。
 
 协议能力查询通过，只证明 SDK/CLI 查询通道；真实模型、host tool 循环、Session、取消与清理仍需单独实际验收。不得把接口形状检查当成 G1 完成。
+
+
+## 配好 Key 后单独验收
+
+执行 `scripts/lab qualify`：真实 SDK 发现、非法输入失败、模型读取实际运行版本的 host tool、结构化结果，以及在实际工具回调后取消同一个 run。结果写入 runner 数据卷的 `/data/qualification/report.json`。这条命令会调用真实模型并产生供应商费用；它还不是订单故障修复 E2E。
+
+不配 Key 也可在 VM 内执行 `sudo docker compose --env-file .local/lab.env --env-file .local/runtime.env exec -T runner python /app/scripts/qualify_jiuwen.py --discovery-only`，只检查协议和非法输入；报告保留 `real_model_qualified=false`。

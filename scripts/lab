@@ -26,16 +26,10 @@ case "$command_name" in
   if ! grep -q '^ORDER_IMAGE=' .local/runtime.env; then python3 scripts/build_baseline.py; fi
   compose build control runner
   compose up -d --no-build
-  if ! grep -q '^ORDER_IMAGE=' .local/runtime.env; then ./scripts/lab bootstrap-image; fi
+  if ! grep -q '^ORDER_IMAGE=' .local/runtime.env; then ./scripts/lab bootstrap-image; else docker start ops-order-api >/dev/null; fi
   ;;
- bootstrap-image)
-  sha="$(sed -n 's/^LAB_TRUST_SHA=//p' .local/runtime.env)"
-  docker tag jiuwen-order:bootstrap "localhost:5000/jiuwen-order:$sha"
-  docker push "localhost:5000/jiuwen-order:$sha"
-  digest="$(docker image inspect "localhost:5000/jiuwen-order:$sha" --format '{{index .RepoDigests 0}}')"
-  if ! grep -q '^ORDER_IMAGE=' .local/runtime.env; then printf 'ORDER_IMAGE=%s\n' "$digest" >> .local/runtime.env; fi
-  compose up -d --no-deps order-api
-  ;;
+ bootstrap-image) exec python3 scripts/bootstrap_image.py ;;
+
  status) compose ps ;;
  logs) compose logs --tail=80 "$@" ;;
  configure-model)
@@ -46,10 +40,18 @@ case "$command_name" in
   fi
   compose up -d --no-deps --force-recreate runner
   ;;
+ qualify)
+  if [[ "$(uname)" == Darwin ]]; then
+   exec limactl shell jiuwen-ops-lab -- bash -lc 'cd ~/jiuwen-ops-lab && sudo ./scripts/lab qualify'
+  fi
+  compose exec -T runner python /app/scripts/qualify_jiuwen.py --lifecycle
+  ;;
  token) cat .local/secrets/control_token ;;
  baseline|fault|investigate)
   exec python3 scripts/api.py "$command_name" ;;
  smoke) exec python3 scripts/smoke.py "$@" ;;
- stop) compose stop ;;
- *) printf '%s\n' 'init [--github] | vm-create | vm-sync | vm-up | vm-status | up | status | configure-model | token | baseline | fault | investigate | smoke | logs | stop' ;;
+ stop) compose stop
+  docker stop ops-order-api
+  ;;
+ *) printf '%s\n' 'init [--github] | vm-create | vm-sync | vm-up | vm-status | up | status | configure-model | qualify | token | baseline | fault | investigate | smoke | logs | stop' ;;
 esac
