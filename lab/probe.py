@@ -68,9 +68,16 @@ def progress(key:str):return get('verification-progress',key)
 def report(key:str):return get('report',key)
 @app.post('/verify',dependencies=[Depends(operator)])
 def verify(args:dict):
+ return verify_contract(args)
+@app.post('/baseline',dependencies=[Depends(operator)])
+def baseline(args:dict):
+ return verify_contract(args,quick_baseline=True)
+def verify_contract(args:dict,quick_baseline=False):
  seconds=int(os.getenv('LAB_VERIFY_SECONDS','60'));windows=int(os.getenv('LAB_VERIFY_WINDOWS','2'));minimum=int(os.getenv('LAB_VERIFY_MIN_REQUESTS','30'))
+ if quick_baseline:seconds,windows,minimum=0,1,2
  # No caller-supplied shortcuts to the trusted recovery contract.
  report={'verification_id':ident('verify'),'release_id':args['release_id'],'expected_source_sha':args['source_sha'],'expected_image_digest':args['image_digest'],'started_at':time.time(),'windows':[],'passed':True,'contract':{'seconds':seconds,'windows':windows,'minimum_per_path':minimum}}
+ if quick_baseline:report['contract'].update(mode='quick_baseline',rounds=2)
  key=args.get('progress_key') or report['verification_id']
  def publish(window,rows):
   put('verification-progress',key,{'verification_id':report['verification_id'],'started_at':report['started_at'],'observed_at':time.time(),'window':window,'windows':windows,'seconds_per_window':seconds,'elapsed_seconds':round(time.time()-report['started_at'],1),'counts':{p:sum(r.get('path')==p for r in rows) for p in ['coupon','no_coupon']},'failed_requests':sum(not r['ok'] for r in rows),'completed_windows':len(report['windows']),'finished':False})
@@ -79,12 +86,12 @@ def verify(args:dict):
   report['before']=c.get(BASE+'/version').json()
   for n in range(windows):
    start=time.time();rows=[]
-   while time.time()-start<seconds:
+   while (len(rows)<4 if quick_baseline else time.time()-start<seconds):
     for coupon in [None,'SAVE10']:
      try:rows.append(sample(coupon))
      except Exception as exc:rows.append({'path':'coupon' if coupon else 'no_coupon','ok':False,'error':type(exc).__name__})
     publish(n+1,rows)
-    time.sleep(.5)
+    if not quick_baseline:time.sleep(.5)
    counts={p:sum(r['path']==p for r in rows) for p in ['coupon','no_coupon']}
    passed=all(r['ok'] for r in rows) and all(v>=minimum for v in counts.values())
    report['windows'].append({'start':start,'end':time.time(),'counts':counts,'passed':passed,'requests':rows});report['passed'] &= passed

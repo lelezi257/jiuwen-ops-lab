@@ -59,7 +59,7 @@ def run_operation(oid):
  try:
   if o['action']=='baseline':
    cur=call(DELIVERY,'/ops/register',{})
-   report=call(PROBE,'/verify',{**{k:cur['ledger'][k] for k in ['release_id','source_sha','image_digest']},'progress_key':oid},timeout=600)
+   report=call(PROBE,'/baseline',{**{k:cur['ledger'][k] for k in ['release_id','source_sha','image_digest']},'progress_key':oid},timeout=90)
    update_round(eid,baseline=contract_summary(report))
    if not report['passed']:raise RuntimeError('真实业务基线验证未通过，请查看下单、金额和数据库检查结果')
    result=call(DELIVERY,'/ops/mark-good',{'verification_id':report['verification_id']})

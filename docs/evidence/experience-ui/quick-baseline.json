@@ -1,0 +1,70 @@
+{
+  "id": "operation-a80bacd44b2c495b",
+  "action": "baseline",
+  "experiment_id": "experiment-2cc7203ea1e44b46",
+  "state": "SUCCEEDED",
+  "stage": "BASELINE_PASSED",
+  "created_at": 1793364206.7261603,
+  "updated_at": 1793364207.417152,
+  "started_at": 1793364207.0120986,
+  "verification": {
+    "verification_id": "verify-d5f10d9c9671423d",
+    "release_id": "release-case-7b8b276e511147cf",
+    "expected_source_sha": "ad4df41b52be9b1a0f55ea98f92ae73052d1ce6c",
+    "expected_image_digest": "localhost:5000/jiuwen-order@sha256:913616098bdcd5cf0cac8aaf6681f7785063655b3b172b3a57424a64d7a2a072",
+    "started_at": 1793364207.0918355,
+    "finished_at": 1793364207.2986553,
+    "passed": true,
+    "old_order_ok": true,
+    "invalid_input_ok": true,
+    "contract": {
+      "seconds": 0,
+      "windows": 1,
+      "minimum_per_path": 2,
+      "mode": "quick_baseline",
+      "rounds": 2
+    },
+    "examples": [
+      {
+        "path": "no_coupon",
+        "status": 200,
+        "order_id": "cd8713281c8a43bb9e40fb15cbdd8e63",
+        "total_cents": 20000,
+        "expected_total_cents": 20000,
+        "database_row": [
+          "cd8713281c8a43bb9e40fb15cbdd8e63",
+          2,
+          20000
+        ],
+        "ok": true
+      },
+      {
+        "path": "coupon",
+        "status": 200,
+        "order_id": "a385dce0ce684973ac0e28e8ce47862f",
+        "total_cents": 18000,
+        "expected_total_cents": 18000,
+        "database_row": [
+          "a385dce0ce684973ac0e28e8ce47862f",
+          2,
+          18000
+        ],
+        "ok": true
+      }
+    ],
+    "windows": [
+      {
+        "start": 1793364207.1168752,
+        "end": 1793364207.2820048,
+        "counts": {
+          "coupon": 2,
+          "no_coupon": 2
+        },
+        "passed": true,
+        "failed_requests": 0,
+        "database_rows_match": true
+      }
+    ]
+  },
+  "finished_at": 1793364207.4168704
+}
