@@ -1,0 +1,135 @@
+{
+  "date": "2026-10-30",
+  "scope": "actual_engineering_delivery_e2e_without_model",
+  "case_id": "engineering-7c3f9342759b4a0b",
+  "terminal_state": "DELIVERY_ACCEPTANCE_PASSED",
+  "patch_author": "human_acceptance_script",
+  "model_calls": 0,
+  "real_agent_qualified": false,
+  "incident_source_sha": "297428371eb288ade09dfd5380f61b239d547ab5",
+  "pr": {
+    "number": 1,
+    "url": "https://github.com/lelezi257/jiuwen-ops-lab/pull/1",
+    "head_sha": "c2c03e7b9178b173af8d29e87da7dfd605a119e0",
+    "base_sha": "297428371eb288ade09dfd5380f61b239d547ab5",
+    "case_id": "engineering-7c3f9342759b4a0b"
+  },
+  "ci": {
+    "state": "passed",
+    "run_id": 40996229012,
+    "run_url": "https://github.com/lelezi257/jiuwen-ops-lab/actions/runs/40996229012",
+    "test_merge_sha": "0a61ab868307f5ec4dedbf1d89cc15d1242d7ea4",
+    "pr": {
+      "number": 1,
+      "url": "https://github.com/lelezi257/jiuwen-ops-lab/pull/1",
+      "head_sha": "c2c03e7b9178b173af8d29e87da7dfd605a119e0",
+      "base_sha": "297428371eb288ade09dfd5380f61b239d547ab5",
+      "case_id": "engineering-7c3f9342759b4a0b"
+    }
+  },
+  "merge": {
+    "state": "merged",
+    "merge_sha": "3e1e80e1aa3994b6f18e767c9a98647212691998",
+    "pr": {
+      "number": 1,
+      "url": "https://github.com/lelezi257/jiuwen-ops-lab/pull/1",
+      "head_sha": "c2c03e7b9178b173af8d29e87da7dfd605a119e0",
+      "base_sha": "297428371eb288ade09dfd5380f61b239d547ab5",
+      "case_id": "engineering-7c3f9342759b4a0b"
+    },
+    "checked": {
+      "state": "passed",
+      "run_id": 40996229012,
+      "run_url": "https://github.com/lelezi257/jiuwen-ops-lab/actions/runs/40996229012",
+      "test_merge_sha": "0a61ab868307f5ec4dedbf1d89cc15d1242d7ea4",
+      "pr": {
+        "number": 1,
+        "url": "https://github.com/lelezi257/jiuwen-ops-lab/pull/1",
+        "head_sha": "c2c03e7b9178b173af8d29e87da7dfd605a119e0",
+        "base_sha": "297428371eb288ade09dfd5380f61b239d547ab5",
+        "case_id": "engineering-7c3f9342759b4a0b"
+      }
+    }
+  },
+  "build": {
+    "source_sha": "3e1e80e1aa3994b6f18e767c9a98647212691998",
+    "dispatched_at": 1793330113.8739011,
+    "state": "ready",
+    "run_id": 40996327233,
+    "run_url": "https://github.com/lelezi257/jiuwen-ops-lab/actions/runs/40996327233",
+    "image_digest": "localhost:5000/jiuwen-order@sha256:eed0247991192fb5a437d51f7031a072a19b4337870740fb958551c3de414524",
+    "artifact_id": 12952050101,
+    "provenance": {
+      "source_sha": "3e1e80e1aa3994b6f18e767c9a98647212691998",
+      "architecture": "arm64",
+      "archive_sha256": "9139d9e25dcc3800a584bacc03a4b684d2dd31135b7ad3d20c53ae29006af94f",
+      "run_id": "40996327233"
+    }
+  },
+  "deployment_runtime": {
+    "container_id": "49c6c97a3a3c237e20aa163c4b7232a68721085cf9a299b60087139b311ae589",
+    "image_id": "sha256:eed0247991192fb5a437d51f7031a072a19b4337870740fb958551c3de414524",
+    "repo_digests": [
+      "order-build@sha256:eed0247991192fb5a437d51f7031a072a19b4337870740fb958551c3de414524",
+      "localhost:5000/jiuwen-order@sha256:eed0247991192fb5a437d51f7031a072a19b4337870740fb958551c3de414524"
+    ],
+    "source_sha": "3e1e80e1aa3994b6f18e767c9a98647212691998",
+    "running": true,
+    "release_id": "release-engineering-7c3f9342759b4a0b"
+  },
+  "deployment_ledger": {
+    "release_id": "release-engineering-7c3f9342759b4a0b",
+    "source_sha": "3e1e80e1aa3994b6f18e767c9a98647212691998",
+    "image_digest": "localhost:5000/jiuwen-order@sha256:eed0247991192fb5a437d51f7031a072a19b4337870740fb958551c3de414524",
+    "state": "ready"
+  },
+  "verification": {
+    "verification_id": "verify-71517ae897d14e80",
+    "release_id": "release-engineering-7c3f9342759b4a0b",
+    "expected_source_sha": "3e1e80e1aa3994b6f18e767c9a98647212691998",
+    "expected_image_digest": "localhost:5000/jiuwen-order@sha256:eed0247991192fb5a437d51f7031a072a19b4337870740fb958551c3de414524",
+    "started_at": 1793330257.5251777,
+    "finished_at": 1793330377.709182,
+    "contract": {
+      "seconds": 60,
+      "windows": 2,
+      "minimum_per_path": 30
+    },
+    "before": {
+      "source_sha": "3e1e80e1aa3994b6f18e767c9a98647212691998",
+      "release_id": "release-engineering-7c3f9342759b4a0b",
+      "image_digest": "localhost:5000/jiuwen-order@sha256:eed0247991192fb5a437d51f7031a072a19b4337870740fb958551c3de414524"
+    },
+    "after": {
+      "source_sha": "3e1e80e1aa3994b6f18e767c9a98647212691998",
+      "release_id": "release-engineering-7c3f9342759b4a0b",
+      "image_digest": "localhost:5000/jiuwen-order@sha256:eed0247991192fb5a437d51f7031a072a19b4337870740fb958551c3de414524"
+    },
+    "passed": true,
+    "old_order_ok": true,
+    "invalid_input_ok": true,
+    "windows": [
+      {
+        "start": 1793330257.535709,
+        "end": 1793330317.6211143,
+        "counts": {
+          "coupon": 109,
+          "no_coupon": 109
+        },
+        "passed": true,
+        "all_database_rows_match": true
+      },
+      {
+        "start": 1793330317.6211243,
+        "end": 1793330377.6840904,
+        "counts": {
+          "coupon": 109,
+          "no_coupon": 109
+        },
+        "passed": true,
+        "all_database_rows_match": true
+      }
+    ]
+  },
+  "note": "This validates the actual delivery/recovery chain with an explicit human-authored patch. It is not evidence of LLM diagnosis or generated repair."
+}

@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-30",
+  "scope": "real_sdk_cli_runtime_without_model",
+  "framework_lock": "../../config/framework.lock.json",
+  "capabilities": {
+    "status": "completed",
+    "protocol_revision": 1,
+    "features": {
+      "custom_agent": true,
+      "run_model": true,
+      "run_skills": true,
+      "run_mcp": true,
+      "run_permissions": true,
+      "structured_output": true,
+      "max_turns": true,
+      "max_budget_usd": true,
+      "host_tools": true,
+      "interaction_callback": true,
+      "unattended_permission_rejection": true,
+      "cancel": true,
+      "session_resume": true,
+      "stable_event_fields": true,
+      "field_errors": true,
+      "empty_tools": true,
+      "protocol_schema": true
+    }
+  },
+  "runtime_modes": {
+    "status": "completed",
+    "exit_code": 0
+  },
+  "invalid_input": {
+    "status": "failed",
+    "exit_code": 2,
+    "error": {
+      "code": "INVALID_INPUT",
+      "message": "run input does not match the schema",
+      "retryable": false,
+      "details": {
+        "field": "/max_turns",
+        "reason": "invalid_value"
+      }
+    }
+  },
+  "real_model_qualified": false,
+  "model_calls": 0,
+  "note": "SDK terminal/OS-exit checks passed for these calls. External model, host-tool loop and real-model cancellation remain pending user configuration."
+}

@@ -4,6 +4,8 @@
 
 维护对象是独立运行的订单 API + PostgreSQL。一次优惠码空值处理回归会让普通下单返回 500。目标流程：实际告警 → 模型读取实际日志/指标/源码 → 生成修复与回归测试 → 真实 GitHub PR/CI → 按规则合并 → 构建精确提交 → 发布不可变镜像 → 独立验证业务恢复。
 
+**当前：独立组件、真实故障/告警、真实 PR/CI/构建/发布与业务恢复已跑通；工程验收使用人工补丁，真实 Agent 尚待模型配置。**
+
 **当前验收状态请先看 [STATUS](docs/STATUS.md)。模型未配置不代表 Agent 已验证；工程、环境和模型验收分别记录。** 本项目用于受控学习实验，自动操作仅针对你自己的演示仓库与专用 VM。
 
 ## 先理解组件
@@ -29,7 +31,7 @@ flowchart LR
 
 Swarm 和 Core 在执行服务的官方子进程里，不是两个 HTTP 服务。我们的 runner 只做 SDK 调用、事件持久化映射、工具回调、取消与错误处理，没有编写另一个模型循环。首版是单 Agent 按阶段执行，不声称使用 Swarm 多 Agent 团队。
 
-详细阅读：[HTML 设计](docs/design.html) · [官方九问接线](docs/JIUWEN.md) · [运行与复现](docs/RUNBOOK.md) · [权限和版本链](docs/BOUNDARIES.md) · [验收记录](docs/STATUS.md)。
+详细阅读：[D1 HTML 设计快照](docs/design.html) · [官方九问接线](docs/JIUWEN.md) · [运行与复现](docs/RUNBOOK.md) · [权限和版本链](docs/BOUNDARIES.md) · [验收记录](docs/STATUS.md)。
 
 ## Mac 快速开始
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Run inside official-framework runner image. Never substitutes model output."""
-import asyncio,json,sys,time
+import asyncio,json,os,sys,time
 from pathlib import Path
 import httpx
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
@@ -25,6 +25,7 @@ async def main():
    assert release['consistent'];result={'source_sha':release['runtime']['source_sha'],'release_id':release['runtime']['release_id']};calls.append(result);return result
   async def event(e):events.append(e)
   request={'input':'Call get_live_order_version, then return the exact source_sha you observed and observed=true. Do not invent values.','agent':{'name':'ops-sdk-qualification','instructions':'Use the declared host tool. Final response must be only the JSON object required by output_schema.','tools':['get_live_order_version']},'host_tools':[{'name':'get_live_order_version','description':'Read actual running order container version through control service','input_schema':{'type':'object','properties':{},'additionalProperties':False}}],'permissions':{'tools':{'get_live_order_version':'allow'}},'workspace':{'cwd':str(workspace)},'max_turns':8,'timeout_seconds':180,'output_schema':{'type':'object','properties':{'source_sha':{'type':'string'},'observed':{'type':'boolean'}},'required':['source_sha','observed'],'additionalProperties':False}}
+  if os.getenv('LAB_MAX_BUDGET_USD'):request['max_budget_usd']=float(os.environ['LAB_MAX_BUDGET_USD'])
   result=await cli.run(request,on_event=event,on_tool_call=tool,deadline_seconds=300)
   assert result['status']=='completed' and result['exit_code']==0 and calls,result
   assert result['output_json']=={'source_sha':calls[-1]['source_sha'],'observed':True},result

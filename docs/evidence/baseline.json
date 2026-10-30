@@ -1,0 +1,46 @@
+{
+  "verification_id": "verify-b1c095403d0043c1",
+  "release_id": "release-baseline",
+  "started_at": 1793329504.1499264,
+  "finished_at": 1793329625.0123765,
+  "contract": {
+    "seconds": 60,
+    "windows": 2,
+    "minimum_per_path": 30
+  },
+  "before": {
+    "source_sha": "cf53f47434f355999f3ae03cec74dbc905cef42b",
+    "release_id": "release-baseline",
+    "image_digest": "localhost:5000/jiuwen-order@sha256:fcfcc95820f68aa1eded844fd777060325ad06c10827d409e0bdb9548a1fe1c6"
+  },
+  "after": {
+    "source_sha": "cf53f47434f355999f3ae03cec74dbc905cef42b",
+    "release_id": "release-baseline",
+    "image_digest": "localhost:5000/jiuwen-order@sha256:fcfcc95820f68aa1eded844fd777060325ad06c10827d409e0bdb9548a1fe1c6"
+  },
+  "passed": true,
+  "old_order_ok": true,
+  "invalid_input_ok": true,
+  "windows": [
+    {
+      "start": 1793329504.1597993,
+      "end": 1793329564.5629485,
+      "counts": {
+        "coupon": 110,
+        "no_coupon": 110
+      },
+      "passed": true,
+      "all_database_rows_match": true
+    },
+    {
+      "start": 1793329564.5629556,
+      "end": 1793329625.0032518,
+      "counts": {
+        "coupon": 110,
+        "no_coupon": 110
+      },
+      "passed": true,
+      "all_database_rows_match": true
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "scope": "actual_fault_and_automatic_alert",
+  "case": {
+    "id": "case-c4c2af08038e4abe",
+    "created_at": 1793329979.5756545,
+    "state": "REPAIR_QUEUED",
+    "observed_release": "fault-release-50e8c98c963642ea",
+    "observed_sha": "297428371eb288ade09dfd5380f61b239d547ab5",
+    "trigger": {
+      "source": "alertmanager",
+      "alerts": [
+        {
+          "status": "firing",
+          "labels": {
+            "alertname": "OrderNoCouponErrors",
+            "service": "order-api"
+          },
+          "annotations": {
+            "summary": "Order creation has real HTTP 500 errors"
+          },
+          "startsAt": "2026-10-30T03:12:54.495Z",
+          "endsAt": "0001-01-01T00:00:00Z",
+          "generatorURL": "http://d8338ef9d73b:9090/graph?g0.expr=sum%28increase%28order_requests_total%7Bpath%3D%22%2Forders%22%2Cstatus%3D%22500%22%7D%5B1m%5D%29%29+%3E+5&g0.tab=1",
+          "fingerprint": "2328450b5f59404a"
+        }
+      ]
+    },
+    "cancelled": false,
+    "attempt": 0,
+    "feedback": null,
+    "updated_at": 1793329979.5796251
+  },
+  "requests": [
+    {
+      "coupon": null,
+      "status": 500
+    },
+    {
+      "coupon": "SAVE10",
+      "status": 200,
+      "data": {
+        "id": "0a0307b234e14f7cba301c6ad4719486",
+        "total_cents": 18000
+      }
+    }
+  ],
+  "fault_release": {
+    "runtime": {
+      "container_id": "1388161828de85e132c4741923926c9549db20dba808535fd2866fecc65a6da9",
+      "image_id": "sha256:78967199c03e17f6fabd95c1e28eb3300cdd2533075b5da17135b6906bc34b11",
+      "repo_digests": [
+        "localhost:5000/jiuwen-order@sha256:78967199c03e17f6fabd95c1e28eb3300cdd2533075b5da17135b6906bc34b11"
+      ],
+      "source_sha": "297428371eb288ade09dfd5380f61b239d547ab5",
+      "running": true,
+      "release_id": "fault-release-50e8c98c963642ea"
+    },
+    "ledger": {
+      "release_id": "fault-release-50e8c98c963642ea",
+      "source_sha": "297428371eb288ade09dfd5380f61b239d547ab5",
+      "image_digest": "localhost:5000/jiuwen-order@sha256:78967199c03e17f6fabd95c1e28eb3300cdd2533075b5da17135b6906bc34b11",
+      "previous": {
+        "release_id": "release-baseline",
+        "source_sha": "cf53f47434f355999f3ae03cec74dbc905cef42b",
+        "image_digest": "localhost:5000/jiuwen-order@sha256:fcfcc95820f68aa1eded844fd777060325ad06c10827d409e0bdb9548a1fe1c6",
+        "state": "ready",
+        "time": 1793329504.114367
+      },
+      "state": "ready",
+      "time": 1793329885.8397787
+    },
+    "known_good": {
+      "release_id": "release-baseline",
+      "source_sha": "cf53f47434f355999f3ae03cec74dbc905cef42b",
+      "image_digest": "localhost:5000/jiuwen-order@sha256:fcfcc95820f68aa1eded844fd777060325ad06c10827d409e0bdb9548a1fe1c6",
+      "state": "ready",
+      "time": 1793329504.114367
+    },
+    "consistent": true
+  },
+  "model_calls": 0,
+  "note": "Real 500, actual Loki/Prometheus evidence and Alertmanager event. Repair queued because no model configured."
+}

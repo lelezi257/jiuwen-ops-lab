@@ -36,3 +36,24 @@ class ProductBoundaries(unittest.TestCase):
   self.assertTrue(get('case',c['id'])['cancelled']);self.assertEqual(get('case',c['id'])['state'],'CANCELLED')
  def test_cli_key_is_not_in_committed_template(self):
   text=(Path(__file__).resolve().parents[2]/'config/model.env.example').read_text();self.assertIn('API_KEY=\n',text)
+ def test_ci_gate_rejects_non_success_and_changed_code(self):
+  head='a'*40;base='b'*40;record={'number':1,'head_sha':head,'base_sha':base}
+  pr={'state':'open','head':{'sha':head,'repo':{'full_name':'owner/lab'}},'base':{'sha':base,'ref':'lab-live'},'changed_files':1,'merge_commit_sha':'c'*40}
+  for conclusion,job,want in [('failure','failure','failed'),('neutral','neutral','failed'),('skipped','skipped','failed'),('success','skipped','failed'),('success','success','passed')]:
+   def github(method,path,body=None):
+    if path=='/pulls/1':return pr
+    if path.startswith('/pulls/1/files'):return [{'filename':'apps/order_api/pricing.py','status':'modified'}]
+    if path=='/actions/workflows/contract.yml':return {'id':7}
+    if path.startswith('/actions/workflows/contract.yml/runs'):return {'workflow_runs':[{'id':8,'workflow_id':7,'pull_requests':[{'number':1}],'status':'completed','conclusion':conclusion,'html_url':'https://example.invalid/run'}]}
+    if path=='/actions/runs/8/jobs':return {'jobs':[{'name':'contract','conclusion':job}]}
+    raise AssertionError(path)
+   with self.subTest(conclusion=conclusion,job=job),patch('lab.delivery.get',return_value=record),patch('lab.delivery.gh',side_effect=github),patch('lab.delivery.assert_trusted'):
+    self.assertEqual(delivery.pr_status('c')['state'],want)
+  for changed in [{**pr,'head':{'sha':'d'*40,'repo':{'full_name':'owner/lab'}}},{**pr,'base':{'sha':'e'*40,'ref':'lab-live'}}]:
+   with patch('lab.delivery.get',return_value=record),patch('lab.delivery.gh',return_value=changed):self.assertEqual(delivery.pr_status('c')['state'],'stale')
+ def test_retry_invalidates_late_attempt(self):
+  c={'id':'retry-test','state':'CANCELLED','cancelled':True,'observed_sha':'b'*40,'attempt_id':'old-attempt','attempt':1};put('case',c['id'],c)
+  client=TestClient(control.app)
+  with patch('lab.common.secret',side_effect=lambda name:{'runner_token':'runner-secret','control_token':'control-secret'}.get(name,'')),patch('lab.control.call',return_value={'consistent':True,'runtime':{'source_sha':'b'*40}}):
+   r=client.post('/api/cases/retry-test/retry',json={},headers={'Authorization':'Bearer control-secret'});self.assertEqual(r.status_code,200);self.assertNotEqual(r.json()['attempt_id'],'old-attempt')
+   old=client.post('/internal/cases/retry-test/result',json={'attempt_id':'old-attempt','result':{'status':'completed','exit_code':0}},headers={'Authorization':'Bearer runner-secret'});self.assertEqual(old.status_code,409)

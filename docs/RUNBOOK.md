@@ -64,7 +64,7 @@ Python 包和 Debian apt 也可分别通过 `PIP_INDEX_URL` / `UV_INDEX_URL` / `
 
 ## 停止与重置
 
-工作台“停止后续动作”取消事件；已发生的 PR/合并/发布保留。VM 内 `sudo scripts/lab stop` 停止服务，`limactl stop jiuwen-ops-lab` 停止专用 VM。数据卷保留。重新注入故障前，应先确保已有事件已完成或取消，且已知正常基线仍可部署。
+工作台“停止后续动作”取消事件；已发生的 PR/合并/发布保留。VM 内 `sudo scripts/lab stop` 停止服务，`limactl stop jiuwen-ops-lab` 停止专用 VM。数据卷保留。重新注入故障前，应先确保已有事件已完成或取消，且已知正常基线仍可部署。注入器先用新提交把实验分支的业务源码/测试目录恢复到所选可信健康基线，再提交故障；不强推分支，既有修复 PR 和提交历史都保留。
 
 不提供默认的 `down -v`、删除 VM、强推实验分支或清理全部 Docker 缓存。需要从零重做时先导出事件/动作/验证材料，再明确选择要删除的本项目资源。
 
@@ -85,3 +85,6 @@ sudo python3 scripts/engineering_acceptance.py
 脚本明确使用人工编写的案例补丁，经真实工具接口创建真实 PR，等待实际 CI、合并、两平台构建、digest 发布和独立业务验证。它会取消当前排队事件以独占这次工程实验；只应在本项目专用 VM 使用。结果状态为 `DELIVERY_ACCEPTANCE_PASSED`，时间线明确 `model_calls=0`，从不伪造 SDK 输出或冒充模型修复。
 
 完成后可再次制造故障，为后续真实模型验收准备新事件。
+
+
+代码同步会核对已有 VM 的数据库身份。换一个 clone 后若 `.local` 是新生成的，不能直接覆盖旧 VM 的配置；恢复原配置后再同步。模型 Key 只更新使用 `scripts/lab configure-model`，不需要覆盖整个 VM 配置。

@@ -12,10 +12,11 @@ case "$command_name" in
   # Only source + explicit configuration; never copy venvs, evidence or VM state.
   COPYFILE_DISABLE=1 tar --no-xattrs --exclude=.git --exclude=vendor --exclude=__pycache__ --exclude=.local -czf .local/sync.tar.gz .
   COPYFILE_DISABLE=1 tar --no-xattrs -czf .local/config-sync.tar.gz .local/model.env .local/lab.env .local/secrets .local/swarm
-  limactl shell jiuwen-ops-lab -- mkdir -p jiuwen-ops-lab
+  limactl shell jiuwen-ops-lab -- mkdir -p jiuwen-ops-lab/scripts
+  limactl copy scripts/sync_guard.py jiuwen-ops-lab:jiuwen-ops-lab/scripts/sync_guard.py
   limactl copy .local/sync.tar.gz jiuwen-ops-lab:jiuwen-ops-lab/source.tar.gz
   limactl copy .local/config-sync.tar.gz jiuwen-ops-lab:jiuwen-ops-lab/config.tar.gz
-  limactl shell jiuwen-ops-lab -- bash -lc 'cd ~/jiuwen-ops-lab && tar -xzf source.tar.gz && tar -xzf config.tar.gz && rm source.tar.gz config.tar.gz && chmod 700 .local .local/secrets && chmod 600 .local/secrets/* .local/model.env && chmod 644 .local/secrets/db_password .local/secrets/verify_db_password && python3 scripts/runtime_env.py '"$(git rev-parse HEAD)"
+  limactl shell jiuwen-ops-lab -- bash -lc 'cd ~/jiuwen-ops-lab && python3 scripts/sync_guard.py config.tar.gz && tar -xzf source.tar.gz && tar -xzf config.tar.gz && rm source.tar.gz config.tar.gz && chmod 700 .local .local/secrets && chmod 600 .local/secrets/* .local/model.env && chmod 644 .local/secrets/db_password .local/secrets/verify_db_password && python3 scripts/runtime_env.py '"$(git rev-parse HEAD)"
 
   ;;
  vm-up) exec limactl shell jiuwen-ops-lab -- bash -lc 'cd ~/jiuwen-ops-lab && sudo --preserve-env=HTTP_PROXY,HTTPS_PROXY,NO_PROXY,http_proxy,https_proxy,no_proxy ./scripts/lab up' ;;

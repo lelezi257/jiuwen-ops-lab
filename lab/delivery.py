@@ -164,6 +164,7 @@ def deploy(image,sha,release_id,expected):
 
 @app.post('/ops/{name}',dependencies=[Depends(operator)])
 def ops(name:str,args:dict):
+ if name=='current':return current()
  with lock:
   if name=='current':return current()
   if name=='bootstrap':
@@ -192,6 +193,7 @@ def ops(name:str,args:dict):
    cid=args['case_id'];merge=get('merge',cid)
    if not merge:raise HTTPException(409,'Merge ledger required')
    sha=merge['merge_sha'];assert_trusted(sha);assert_trusted(gh('GET','/branches/main')['commit']['sha']);rec=get('build',cid)
+   if rec and rec['state'] in ['ready','failed']:return rec
    if not rec:
     rec={'source_sha':sha,'dispatched_at':now(),'state':'dispatching'};put('build',cid,rec)
     gh('POST','/actions/workflows/build.yml/dispatches',{'ref':'main','inputs':{'source_sha':sha}});rec['state']='pending';put('build',cid,rec)
@@ -245,6 +247,11 @@ def ops(name:str,args:dict):
     try:branch=gh('GET','/git/ref/heads/'+BRANCH)['object']['sha']
     except RuntimeError:branch=os.environ['LAB_TRUST_SHA']
    path=WORK/ident('fault');cmd(['git','clone',str(root),str(path)]);cmd(['git','remote','set-url','origin',REMOTE],path);cmd(['git','checkout','-b','fault',branch],path)
+   cmd(['git','config','user.name','Jiuwen Ops Lab'],path);cmd(['git','config','user.email','ops-lab@users.noreply.github.com'],path)
+   # A fresh business fixture for every trial, preserving Git history. This is
+   # operator-owned experiment setup, never a model-visible repair fallback.
+   cmd(['git','restore','--source='+os.environ['LAB_TRUST_SHA'],'--staged','--worktree','--','apps/order_api','tests/order'],path)
+   if cmd(['git','status','--porcelain'],path):cmd(['git','commit','-m','Experiment: restore trusted healthy business baseline'],path)
    file=path/'apps/order_api/pricing.py';source=file.read_text();old="normalized = (coupon or '').strip().upper()"
    if old not in source:raise HTTPException(409,'Baseline pricing changed; reset/review experiment explicitly')
    file.write_text(source.replace(old,'normalized = coupon.strip().upper()'))
